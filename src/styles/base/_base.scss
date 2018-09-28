@@ -1,0 +1,106 @@
+/* Base styles */
+
+body {
+  position: relative;
+  font: 400 14px/1 "Montserrat Alternates", Arial, sans-serif;
+  color: $base-text-color;
+  overflow-x: hidden;
+  &.hidden {
+    overflow: hidden;
+  }
+  &.body__main-background {
+    background: $mainLandingRedBackground;
+  }
+}
+
+input {
+  outline: none;
+  @include transition(0.4s);
+}
+
+a {
+  text-decoration: none;
+}
+
+textarea {
+  outline: none;
+  color: $base-text-color;
+  &:focus {
+    color: $base-text-color;
+  }
+}
+
+button {
+  display: block;
+}
+
+button,
+input[type="submit"] {
+  cursor: pointer;
+  @include transition(0.4s);
+  background: transparent;
+  border: 1px solid $base-text-color;
+  border-radius: 0;
+  &:focus,
+  &:active {
+    outline: none;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: $base-text-color;
+  cursor: pointer;
+  @include transition(0.3s);
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+li {
+  list-style: none;
+}
+
+main {
+  background: #ffffff;
+}
+
+img {
+  display: block;
+}
+
+.img-cover {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  @supports (object-fit: cover) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.img-contain {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  @supports (object-fit: contain) {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.section__container {
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 15px;
+  margin: 0 auto;
+}
+
+input,
+button {
+  border: none;
+  outline: none;
+  font-family: "Montserrat Alternates";
+}

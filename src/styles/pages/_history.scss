@@ -1,0 +1,64 @@
+.history {
+  padding-top: 60px;
+  @include display-flex(column, center, center);
+  &__title {
+    @include title(20px, 600, 60px);
+  }
+  &__table-text {
+    color: #74777E;
+    font-size: 14px;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 1px 0;
+  }
+
+  &__container {
+    width: 940px;
+  }
+
+  &__row {
+    display: flex;
+    border-bottom: 1px solid #ECECEC;
+    &:last-child {
+      border-bottom: none;
+    }
+    &.head {
+     .history__table-text {
+        color: $textBlack;
+      }
+    }
+    > div {
+      padding: 13px 10px;
+    }
+  }
+  &__table {
+    margin-bottom: 40px;
+  }
+  &__table-id {
+    width: 10%;
+  }
+  &__table-date {
+    width: 17%;
+  }
+  &__table-number {
+    width: 23%;
+  }
+  &__table-sum {
+    width: 17%;
+  }
+  &__table-successUser {
+    width: 33%;
+  }
+  &__footer {
+    @include display-flex(row, space-between, center);
+    .btn {
+      height: 42px;
+      color: $red;
+      padding: 11px 10px;
+      width: 258px;
+      font-size: 16px;
+    }
+  }
+}

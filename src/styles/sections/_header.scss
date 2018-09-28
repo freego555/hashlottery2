@@ -1,0 +1,50 @@
+/* Header section */
+
+.header {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  background-color: $red;
+  &__container {
+    position: relative;
+    @include display-flex(row, space-between, center);
+    min-height: 100px;
+  }
+  &__logo-wrapper {
+    width: 214px;
+    &--margin {
+      margin-bottom: 48px;
+    }
+  }
+  &__link-block {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.menu-links {
+  &__wrapper {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.link__btn {
+  display: flex;
+  @include display-flex(row, center, center);
+  height: 40px;
+  width: 230px;
+  border: 2px solid $white;
+  border-radius: 30px;
+  font: 600 16px/19px "Montserrat Alternates", san-serif;
+  @include transition(0.3s);
+  &:hover {
+    transform: scale(1.02) translate(0, -2px);
+    background-color: $white;
+    color: $textBlack;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.3);
+  }
+}

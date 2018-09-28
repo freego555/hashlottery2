@@ -1,0 +1,11 @@
+.footer {
+  &__container {
+    @include display-flex(row, center, center);
+    min-height: 40px;
+    background-color: $textBlack;
+    padding: 10px 15px;
+  }
+  &__title {
+    font: 500 12px/30px "Montserrat Alternates";
+  }
+}

@@ -1,0 +1,14 @@
+.headerBar {
+  background-color: $textBlack;
+  padding: 15px;
+  height: 70px;
+  &__logo {
+    width: 174px;
+    height: 40px;
+    object-fit: contain;
+  }
+  &__wrap {
+    max-width: 1130px;
+    margin: 0 auto;
+  }
+}

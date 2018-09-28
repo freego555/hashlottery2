@@ -1,0 +1,28 @@
+// COMMON STYLES
+
+@import "./base/_reset.scss";
+@import "./base/_colors.scss";
+@import "./base/_fonts.scss";
+@import "./base/_mixins.scss";
+@import "./base/_base.scss";
+@import "./base/_theme.scss";
+
+// MAIN SECTIONS STYLES
+
+@import "./sections/_header.scss";
+@import "./sections/_home-screen.scss";
+@import "./sections/_bonuses.scss";
+@import "./sections/_investments.scss";
+@import "./sections/_footer.scss";
+@import "./sections/_headerBar.scss";
+
+//PAGES
+@import "./pages/_indetification.scss";
+@import "./pages/_mainPage.scss";
+@import "./pages/_formShipment.scss";
+@import "./pages/_error.scss";
+@import "./pages/_lotteryMainPage.scss";
+@import "./pages/_history.scss";
+@import "./pages/_formAcquisition.scss";
+@import "./pages/_icoNotification.scss";
+@import "./pages/_buyTicket.scss";

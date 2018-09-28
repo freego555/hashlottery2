@@ -1,0 +1,143 @@
+/* BONUSES SECTION */
+
+.bonuses {
+  overflow-x: hidden;
+  &__container {
+    @include display-flex(column, flex-start, center);
+    min-height: 400px;
+    padding: 220px 15px 75px;
+    @media (max-width: 1700px) {
+      padding: 170px 15px 75px;
+    }
+    @media (max-width: 1500px) {
+      padding: 130px 15px 75px;
+    }
+    @media (max-width: 1366px) {
+      padding: 100px 15px;
+    }
+    @media (max-width: 1200px) {
+      padding: 60px 15px 75px;
+    }
+    @media (max-width: 1024px) {
+      padding: 50px 15px 75px;
+    }
+  }
+  &__header-block {
+    @include display-flex(row, flex-start, flex-start);
+    width: 100%;
+    margin-bottom: 100px;
+  }
+  &__title {
+    position: relative;
+    width: calc(216px + 72px);
+    margin-right: 24px;
+    padding-left: 72px;
+    font: 800 28px/30px "Montserrat Alternates";
+    &:before {
+      position: absolute;
+      z-index: 1;
+      left: 0;
+      top: 10px;
+      content: "";
+      display: block;
+      width: 48px;
+      height: 6px;
+      border-radius: 7px;
+      background-color: $white;
+    }
+  }
+  &__list-title {
+    margin-bottom: 24px;
+    font: 600 20px/30px "Montserrat Alternates";
+  }
+  &__list-item {
+    position: relative;
+    padding-left: 30px;
+    width: 100%;
+    font: 600 16px/27px "Montserrat Alternates";
+    cursor: pointer;
+    &:after {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      display: block;
+      content: "";
+      width: 8px;
+      height: 8px;
+      background-color: $white;
+      border-radius: 50%;
+      @include transition(0.3s);
+    }
+  }
+  &__card-list {
+    @include display-flex(row, center, center);
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  &__card-list-item {
+    position: relative;
+    @include display-flex(column, flex-start, center);
+    width: calc((100% - 96px) / 3);
+    max-width: 264px;
+    min-height: 320px;
+    margin-right: 48px;
+    padding: 38px 24px 24px;
+    border-radius: 6px;
+    background-color: $white;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+    @include transition(0.2s);
+    &:last-of-type {
+      margin-right: 0;
+    }
+  }
+  &__card-item-icon-wrapper {
+    margin-bottom: 4px;
+  }
+  &__card-value {
+    margin-bottom: 12px;
+    font: 800 50px/61px "Montserrat Alternates";
+    color: $textBlack;
+  }
+  &__card-devider {
+    display: block;
+    width: 40px;
+    height: 6px;
+    margin-bottom: 12px;
+    border-radius: 7px;
+    background-color: $red;
+  }
+  &__card-text {
+    font: 600 16px/23px "Montserrat Alternates";
+    color: $textBlack;
+    text-align: center;
+  }
+  &__card-bitcoin-icon {
+    position: absolute;
+    &--one {
+      z-index: -1;
+      left: -78px;
+      top: 135px;
+    }
+    &--two {
+      z-index: 2;
+      left: 108px;
+      bottom: -43px;
+    }
+    &--three {
+      z-index: 2;
+      left: 84px;
+      bottom: -73px;
+    }
+    &--four {
+      z-index: 2;
+      right: -71px;
+      bottom: 69px;
+    }
+    &--five {
+      z-index: 2;
+      right: -160px;
+      bottom: -60px;
+    }
+  }
+}

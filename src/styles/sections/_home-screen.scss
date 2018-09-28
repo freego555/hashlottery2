@@ -1,0 +1,87 @@
+/* HOME-SCREEN SECTION */
+
+.home-screen {
+  position: relative;
+  &__container {
+    position: relative;
+    @include display-flex(column, center, flex-start);
+    min-height: 100vh;
+    min-height: 500px;
+    padding: 100px 15px 220px;
+    @media (max-width: 1700px) {
+      padding: 100px 15px 170px;
+    }
+    @media (max-width: 1500px) {
+      padding: 100px 15px 130px;
+    }
+    @media (max-width: 1366px) {
+      padding: 100px 15px;
+    }
+    @media (max-width: 1200px) {
+      padding: 100px 15px 60px;
+    }
+    @media (max-width: 1024px) {
+      padding: 100px 15px 50px;
+    }
+  }
+  &__background-image {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+  &__title {
+    width: 768px;
+    margin-bottom: 10px;
+    font: 800 44px/50px "Montserrat Alternates";
+  }
+  &__subtitle {
+    width: 768px;
+    margin-bottom: 40px;
+    font: 600 28px/50px "Montserrat Alternates";
+  }
+  &__main-text-wrapper {
+    max-width: 768px;
+    @media (max-width: 1200px) {
+      max-width: 580px;
+    }
+  }
+  &__main-text {
+    margin-bottom: 30px;
+    font: 600 16px/27px "Montserrat Alternates";
+    &:last-of-type {
+      margin-bottom: 50px;
+    }
+  }
+  &__etherium-text {
+    margin-bottom: 40px;
+    font: 600 26px/32px "Montserrat Alternates";
+    span {
+      margin-right: 6px;
+      font-weight: 800;
+    }
+  }
+  &__button {
+    @include display-flex(row, center, center);
+    height: 70px;
+    width: 308px;
+    margin-bottom: 24px;
+    border-radius: 35px;
+    background-color: $white;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.3);
+    font: 600 22px/27px "Montserrat Alternates";
+    color: $textBlack;
+    @include transition(0.3s);
+    &:hover {
+      transform: scale(1.02) translate(0, -4px);
+      background-color: $textBlack;
+      color: $white;
+    }
+    &--middle {
+      height: 60px;
+      width: 264px;
+      font: 600 18px/22px "Montserrat Alternates";
+    }
+  }
+}

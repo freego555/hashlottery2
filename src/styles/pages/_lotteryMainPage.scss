@@ -1,0 +1,89 @@
+.lotteryMain {
+  padding-top: 60px;
+  .wrapper {
+    max-width: 648px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  &__row-title {
+    display: flex;
+    justify-content: center;
+  }
+  &__title {
+    @include title(20px, 600, 60px);
+  }
+  &__headText {
+    line-height: 22px;
+    color: #272E40;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    &.hash {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 600;
+      max-width: 264px;
+      float: right;
+    }
+    &.bold {
+      text-align: right;
+      font-weight: 600;
+      max-width: 50%;
+      font-size: 18px;
+    }
+  }
+  &__row {
+    @include display-flex (row, space-between, center);
+    margin-bottom: 20px;
+  }
+  &__toggleContent {
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 10px;
+    transition: 0.3s;
+    &.hideContent {
+      height: 130px;
+      &:after {
+        position: absolute;
+        content: '';
+        bottom: 0;
+        height: 80px;
+        left: 0;
+        width: 100%;
+        z-index: 10;
+        background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #FFFFFF 100%);
+      }
+    }
+  }
+  &__toggleText {
+    color: #74777E;
+    line-height: 22px;
+    font-weight: 500;
+    font-size: 14px;
+  }
+  &__showToggleContent {
+    color: $red;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    position: relative;
+    padding-right: 20px;
+    &:after {
+      transition: 0.3s;
+      position: absolute;
+      font: normal normal normal 14px/1 FontAwesome;
+      right: 0;
+      content: "\f107";
+      font-size: 20px;
+      font-weight: 600;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    &.active {
+      &:after {
+        transform: translateY(-50%) rotate(180deg);
+      }
+    }
+  }
+}

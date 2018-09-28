@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="msapplication-config" content="../browserconfig.xml" />
+  <meta(name="Highway Academy" content="Hash lottery" )/>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat+Alternates:400,500,600,700" rel="stylesheet">
+
+  <title>Identification Page </title>
+
+  <link rel="manifest" href="../manifest.json">
+
+  <link rel="stylesheet" href="../css/font-awesome.css">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <div class="headerBar">
+    <div class="wrapper">
+      <img src="../img/cabinetLogo.png" alt="" class="headerBar__logo">
+    </div>
+  </div>
+  <div class="wrapLottery">
+    <p class="wrapForm__title border">
+      Добро пожаловать в лотерею <br /> Hash Lottery! Мы так долго вас ждали!
+    </p>
+    <div class="wrapForm">
+      <p class="wrapForm__form-title">
+        Пожалуйста, добавьте ваш кошелек
+      </p>
+      <div class="uploadRow">
+        <div class="file-upload">
+          <label>
+            <input type="file" name="file" onchange="getFileName()" id="uploaded-file">
+            <span>Выбрать</span>
+          </label>
+        </div>
+        <div id="file-name">Файл не выбран</div>
+      </div>
+      <div class="inputRow">
+        <p class="inputRow__label">
+          Введите пароль 
+        </p>
+        <input type="text" class="inputRow__input" />
+      </div>
+      <button class="button">
+        Подтвердить
+      </button> 
+    </div>
+  </div>
+  <script src="js/main.js"></script>
+  <script>
+    function getFileName () {
+      var file = document.getElementById('uploaded-file').value;
+      file = file.replace (/\\/g, '/').split('/').pop();
+      document.getElementById('file-name').innerHTML = 'Имя файла: ' + file; 
+    }
+  </script>
+</body>
+</html>

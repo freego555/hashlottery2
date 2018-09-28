@@ -1,0 +1,68 @@
+
+.errorPage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-height: calc(100vh - 70px);
+  &.ico {
+    justify-content: flex-start;
+    padding-top: 24px;
+    .acquisition__head {
+      margin-bottom: 100px;
+    }
+  }
+  &__wrapper {
+    max-width: 312px;
+    margin: 0 auto;
+    width: 100%;
+    text-align: center;
+    @include display-flex(column, center, center);
+    &.customWidth {
+      max-width: 360px;
+    }
+  }
+  &__title {
+    @include title(24px, 600, 82px);
+    &.margin {
+      margin-bottom: 20px;
+    }
+    &.marginB30 {
+      margin-bottom: 30px;
+    }
+  }
+  &__priceText {
+    font-size: 28px;
+    color: $red;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  &__textRed {
+    color: $red;
+    font-size: 28px;
+    line-height: 36px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  &__title-success {
+    @include title(24px, 600, 60px);
+    margin-bottom: 20px;
+  }
+  &__img {
+    width: 80px;
+    height: 100px;
+    margin-bottom: 65px;
+  }
+  .marginBottom {
+    margin-bottom: 80px;
+  }
+  .marginTop {
+    margin-top: 80px;
+  }
+  &__gray-text {
+    font-size: 16px;
+    margin-bottom: 50px;
+    color: #999999;
+    line-height: 24px;
+  }
+}

@@ -1,0 +1,26 @@
+/* INVESTMENTS SECTION */
+
+.investments {
+  &__container {
+    @include display-flex(column, flex-start, flex-start);
+    padding: 50px 15px 120px;
+  }
+  &__data-block {
+    @include display-flex(row, space-between, center);
+    width: 100%;
+    &:first-of-type {
+      margin-bottom: 24px;
+    }
+    &:last-of-type {
+      margin-bottom: 66px;
+    }
+  }
+  &__data-title {
+    font: 800 28px/33px "Montserrat Alternates";
+    letter-spacing: -0.04em;
+  }
+  &__data-value {
+    font: 400 20px/28px "Montserrat Alternates";
+    letter-spacing: -0.04em;
+  }
+}
