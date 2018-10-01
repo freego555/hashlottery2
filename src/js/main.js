@@ -17,28 +17,4 @@ $(document).ready(function() {
       $(this).removeClass('active');
     }    
   });
-  $('#clock').countdown('2020/10/10', function(event) {
-    var $this = $(this).html(event.strftime(''
-      + `<div class="itemTime">
-          <span class="textTime">%H</span>
-          <span class="subText">часов</span>
-          <span class="semicolon">
-            <span class="semicolonItem"></span>
-            <span class="semicolonItem"></span>
-          </span>
-        </div>`
-      + `<div class="itemTime">
-          <span class="textTime">%M</span>
-          <span class="subText">минут</span>
-          <span class="semicolon">
-            <span class="semicolonItem"></span>
-            <span class="semicolonItem"></span>
-          </span>
-        </div>`
-      + `<div class="itemTime">
-          <span class="textTime">%S</span>
-          <span class="subText">секунд</span>
-        </div>`));
-  });
-  $('.select').niceSelect();
 });

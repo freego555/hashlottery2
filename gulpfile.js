@@ -65,19 +65,20 @@ gulp.task("css", () => {
 /*Task for JS*/
 gulp.task("js", () => {
   gulp
-    .src([
-      "./src/js/parts/jquery-3.2.1.min.js",
-      "./src/js/parts/jquery.maskedinput.min.js",
-      "./src/js/parts/adaptiveMobilemenu.js",
-      "./src/js/parts/navigationMenu.js",
-      "./src/js/parts/backToTop.js",
-      "./src/js/parts/sendForm.js",
-      "./src/js//parts/carAnimations.js",
-      "./src/js/parts/jquery.countdown.min.js",
-      "./src/js/parts/jquery.nice-select.min.js",
-      "./src/js/main.js"
-    ])
-    .pipe(concat("main.js"))
+    // .src([
+    //   "./src/js/parts/jquery-3.2.1.min.js",
+    //   "./src/js/parts/jquery.maskedinput.min.js",
+    //   "./src/js/parts/adaptiveMobilemenu.js",
+    //   "./src/js/parts/navigationMenu.js",
+    //   "./src/js/parts/backToTop.js",
+    //   "./src/js/parts/sendForm.js",
+    //   "./src/js//parts/carAnimations.js",
+    //   "./src/js/parts/jquery.countdown.min.js",
+    //   "./src/js/parts/jquery.nice-select.min.js",
+    //   "./src/js/main.js"
+    // ])
+    .src('./src/js/**/*.js')
+    // .pipe(concat("main.js"))
     .pipe(
       minify({
         ext: {
