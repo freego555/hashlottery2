@@ -1,9 +1,0 @@
-FROM node:8
-
-COPY . /var/www/front/
-
-WORKDIR /var/www/front/
-
-RUN npm i && npm run build-stage
-
-CMD cp .htaccess /var/www/front/static/ && cp -r /var/www/front/build/* /var/www/front/static
