@@ -1,0 +1,31 @@
+/**
+* Reset styles
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none !important;
+  &:after,
+  &:before {
+    box-sizing: border-box;
+  }
+}
+
+*:focus,
+*:active,
+*:hover,
+*:visited {
+  outline: none !important;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+img {
+  border: 0;
+  display: block;
+}

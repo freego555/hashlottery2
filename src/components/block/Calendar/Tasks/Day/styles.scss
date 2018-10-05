@@ -1,0 +1,103 @@
+@import '../../../../../style/index.scss';
+@import '../../../../../style/mixins/index.scss';
+
+.day-task {
+  background-color: $white;
+  border-radius: 5px;
+  box-shadow: 0 1px 4px 0 $shadowBlackLight;
+  border: 1px solid rgba(57, 31, 85, 0.12);
+  padding: 0 16px 0 8px;
+  height: 48px;
+  cursor: pointer;
+  @include display-flex($align-vertical: center);
+  @include transition(0.2s);
+
+  &:active {
+    background-color: $white - 8;
+  }
+
+  &__category {
+    @include display-flex($align-horizontal: center, $align-vertical: center);
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: $desktopBorderRadius;
+
+    div div {
+      svg {
+        height: 26px;
+        width: 26px;
+      }
+    }
+  }
+
+  &__time {
+    margin: 0 0 0 5%;
+    color: $darkGrey;
+  }
+
+  &__title {
+    padding: 0 26px 0 0;
+    margin: 0 0 0 8%;
+    width: 99px;
+    font-weight: 500;
+    font-size: 15px;
+    flex: 1;
+    text-transform: capitalize;
+    @include text-elipsis();
+  }
+
+  &__arrow {
+    margin-left: auto;
+
+    &--color-red {
+      div div {
+        svg {
+          g {
+            fill: #eb1a55;
+          }
+        }
+      }
+    }
+
+    &--color-blue {
+      div div {
+        svg {
+          g {
+            fill: #4f5fe8;
+          }
+        }
+      }
+    }
+
+    &--color-green {
+      div div {
+        svg {
+          g {
+            fill: #39d6a9;
+          }
+        }
+      }
+    }
+
+    &--color-yellow {
+      div div {
+        svg {
+          g {
+            fill: #f1c40f;
+          }
+        }
+      }
+    }
+
+    &--color-purple {
+      div div {
+        svg {
+          g {
+            fill: #8449be;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+@import './../../../../style/constants/index.scss';
+@import './../../../../style/mixins/index.scss';
+
+.search-form {
+  &__input-wrapper {
+    position: relative;
+
+    .simple-input__input {
+      max-width: 100%;
+    }
+  }
+
+  &--max-full-width {
+    max-width: 100%;
+
+    .ui-field-wrapper__block {
+      max-width: 100%;
+    }
+  }
+}

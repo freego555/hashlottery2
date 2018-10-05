@@ -1,0 +1,123 @@
+@import './../../../style/constants/index.scss';
+@import './../../../style/mixins/index.scss';
+
+.messages-tabs {
+  height: 100%;
+  @include display-flex(column, flex-start, stretch);
+  @media (max-width: $maxMobileSize), (orientation: portrait) {
+    padding-top: 10px;
+  }
+
+  &__content {
+    flex: 1;
+    @include display-flex(column, flex-start, stretch);
+
+    @media (max-width: $maxMobileSize), (orientation: portrait) {
+      padding: 0;
+    }
+    .sub-tabs-body__inner-wrapper--sub,
+    .sub-tabs-body__inner-wrapper {
+      @include display-flex(column, flex-start, stretch);
+    }
+  }
+}
+
+.messages-list {
+  position: absolute;
+  flex: 1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 0 8px 0 $shadowBlackLight;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  &__wrapper {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+  }
+}
+
+.messages-list {
+  position: absolute;
+  flex: 1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 0 8px 0 $shadowBlackLight;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  &__wrapper {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+  }
+}
+
+.messages-page {
+  position: relative;
+  width: 100%;
+  @include display-flex(column, flex-start, stretch);
+  height: 100%;
+
+  &__content {
+    position: relative;
+    @include display-flex(row, center, stretch);
+    flex: 1;
+    height: 0;
+    @media (max-width: $maxMobileSize), (orientation: portrait) {
+      overflow: hidden;
+    }
+  }
+
+  &__sidebar {
+    flex: 1;
+    max-width: 350px;
+    height: 100%;
+    @include display-flex(column, flex-start, stretch);
+    border-radius: $desktopBorderRadius;
+    background-color: $white;
+    box-shadow: 0 0 8px 0 $shadowBlackLight;
+    @media (max-width: $maxMobileSize), (orientation: portrait) {
+      max-width: initial;
+      border-radius: $mobileBorderRadius $mobileBorderRadius 0 0;
+      box-shadow: none;
+    }
+  }
+
+  &__sidebar-header {
+    padding: 12px;
+    border-bottom: 1px solid $grey;
+    @media (max-width: $maxMobileSize), (orientation: portrait) {
+      padding: 10px;
+    }
+  }
+
+  &__message-full {
+    flex: 1;
+    padding-left: 12px;
+    @media (max-width: $maxMobileSize), (orientation: portrait) {
+      @include transition();
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      z-index: 1;
+      transform: translateX(120%);
+
+      &--show {
+        padding-left: 0;
+        transform: translateX(0);
+        @include transition();
+        z-index: 2;
+      }
+    }
+  }
+}

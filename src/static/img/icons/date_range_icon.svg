@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="18px" viewBox="0 0 16 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>date_range - material</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Ipad-Patient" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" fill-opacity="0.87">
+        <g id="iPad-Patient-Create-patient-1" transform="translate(-840.000000, -1082.000000)" fill="#999999">
+            <g id="Add-Task" transform="translate(136.000000, 36.000000)">
+                <g id="Form" transform="translate(107.000000, 150.000000)">
+                    <g id="identity-card-number-copy-15" transform="translate(332.000000, 862.000000)">
+                        <g id="Selector-Copy-2" transform="translate(0.000000, 23.000000)">
+                            <path d="M278.82,26.68 L278.82,17.5 L267.18,17.5 L267.18,26.68 L278.82,26.68 Z M278.82,13.32 C279.273336,13.32 279.666665,13.486665 280,13.82 C280.333335,14.153335 280.5,14.5466644 280.5,15 L280.5,26.68 C280.5,27.1333356 280.333335,27.5199984 280,27.84 C279.666665,28.1600016 279.273336,28.32 278.82,28.32 L267.18,28.32 C266.713331,28.32 266.316668,28.1600016 265.99,27.84 C265.663332,27.5199984 265.5,27.1333356 265.5,26.68 L265.5,15 C265.5,14.5466644 265.663332,14.153335 265.99,13.82 C266.316668,13.486665 266.713331,13.32 267.18,13.32 L268,13.32 L268,11.68 L269.68,11.68 L269.68,13.32 L276.32,13.32 L276.32,11.68 L278,11.68 L278,13.32 L278.82,13.32 Z M277.18,19.18 L277.18,20.82 L275.5,20.82 L275.5,19.18 L277.18,19.18 Z M273.82,19.18 L273.82,20.82 L272.18,20.82 L272.18,19.18 L273.82,19.18 Z M270.5,19.18 L270.5,20.82 L268.82,20.82 L268.82,19.18 L270.5,19.18 Z" id="date_range---material"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

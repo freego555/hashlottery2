@@ -1,0 +1,97 @@
+@import './../../../../style/constants/index.scss';
+@import './../../../../style/mixins/index.scss';
+
+.sub-tabs-header {
+  display: block;
+  padding: 12px;
+
+  &--no-padding {
+    padding: 0;
+  }
+
+  @media (max-width: $maxMobileSize), (orientation: portrait) {
+    padding: 0 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  &__tab-list {
+    display: flex;
+    width: 100%;
+    height: 40px;
+    padding: 4px;
+    border-radius: 20px;
+    background-color: $lightGrey;
+
+    a {
+      display: block;
+      flex: 1;
+    }
+  }
+
+  &__tab {
+    position: relative;
+    @include display-flex(row, center, center);
+    width: 100%;
+    height: 32px;
+    border-radius: 16px;
+    background-color: $lightGrey;
+
+    &:hover {
+      .sub-tabs-header__tab-title--show {
+        padding-top: 0;
+        font-weight: $bold;
+        color: $black;
+      }
+    }
+
+    &--active {
+      background-color: $mainBlue;
+
+      &:hover {
+        .sub-tabs-header__tab-title--show {
+          color: $white;
+        }
+      }
+
+      .sub-tabs-header__tab-title--show {
+        padding-top: 0;
+        font-weight: $bold;
+        color: $white;
+      }
+    }
+  }
+
+  &__tab-title {
+    &--hide {
+      opacity: 0;
+
+      @media (max-width: $maxMobileSize), (orientation: portrait) {
+      }
+    }
+
+    &--show {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 20px;
+      padding-top: 2px;
+      font: $regular 14px/19px $secondaryFont;
+      text-align: center;
+      color: $darkMiddleLGrey;
+      opacity: 1;
+
+      @media (max-width: $maxMobileSize), (orientation: portrait) {
+        left: 0;
+        transform: translate(0, -50%);
+        height: 14px;
+        padding-top: 0;
+        font: $bold 14px/14px $secondaryFont;
+        text-transform: uppercase;
+        color: $navLinkLabelColor;
+      }
+    }
+  }
+}

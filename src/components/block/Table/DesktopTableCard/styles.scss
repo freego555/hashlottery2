@@ -1,0 +1,57 @@
+@import './../../../../style/constants/index.scss';
+@import './../../../../style/mixins/index.scss';
+
+.desktop-table-card {
+  display: flex;
+  height: 46px;
+  padding: 0 24px;
+  border-top: 1px solid $grey;
+  background-color: $lightGrey;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+
+  &:first-child {
+    border-top: none;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:nth-of-type(2n + 2) {
+    background-color: $white;
+  }
+
+  &:hover {
+    position: relative;
+    z-index: 2;
+    border-top-color: transparent;
+    background-color: $white;
+    box-shadow: 0 0 12px 2px $shadowBlackMedium;
+
+    & + .desktop-table-card {
+      border-top-color: transparent;
+    }
+  }
+
+  &__column-cell {
+    display: flex;
+    height: 46px;
+    align-items: center;
+    font: $regular 14px/14px $mainFont;
+    color: $black;
+
+    &:last-child {
+      justify-content: flex-end;
+      padding: 0;
+    }
+
+    &:nth-last-child(2) {
+      padding: 0 4px 0 0;
+    }
+  }
+
+  &__text {
+    @include text-elipsis-custom;
+  }
+}

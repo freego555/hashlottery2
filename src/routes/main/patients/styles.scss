@@ -1,0 +1,19 @@
+@import './../../../style/constants/index.scss';
+@import './../../../style/mixins/index.scss';
+
+.patients-page {
+  width: 100%;
+
+  .search-header {
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: $desktopBorderRadius;
+    box-shadow: 0 0 8px 0 $shadowBlackLight;
+
+    @media (max-width: $maxMobileSize), (orientation: portrait) {
+      margin-bottom: 10px;
+      border-radius: $mobileBorderRadius;
+      box-shadow: none;
+    }
+  }
+}

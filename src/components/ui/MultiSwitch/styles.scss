@@ -1,0 +1,27 @@
+@import './../../../style/constants/index.scss';
+@import './../../../style/mixins/index.scss';
+
+.multi-switcher {
+  display: flex;
+  height: 40px;
+  padding: 4px;
+  border-radius: 24px;
+  background-color: $lightGrey;
+
+  &__item {
+    @include display-flex(row, center, center);
+    width: 55px;
+    height: 32px;
+    padding-top: 2px;
+    border-radius: 16px;
+    background-color: $lightGrey;
+    font: $regular 14px/32px $secondaryFont;
+    text-align: center;
+    color: $darkMiddleLGrey;
+
+    &--active {
+      background-color: $mainBlue;
+      color: $white;
+    }
+  }
+}

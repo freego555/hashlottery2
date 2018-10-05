@@ -1,0 +1,60 @@
+@import '../../../style/constants/index.scss';
+@import '../../../style/mixins/index.scss';
+
+.simple-textarea {
+  &__wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  &__textarea {
+    width: 100%;
+    max-width: 350px;
+    height: $fieldHeight;
+    padding: 12px 56px 12px 16px;
+    border: 1px solid $grey;
+    border-radius: $desktopBorderRadius;
+    font: $regular 14px/14px $mainFont;
+    color: $inputText;
+    background-color: $darkWhite;
+    resize: none;
+    min-height: 140px;
+    @include transition();
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    &--full-width {
+      max-width: initial;
+    }
+
+    &::placeholder {
+      font: $regular 14px/14px $mainFont;
+      color: $inputPlaceholder;
+    }
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      margin: 0;
+    }
+
+    &:hover {
+      border: 1px solid darken($grey, 5%);
+      background-color: darken($darkWhite, 2%);
+    }
+
+    &:focus {
+      border: 1px solid $mainBlue;
+      background-color: $white;
+    }
+
+    // modify for input view
+
+    &--error {
+      border: 1px solid $mainRed;
+    }
+  }
+}

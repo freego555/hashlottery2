@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>close - material</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="UI" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="iPad-Patient-Medications-Add-Medication-(1)" transform="translate(-19.000000, -31.000000)" fill="#FFFFFF">
+            <g id="Bars/Navigation/Navigation-Bar">
+                <polygon id="close---material" points="41 33.2302405 32.2302405 42 41 50.7697595 38.7697595 53 30 44.2302405 21.2302405 53 19 50.7697595 27.7697595 42 19 33.2302405 21.2302405 31 30 39.7697595 38.7697595 31"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

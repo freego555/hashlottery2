@@ -1,0 +1,54 @@
+@import './../../../../style/constants/index.scss';
+@import './../../../../style/mixins/index.scss';
+
+.main-structure {
+  display: grid;
+  height: 100vh;
+  grid-template-columns: 86px 1fr;
+  grid-template-rows: 50px;
+  grid-template-areas:
+    'nav header'
+    'nav content';
+
+  @media (max-width: $maxMobileSize), (orientation: portrait) {
+    grid-template-areas:
+      'header header'
+      'content content'
+      'nav nav';
+
+    grid-template-rows: 50px 1fr 80px;
+  }
+
+  &--aside {
+    grid-template-columns: 86px 1fr 225px;
+    grid-template-areas:
+      'nav header aside'
+      'nav content aside';
+
+    @media (max-width: $maxMobileSize), (orientation: portrait) {
+      grid-template-columns: 86px 1fr;
+      grid-template-areas:
+        'header header'
+        'content content'
+        'nav nav';
+
+      grid-template-rows: 50px 1fr 80px;
+    }
+  }
+
+  &__content {
+    grid-area: content;
+  }
+
+  &__header {
+    grid-area: header;
+  }
+
+  &__nav {
+    grid-area: nav;
+  }
+
+  &__aside {
+    grid-area: aside;
+  }
+}

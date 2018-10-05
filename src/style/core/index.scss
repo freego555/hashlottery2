@@ -1,0 +1,77 @@
+/**
+* Core styles
+*/
+
+@import '_reset.scss';
+@import './../constants/colors';
+
+body {
+  min-width: 100vw;
+  font: 400 14px 'Roboto', Arial, san-serif;
+  color: $black;
+  overflow-x: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  -webkit-overflow-scrolling: touch;
+}
+
+input {
+  transition: all 0.3s ease-in-out;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+input[type='text'] {
+  -moz-appearance: textfield;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+input[type='number']:hover,
+input[type='number']:focus {
+  -moz-appearance: textfield;
+}
+
+a {
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+li {
+  list-style: none;
+}
+
+button,
+input[type='submit'] {
+  display: block;
+  background: transparent;
+  border-radius: 0;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  &:focus,
+  &:active {
+    outline: none;
+  }
+}
+
+svg {
+  pointer-events: none;
+}
+
+@import '_rest.scss';

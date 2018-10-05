@@ -1,0 +1,42 @@
+@import './../../../style/constants/index.scss';
+@import './../../../style/mixins/index.scss';
+
+.round-button {
+  display: block;
+  position: relative;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  background-color: $mainBlue;
+  box-shadow: 0 5px 13px 0 $secondaryBlue, 0 3px 4px 0 $shadowBlackLight,
+    0 0 12px 0 $shadowBlackLight, 0 12px 12px 0 $shadowBlackLightest;
+
+  &:after,
+  &:before {
+    display: block;
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 2px;
+    background-color: $white;
+    @include transition(0.2s);
+  }
+
+  &:after {
+    width: 2px;
+    height: 20px;
+  }
+
+  &:hover {
+    &:after {
+      height: 22px;
+    }
+
+    &:before {
+      width: 22px;
+    }
+  }
+}

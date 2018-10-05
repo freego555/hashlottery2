@@ -1,0 +1,142 @@
+@import './../../../style/constants/index.scss';
+@import './../../../style/mixins/index.scss';
+
+.message-full {
+  @include display-flex(column, flex-start, stretch);
+  height: 100%;
+  border-radius: $desktopBorderRadius;
+  background-color: $white;
+  box-shadow: 0 0 8px 0 $shadowBlackLight;
+
+  @media (max-width: $maxMobileSize), (orientation: portrait) {
+    border-radius: $mobileBorderRadius $mobileBorderRadius 0 0;
+    box-shadow: none;
+  }
+
+  &--placeholder {
+    @include display-flex(column, center, center);
+  }
+
+  &__header {
+    @include display-flex(row, space-between, center);
+    padding: 16px 26px 18px 20px;
+    border-bottom: 1px solid $grey;
+
+    @media (max-width: $maxMobileSize), (orientation: portrait) {
+      padding: 10px;
+    }
+  }
+
+  &__heading-date {
+    color: $textLightGrey;
+    white-space: nowrap;
+  }
+
+  &__heading-title {
+    margin-bottom: 10px;
+    color: $black;
+    font: $bold 20px/19px $secondaryFont;
+  }
+
+  &__buttons {
+    display: flex;
+  }
+
+  &__button-delete {
+    @include display-flex(row, center, center);
+  }
+
+  &__button-back {
+    display: none;
+    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+    background-color: $lightGrey;
+    border-radius: $desktopBorderRadius;
+
+    @media (max-width: $maxMobileSize), (orientation: portrait) {
+      @include display-flex(row, center, center);
+    }
+
+    svg path {
+      fill: $black;
+    }
+  }
+}
+
+.message-full-body {
+  position: relative;
+  flex: 1;
+  color: $darkerTextColor;
+
+  &__wrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    overflow: auto;
+    padding: 20px 22px 16px 20px;
+
+    @media (max-width: $maxMobileSize), (orientation: portrait) {
+      padding: 10px;
+    }
+  }
+
+  &__from {
+    font: $regular 12px/12px $mainFont;
+    color: $darkerTextColor;
+    margin-bottom: 6px;
+  }
+
+  &__to {
+    font: $regular 12px/12px $mainFont;
+    color: $darkerTextColor;
+  }
+
+  &__content {
+    margin-top: 24px;
+    font: $regular 14px/19px $mainFont;
+  }
+
+  &__files {
+    margin-top: 30px;
+  }
+
+  &__files-heading {
+    font: $medium 14px/19px $mainFont;
+    margin-bottom: 12px;
+  }
+
+  &__file {
+    max-width: 170px;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid $grey;
+    border-radius: $desktopBorderRadius;
+    color: $darkerTextColor;
+    padding: 12px;
+    margin: 0 10px 10px 0;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    font-size: 12px;
+
+    @media (max-width: $maxMobileSize), (orientation: portrait) {
+      max-width: 100%;
+    }
+
+    &:hover {
+      background-color: $darkWhite;
+    }
+  }
+
+  &__file-icon {
+    margin-right: 6px;
+  }
+
+  &__file-title {
+    font: $regular 14px/19px $mainFont;
+    color: $mainBlue;
+    @include text-elipsis(100%);
+  }
+}

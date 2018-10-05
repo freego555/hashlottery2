@@ -1,0 +1,141 @@
+@import './../../../style/constants/index.scss';
+@import './../../../style/mixins/index.scss';
+
+.nav-bar-link {
+  position: relative;
+  width: 66px;
+  margin-bottom: 34px;
+  transition: none;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:after {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    transform: translateY(-50%);
+    left: -10px;
+    content: '';
+    display: none;
+    width: 4px;
+    height: 68px;
+    border-radius: 0 5px 5px 0;
+    background-color: $white;
+  }
+
+  @media (max-width: $maxMobileSize), (orientation: portrait) {
+    width: initial;
+    margin-bottom: 0;
+  }
+
+  &--active {
+    &:after {
+      display: block;
+    }
+
+    .nav-bar-link__label {
+      font-size: 13px;
+      font-weight: 500;
+      color: $white;
+
+      @media (max-width: $maxMobileSize), (orientation: portrait) {
+        font-size: 12px;
+        font-weight: 400;
+        color: $mainBlue;
+      }
+    }
+
+    .nav-bar-link__icon-wrapper {
+      path {
+        &:nth-child(2) {
+          fill-opacity: 1;
+        }
+      }
+
+      @media (max-width: $maxMobileSize), (orientation: portrait) {
+        svg g g {
+          fill: $mainBlue;
+        }
+      }
+    }
+  }
+
+  &:hover {
+    .nav-bar-link__label {
+      color: $white;
+
+      @media (max-width: $maxMobileSize), (orientation: portrait) {
+        color: $mainBlue;
+      }
+    }
+
+    .nav-bar-link__icon-wrapper {
+      path {
+        &:nth-child(2) {
+          fill-opacity: 1;
+        }
+      }
+    }
+  }
+
+  &__block {
+    @include display-flex(column, center, center);
+  }
+
+  &__icon-wrapper {
+    @include display-flex(column, center, center);
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    margin-bottom: 12px;
+
+    div div {
+      @include display-flex(column, center, center);
+      width: 30px;
+      height: 30px;
+
+      svg {
+        width: 30px;
+        height: 30px;
+
+        path {
+          &:nth-child(2) {
+            @include transition(0.2s);
+          }
+        }
+      }
+    }
+
+    @media (max-width: $maxMobileSize), (orientation: portrait) {
+      width: 24px;
+      height: 22px;
+      margin-bottom: 6px;
+
+      div div {
+        width: 24px;
+        height: 22px;
+        svg {
+          width: 24px;
+          height: 22px;
+
+          g g {
+            fill: $darkTextColor;
+          }
+        }
+      }
+    }
+  }
+
+  &__label {
+    font: $regular 12px/13px $secondaryFont;
+    letter-spacing: 0.2px;
+    color: $navLinkLabelColor;
+    @include transition(0.2s, color);
+
+    @media (max-width: $maxMobileSize), (orientation: portrait) {
+      color: $darkTextColor;
+    }
+  }
+}

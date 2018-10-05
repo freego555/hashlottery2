@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="28px" viewBox="0 0 22 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>insert_drive_file - material</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="UI" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="iPad-3-messages-(1)" transform="translate(-672.000000, -453.000000)" fill="#7D7E80">
+            <g id="attached-file-copy" transform="translate(653.000000, 437.000000)">
+                <path d="M31.312,25.8 L38.704,25.8 L31.312,18.472 L31.312,25.8 Z M22,16.488 L32.688,16.488 L40.688,24.488 L40.688,40.488 C40.688,41.213337 40.421336,41.8319974 39.888,42.344 C39.354664,42.8560026 38.725337,43.112 38,43.112 L22,43.112 C21.274663,43.112 20.645336,42.8560026 20.112,42.344 C19.578664,41.8319974 19.312,41.213337 19.312,40.488 L19.376,19.112 C19.376,18.386663 19.6319974,17.7680026 20.144,17.256 C20.6560026,16.7439974 21.274663,16.488 22,16.488 Z" id="insert_drive_file---material"></path>
+            </g>
+        </g>
+    </g>
+</svg>

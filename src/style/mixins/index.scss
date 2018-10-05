@@ -1,0 +1,29 @@
+/**
+* Mixins
+*/
+
+@mixin text-elipsis($width: auto) {
+  max-width: $width;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@mixin text-elipsis-custom {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@mixin transition($time: 0.3s, $property: all) {
+  transition-property: $property;
+  transition-duration: $time;
+  transition-timing-function: ease-in-out;
+}
+
+@mixin display-flex($flex-direction: row, $align-horizontal: start, $align-vertical: stretch) {
+  display: flex;
+  flex-direction: $flex-direction;
+  justify-content: $align-horizontal;
+  align-items: $align-vertical;
+}

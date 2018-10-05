@@ -1,0 +1,18 @@
+@import '../../../../../style/constants/index.scss';
+
+.calendar-week-grid {
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 28px 1fr;
+  display: grid;
+
+  &__date {
+    font-size: 13px;
+    justify-self: center;
+    color: $darkGrey;
+
+    &--active {
+      font-weight: bold;
+      color: $black;
+    }
+  }
+}

@@ -1,0 +1,26 @@
+@import '../../../../../style/index.scss';
+@import '../../../../../style/mixins/index.scss';
+
+.month-task {
+  background-color: $white;
+  border-radius: 4px;
+  box-shadow: 0 0 6px 1px $shadowBlackLight;
+  padding: 6px;
+  height: 56px;
+  cursor: pointer;
+
+  &__line {
+    border-radius: 3px;
+    height: 4px;
+  }
+
+  &__title {
+    margin: 4px 0 0 0;
+    @include text-elipsis();
+  }
+
+  &__time {
+    font-size: 12px;
+    color: $darkGrey;
+  }
+}

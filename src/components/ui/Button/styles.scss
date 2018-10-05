@@ -1,0 +1,44 @@
+@import './../../../style/constants/index.scss';
+
+.rectangular-button {
+  &__wrapper {
+    width: 100%;
+    max-width: 350px;
+    height: $buttonHeight;
+    margin: 0 auto;
+    border: none;
+    border-radius: 3px;
+    background-color: $mainBlue;
+    font: 600 14px/14px 'Source Sans Pro';
+    color: $white;
+
+    &:hover {
+      background-color: $mainBlueHover;
+    }
+
+    // modify for rectangular-button
+
+    &--white {
+      border: 1px solid $grey;
+      background-color: transparent;
+      color: $darkGrey;
+
+      &:hover {
+        border: 1px solid $whiteHover;
+        background-color: $whiteHover;
+      }
+    }
+
+    &--transparent {
+      border: 1px solid transparent;
+      background-color: transparent;
+      color: $darkGrey;
+
+      &:hover {
+        border: 1px solid transparent;
+        background-color: transparent;
+        color: $black;
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+@import './../../../style/constants/index.scss';
+@import './../../../style/mixins/index.scss';
+
+.page-title {
+  min-height: 32px;
+  padding: 0 40px 0 0;
+  margin: 0 0 14px;
+  color: $black;
+  font: $bold 24px $secondaryFont;
+  @include text-elipsis();
+
+  @media (max-width: $maxMobileSize), (orientation: portrait) {
+    margin: 6px 0 8px;
+    padding: 0 25px 0 0;
+  }
+}

@@ -1,0 +1,7 @@
+@import '../../../style/mixins/index.scss';
+
+.list {
+  &__icon-wrapper {
+    @include display-flex(row, center, center);
+  }
+}

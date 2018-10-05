@@ -1,0 +1,57 @@
+@import './../../../style/constants/index.scss';
+@import './../../../style/mixins/index.scss';
+
+.alert-card {
+  position: relative;
+  @include display-flex(column, flex-start, flex-start);
+  width: 100%;
+  min-height: 60px;
+  border-bottom: 1px solid $darkWhiteBackground;
+  margin-bottom: 8px;
+  padding-left: 36px;
+
+  &:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  &:hover {
+    .alert-card__main-title {
+      color: $mainBlue;
+    }
+  }
+
+  &__main-title {
+    width: 100%;
+    font: $bold 14px/20px $secondaryFont;
+    color: $black;
+    transition: color 0.2s ease-in-out;
+    @include text-elipsis(100%);
+  }
+
+  &__alert-counter {
+    position: absolute;
+    left: 4px;
+    top: 0;
+    @include display-flex(row, center, center);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: $mainRed;
+    font: $medium 11px/20px $mainFont;
+    letter-spacing: -0.04em;
+    color: $darkWhite;
+  }
+
+  &__alert-names-wrapper {
+    @include display-flex(column, flex-start, flex-start);
+    width: 100%;
+  }
+
+  &__alert-name {
+    width: 100%;
+    font: $regular 12px/16px $mainFont;
+    color: $darkGrey;
+    @include text-elipsis(100%);
+  }
+}

@@ -1,0 +1,14 @@
+@import '../../../style/mixins/index.scss';
+
+.tabs {
+  &--full-height {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  &__body {
+    flex: 1;
+  }
+}

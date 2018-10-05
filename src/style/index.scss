@@ -1,0 +1,8 @@
+@import './animations/index.scss';
+@import './constants/index.scss';
+@import './mixins/index.scss';
+@import './core/index.scss';
+
+.app {
+  min-width: 320px;
+}
