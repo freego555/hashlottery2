@@ -19,12 +19,9 @@ contract TokenERC20 {
     }
 
     function supplyTokens() {
-        if (owner == msg.sender) {
-            totalSupply = 100000;
-            balanceOf[msg.sender] = totalSupply;
-        } else {
-            throw;
-        }
+        require(owner == msg.sender);
+        totalSupply = 100000;
+        balanceOf[msg.sender] = totalSupply;
     }
 
     function _transfer(address _from, address _to, uint _value) internal {
@@ -54,7 +51,7 @@ contract TokenERC20 {
         return true;
     }
 
-    function getOwnership() public view returns (uint8 percentage) {
+    function getOwnership(address account) public view returns (uint256 percentage) {
         return balanceOf[account] / totalSupply * 10000;
     }
 }
