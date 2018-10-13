@@ -6,3 +6,5 @@ docker-compose.yml
 docker/
 makefile
 mix-manifest.json
+build
+node_modules

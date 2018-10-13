@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "browser-sync": "^2.18.13",
-    "gulp": "3.9.1",
+    "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.0.0",
     "gulp-clean": "^0.3.2",
     "gulp-concat": "^2.6.1",
@@ -24,7 +24,8 @@
     "gulp-sourcemaps": "^2.6.1",
     "gulp-watch": "^4.3.11",
     "imagemin-pngquant": "^5.0.1",
-    "jquery-countdown": "^2.2.0"
+    "jquery-countdown": "^2.2.0",
+    "web3": "^1.0.0-beta.36"
   },
   "devDependencies": {
     "gulp-htmlmin": "^3.0.0",
