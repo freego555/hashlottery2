@@ -11,17 +11,34 @@ contract TokenERC20 {
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+    event TokensEmitted(uint256 tokensSupplyed, uint256 totalTokens);
 
-    constructor(string tokenName, string tokenSymbol) public {
+    constructor() public {
         name = 'LotStock';
         symbol = 'L$';
-        owner = msg.sender;
+        owner = 0x0;
     }
 
-    function supplyTokens() {
+    function setOwner(address owner_address) public returns (bool success) {
+        require(owner == 0x0);
+        owner = owner_address;
+        return true;
+    }
+
+    function supplyTokens() public returns (bool success) {
         require(owner == msg.sender);
         totalSupply = 100000;
         balanceOf[msg.sender] = totalSupply;
+        emit TokensEmitted(totalSupply, totalSupply);
+        return true;
+    }
+
+    function emitMoreTokens(uint256 tokens) public returns (bool success) {
+        require(owner == msg.sender);
+        totalSupply += tokens;
+        balanceOf[owner] += tokens;
+        emit TokensEmitted(tokens, totalSupply);
+        return true;
     }
 
     function _transfer(address _from, address _to, uint _value) internal {
@@ -51,7 +68,7 @@ contract TokenERC20 {
         return true;
     }
 
-    function getOwnership(address account) public view returns (uint256 percentage) {
-        return balanceOf[account] / totalSupply * 10000;
+    function getOwnership(address account) public view returns (uint256 percentageMultiplied100) {
+        return balanceOf[account] * 10000 / totalSupply;
     }
 }
