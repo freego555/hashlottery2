@@ -16,33 +16,28 @@ contract TokenERC20 {
     constructor() public {
         name = 'LotStock';
         symbol = 'L$';
-        owner = 0x0;
-    }
-
-    function setOwner(address owner_address) public returns (bool success) {
-        require(owner == 0x0);
-        owner = owner_address;
-        return true;
+        owner = msg.sender;
     }
 
     function supplyTokens() public returns (bool success) {
-        require(owner == msg.sender);
+        require(owner == msg.sender, "Not Authorized");
         totalSupply = 100000;
         balanceOf[msg.sender] = totalSupply;
         emit TokensEmitted(totalSupply, totalSupply);
         return true;
     }
 
-    function emitMoreTokens(uint256 tokens) public returns (bool success) {
-        require(owner == msg.sender);
+    function emitMoreTokens(uint256 tokens, address receiver) public returns (bool success) {
+        require(owner == msg.sender, "Not Authorized");
         totalSupply += tokens;
-        balanceOf[owner] += tokens;
+        balanceOf[receiver] += tokens;
         emit TokensEmitted(tokens, totalSupply);
         return true;
     }
 
     function _transfer(address _from, address _to, uint _value) internal {
-        require(balanceOf[_from] >= _value);
+        require(balanceOf[_from] >= _value, "Not enough funds");
+        require(_to == address(0), "Try send funds to 0-address");
         balanceOf[_from] -= _value;
         balanceOf[_to] += _value;
         emit Transfer(_from, _to, _value);
@@ -55,7 +50,7 @@ contract TokenERC20 {
 
     function transferFrom(address _from, address _to, uint256 _value) public
     returns (bool success) {
-        require(_value <= allowance[_from][msg.sender]);
+        require(_value <= allowance[_from][msg.sender], "User is not allowed to perform action");
         allowance[_from][msg.sender] -= _value;
         _transfer(_from, _to, _value);
         return true;
