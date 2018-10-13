@@ -1,2 +1,8 @@
+.idea/
 .vscode/*
 node_modules/
+webpack.mix.js
+docker-compose.yml
+docker/
+makefile
+mix-manifest.json
