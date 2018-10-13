@@ -1,13 +1,13 @@
 pragma solidity ^0.4.25;
 
 contract TokenERC20 {
-    function transfer(address receiver, uint amount) external returns(bool);
-    function balanceOf(address receiver) external returns(uint256);
+    function transfer(address receiver, uint256 amount) external returns(bool);
+    function balanceOf(address receiver) external view returns(uint256);
     function totalSupply() external returns(uint256);
 }
 
 contract MultiSigWallet {
-    function getCoinsAfterNegativeIco(address _investor, uint value) public;
+    function getCoinsAfterNegativeIco(address _investor, uint256 value) public;
 }
 
 contract Crowdsale {
@@ -27,9 +27,12 @@ contract Crowdsale {
     MultiSigWallet public multisigContract; // контракт Multisig
     mapping(address => uint256) public balanceOf; // перечень кто сколько внес средств
     mapping(address => uint256) public balanceOfBonusFirstBuyers;
-    bool isInit = false;
-    bool isSetTokenReward = false;
-    bool isSetMultisig = false;
+    mapping(address => bool) public owners;
+    mapping(address => bool) public ownerGetTokens;
+    bool isFirstOwnerGetRestTokens; // один из владельцев ICO уже забрал вероятный остаток от деления на 5
+    bool isInit;
+    bool isSetTokenReward;
+    bool isSetMultisig;
     
     event FundTransfer(address backer, uint amount, bool isContribution);
     
@@ -37,11 +40,11 @@ contract Crowdsale {
         owner = msg.sender;
         
         // Заполним список владельцев ICO
-        ownersOfICO[0] = 0x896ab7b50d7bce2961072fef0a7225376e88ba7e;
-        ownersOfICO[1] = 0x2dbc56b412ef3f70bee2ef3662e850f49c831052;
-        ownersOfICO[2] = 0xf7a67efba2a97f86228a7e36b996b34e0a417763;
-        ownersOfICO[3] = 0x94bb857c3a550130120b5bfc1b7de3d478104705;
-        ownersOfICO[4] = 0x44f8fb0c0425471e23cdcc819827aa32cab607a9;
+        owners[0x896ab7b50d7bce2961072fef0a7225376e88ba7e] = true;
+        owners[0x2dbc56b412ef3f70bee2ef3662e850f49c831052] = true;
+        owners[0xf7a67efba2a97f86228a7e36b996b34e0a417763] = true;
+        owners[0x94bb857c3a550130120b5bfc1b7de3d478104705] = true;
+        owners[0x44f8fb0c0425471e23cdcc819827aa32cab607a9] = true;
     }
     
     modifier onlyOwner() {
@@ -64,40 +67,36 @@ contract Crowdsale {
         isSetMultisig = true;
     }
     
-    function init(uint durationInDays, uint etherCostOfEachToken, uint percentOfTokensForInvestors) public onlyOwner {
+    function init() public onlyOwner {
         require(!isInit && isSetTokenReward && isSetMultisig);
         
         isInit = true;
         startICO = now;
         startICOPlus2Days = startICO + 2 days;
-        deadline = startICO + durationInDays * 1 days;
-        price = etherCostOfEachToken;
-        amountTokensForSale = tokenReward.totalSupply() * percentOfTokensForInvestors / 100; // Отправим указанный процент токенов для продажи на crowdsale
+        deadline = startICO + 7 days;
+        price = 250000000000000000; // Цена в wei = 0.25ETH
+        amountTokensForSale = tokenReward.totalSupply() * 40 / 100; // Отправим указанный процент токенов для продажи на crowdsale
         amountTokensForOwners = tokenReward.totalSupply() - amountTokensForSale; // Остаток токенов равномерно распределим среди владельцев ICO при успешном окончании
-
         limitOfFirstBuyers = 5; // фиксируем колво первых покупателей
     }
     
     function distributeTokensAmongOwners() public {
         // Определим принадлежит ли отправитель транзакции к владельцам ICO
-        bool isOwnerOfICO = false;
-        for (uint i = 0; i < ownersOfICO.length; i++) {
-            if (ownersOfICO[i] == msg.sender) isOwnerOfICO = true;
-        }
-        
+        bool isOwnerOfICO = owners[msg.sender];
         require(isOwnerOfICO && isIcoEnd() && !isIcoFail());
-        
-        // Распределим остаток токенов среди владельцев ICO
+
+        ownerGetTokens[msg.sender] = true;
+
+        // Распределим остаток токенов среди владельцев ICO. Даем остаток от деления на 5 первому владельцу ICO, который забирает токены.
         uint amountForOneOwner = amountTokensForOwners / 5;
-        require(tokenReward.transfer(ownersOfICO[0], amountForOneOwner + amountTokensForOwners % 5)); // Одному из владельцев ICO начисляем также остаток от деления на 5, чтобы точно распределить все токены
-        for (i = 1; i < ownersOfICO.length; i++) {
-            require(tokenReward.transfer(ownersOfICO[i], amountForOneOwner));
+        if (isFirstOwnerGetRestTokens) {
+            require(tokenReward.transfer(msg.sender, amountForOneOwner));
+        } else {
+            // Одному из владельцев ICO начисляем также остаток от деления на 5, чтобы точно распределить все токены
+            isFirstOwnerGetRestTokens = true;
+            require(tokenReward.transfer(msg.sender, amountForOneOwner + amountTokensForOwners % 5));
         }
     }
-    
-    /*function getNow() private {
-        return now;
-    }*/
     
     function isIcoEnd() public view returns(bool) {
         return now > deadline || amountOfSoldTokens >= amountTokensForSale;
@@ -152,8 +151,30 @@ contract Crowdsale {
         return (_token_count, _wei_change);
     }
 
-    function refund() public {
-        require(isIcoEnd() && isIcoFail());
+    function() payable public {
+        invest();
+    }
+
+    function invest() payable public {
+        require(!isIcoEnd() && msg.value > 0);  // Триває ICO та отримані кошти?
+        uint buyer_wei = msg.value;             // Кількість відправлених коштів Покупцем
+        uint actually_wei;                      // Кількість фактично отриманих коштів
+        uint256 token_count;                    // Порахована кількість токенів
+        uint256 wei_change;                     // Решта від відправлених коштів Покупця та фактичної вартості токенів
+        (token_count, wei_change) = calcTokenAmount(buyer_wei, false); // Порахуй кількість токенів та решту коштів
+        actually_wei = buyer_wei - wei_change;
+
+        amountOfSoldTokens += token_count;             // Додай кількість зібраних коштів
+        balanceOf[msg.sender] += actually_wei;         // Додай кількість до вкладених коштів Покупцем
+        tokenReward.transfer(msg.sender, token_count); // Перерахуй кількість токенів на рахунок покупця
+        emit FundTransfer (msg.sender, actually_wei, true);
+
+        multisigContractAddress.transfer(actually_wei); // Відправ кошти на Контракт MultiSig
+        msg.sender.transfer(wei_change);    // Відправ решту Покупцю
+    }
+
+    function refund() payable public { //???
+        require(isIcoFail());
 
         uint valueToRefund = balanceOf[msg.sender]; // Сумма для возврата инвестору
         balanceOf[msg.sender] = 0;
