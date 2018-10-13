@@ -152,5 +152,15 @@ contract Crowdsale {
         return (_token_count, _wei_change);
     }
 
+    function refund() public {
+        require(isIcoEnd() && isIcoFail());
+
+        uint valueToRefund = balanceOf[msg.sender]; // Сумма для возврата инвестору
+        balanceOf[msg.sender] = 0;
+
+        multisigContract.getCoinsAfterNegativeIco(msg.sender, valueToRefund); // Инициируем возврат средств инвестору c multisig-контракта
+        emit FundTransfer(msg.sender, valueToRefund, false);
+    }
+
 }
 
