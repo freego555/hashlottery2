@@ -11,17 +11,17 @@ contract MultiSigWallet {
     bool setOwnerCoinsPartStatus  = false;
     
     function constructor() public {
-        owners[0xca35b7d915458ef540ade6068dfe2f44e8fa733c] = true;
-        owners[0xca35b7d915458ef540ade6068dfe2f44e8fa733c] = true;
-        owners[0xca35b7d915458ef540ade6068dfe2f44e8fa733c] = true;
-        owners[0xca35b7d915458ef540ade6068dfe2f44e8fa733c] = true;
-        owners[0xca35b7d915458ef540ade6068dfe2f44e8fa733c] = true;
+        owners[0x896ab7b50d7bce2961072fef0a7225376e88ba7e] = true;
+        owners[0x2dbc56b412ef3f70bee2ef3662e850f49c831052] = true;
+        owners[0xf7a67efba2a97f86228a7e36b996b34e0a417763] = true;
+        owners[0x94bb857c3a550130120b5bfc1b7de3d478104705] = true;
+        owners[0x44f8fb0c0425471e23cdcc819827aa32cab607a9] = true;
         
-        ownersGetCoins[0xca35b7d915458ef540ade6068dfe2f44e8fa733c] = false;
-        ownersGetCoins[0xca35b7d915458ef540ade6068dfe2f44e8fa733c] = false;
-        ownersGetCoins[0xca35b7d915458ef540ade6068dfe2f44e8fa733c] = false;
-        ownersGetCoins[0xca35b7d915458ef540ade6068dfe2f44e8fa733c] = false;
-        ownersGetCoins[0xca35b7d915458ef540ade6068dfe2f44e8fa733c] = false;
+        ownersGetCoins[0x896ab7b50d7bce2961072fef0a7225376e88ba7e] = false;
+        ownersGetCoins[0x2dbc56b412ef3f70bee2ef3662e850f49c831052] = false;
+        ownersGetCoins[0xf7a67efba2a97f86228a7e36b996b34e0a417763] = false;
+        ownersGetCoins[0x94bb857c3a550130120b5bfc1b7de3d478104705] = false;
+        ownersGetCoins[0x44f8fb0c0425471e23cdcc819827aa32cab607a9] = false;
         
         owner = msg.sender;
     }
