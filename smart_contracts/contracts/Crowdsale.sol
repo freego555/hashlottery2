@@ -74,6 +74,8 @@ contract Crowdsale {
         price = etherCostOfEachToken;
         amountTokensForSale = tokenReward.totalSupply() * percentOfTokensForInvestors / 100; // Отправим указанный процент токенов для продажи на crowdsale
         amountTokensForOwners = tokenReward.totalSupply() - amountTokensForSale; // Остаток токенов равномерно распределим среди владельцев ICO при успешном окончании
+
+        limitOfFirstBuyers = 5; // фиксируем колво первых покупателей
     }
     
     function distributeTokensAmongOwners() public {
@@ -103,6 +105,51 @@ contract Crowdsale {
     
     function isIcoFail() public view returns(bool) {
         return isIcoEnd() && amountOfSoldTokens < amountTokensForSale;
+    }
+
+    /**
+     * Подсчет общего кол-ва токенов с учетом бонусов и подсчет сдачи
+     * возможен запуск из:
+     * -payable() для расчета реального значения
+     * -из js интерфейса для предварительного подсчета без учета бонусов связанных со временем
+     *
+     * @param  _wei_amount : колво wei(копейки) на входе
+     * @param  _pre_calc : флаг для предварительного расчета
+     * @return _token_count - общее колво токенов с учетом бонусов
+     * @return _wei_change - сдача в wei(копейки)
+     */
+    function calcTokenAmount(uint256 _wei_amount, bool _pre_calc) public returns (uint256 _token_count, uint256 _wei_change){
+        // заглушка
+        //return (0 , 0);
+
+        uint256 newPrice = price;
+        //- Те инвесторы, которые приобретут токены в первые 2 дня должны получить скидку в 10%
+        if ((now < startICOPlus2Days) && !_pre_calc) {
+            // предполагается что скидка сохраняется только на покупки в указанный период
+            newPrice = newPrice * 9 / 10;
+        }
+
+        _token_count = _wei_amount / newPrice;
+        _wei_change = _wei_amount % newPrice; // сохраним сдачу
+
+        //- Первые 5 покупателей получат 20% бонус в токенах как ранние инвесторы.
+        if (balanceOf[msg.sender] == 0) {// new buyer
+            if ((countOfFirstBuyers < limitOfFirstBuyers) && !_pre_calc) {
+                balanceOfBonusFirstBuyers[msg.sender] = _token_count * 2 / 10;
+                _token_count = _token_count +  balanceOfBonusFirstBuyers[msg.sender];
+                countOfFirstBuyers++;
+            }
+        }
+
+        //- Также необходимо предусмотреть начисление одного бонусного токена за каждые 100 купленных токенов.
+        //предполагается что подаренные по п2 считаются подарочными и в подсчете не учитываются
+        if (balanceOf[msg.sender] == 0) {// new buyer
+            _token_count += (_token_count - balanceOfBonusFirstBuyers[msg.sender]) / 100;
+        }else{
+            uint256 tokenExists = tokenReward.balanceOf(msg.sender); //balanceOfTest();
+        }
+
+        return (_token_count, _wei_change);
     }
 
     function refund() public {
