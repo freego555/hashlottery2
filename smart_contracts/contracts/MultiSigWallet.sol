@@ -1,10 +1,10 @@
-pragma solidity ^0.4.25;
-import "Crowdsale.sol";
+pragma solidity ^0.4.24;
+import "./Crowdsale.sol";
 
 contract MultiSigWallet {
     
-    mapping(address => bool) owners;
-    mapping(address => bool) ownersGetCoins;
+    mapping(address => bool) public owners;
+    mapping(address => bool) public ownersGetCoins;
     address crowdSaleContract;
     address owner;
     uint ownerPart;
@@ -26,40 +26,49 @@ contract MultiSigWallet {
         owner = msg.sender;
     }
     
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner of contract can call this");
+        _;
+    }
+
     modifier isIcoEnd(bool status) {
-        require(crowdSaleContract.isIcoEnd() == status);
+        require(Crowdsale(crowdSaleContract).isIcoEnd() == status, "ICO isn't end");
         _;
     }
     
     modifier isIcoFail(bool status) {
-        require(crowdSaleContract.isIcoFail() == status);
+        require(Crowdsale(crowdSaleContract).isIcoFail() == status, "ICO isn't fail");
         _;
     }
     
     // Must isIcoEnd => true && isIcoFail => true
+    // Call from Crowdsale.sol
     function getCoinsAfterNegativeIco(address _investor, uint value) public isIcoEnd(true) isIcoFail(true) {
         address(_investor).transfer(value);
     }
     
     // Must isIcoEnd => true && isIcoFail => false
+    // Call from terminal
     function getCoinsByOwners() isIcoEnd(true) public isIcoFail(false) {
         if(owners[msg.sender] == true && ownersGetCoins[msg.sender] == false){
             // Pay dividends for owner
-            address(msg.sender).transfer(ownerPart);
+            if(setOwnerCoinsPartStatus == false){
+                setOwnerCoinsPart();
+            }
+            msg.sender.transfer(ownerPart);
             ownersGetCoins[msg.sender] == true;
         }
     }
     
-    function setCrowdSaleContractAddress(address _crowdSaleContract) private {
-        if(msg.sender == owner){
-            crowdSaleContract = Crowdsale(_crowdSaleContract);
+    // Call from terminal
+    function setCrowdSaleContractAddress(address _crowdSaleContract) public onlyOwner() {
+        if(crowdSaleContract != address(0)){
+            crowdSaleContract = _crowdSaleContract;
         }
     }
     
-    function setOwnerCoinsPart() private {
-        if(setOwnerCoinsPartStatus == false){
-            ownerPart = this.balance/5;
-            setOwnerCoinsPartStatus = true;
-        }
+    function setOwnerCoinsPart() internal isIcoEnd(true) {
+        ownerPart = this.balance/5;
+        setOwnerCoinsPartStatus = true;
     }
 }
