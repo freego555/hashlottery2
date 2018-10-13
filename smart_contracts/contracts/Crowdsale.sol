@@ -13,7 +13,6 @@ contract MultiSigWallet {
 contract Crowdsale {
     address public multisigContractAddress; // куда перечисляются средства
     address public owner; // владелец контракта
-    address[5] public ownersOfICO;
     uint public amountTokensForSale; // необходимое количество токенов
     uint public amountOfSoldTokens; // проданное количество токенов
     uint public amountTokensForOwners; // количество токенов для владельцев ICO. Будут распределены при успешном окончании ICO
@@ -53,14 +52,14 @@ contract Crowdsale {
     }
     
     function setTokenUsedAsReward(address _addressOfTokenUsedAsReward) public onlyOwner {
-        require(!isSetTokenReward);
+        require(!isSetTokenReward, "Token reward contract has already set");
             
         tokenReward = TokenERC20(_addressOfTokenUsedAsReward);
         isSetTokenReward = true;
     }
     
     function setMultisig(address _multisigAddress) public onlyOwner {
-        require(!isSetMultisig);
+        require(!isSetMultisig, "Multisig contract has already set");
             
         multisigContractAddress = _multisigAddress;
         multisigContract = MultiSigWallet(multisigContractAddress);
@@ -68,7 +67,9 @@ contract Crowdsale {
     }
     
     function init() public onlyOwner {
-        require(!isInit && isSetTokenReward && isSetMultisig);
+        require(!isInit, "Crowdsale contract already init");
+        require(isSetTokenReward, "Token isn't set");
+        require(isSetMultisig, "Multisig isn't set");
         
         isInit = true;
         startICO = now;
@@ -83,18 +84,22 @@ contract Crowdsale {
     function distributeTokensAmongOwners() public {
         // Определим принадлежит ли отправитель транзакции к владельцам ICO
         bool isOwnerOfICO = owners[msg.sender];
-        require(isOwnerOfICO && isIcoEnd() && !isIcoFail());
+        bool isOwnerGetTokens = ownerGetTokens[msg.sender];
+        require(isOwnerOfICO, "Only owner of ICO can call this");
+        require(isOwnerGetTokens, "Owner has already get tokens");
+        require(isIcoEnd(), "ICO has already end");
+        require(!isIcoFail(), "ICO is failed");
 
         ownerGetTokens[msg.sender] = true;
 
         // Распределим остаток токенов среди владельцев ICO. Даем остаток от деления на 5 первому владельцу ICO, который забирает токены.
         uint amountForOneOwner = amountTokensForOwners / 5;
-        if (isFirstOwnerGetRestTokens) {
-            require(tokenReward.transfer(msg.sender, amountForOneOwner));
-        } else {
+        if (!isFirstOwnerGetRestTokens) {
             // Одному из владельцев ICO начисляем также остаток от деления на 5, чтобы точно распределить все токены
             isFirstOwnerGetRestTokens = true;
-            require(tokenReward.transfer(msg.sender, amountForOneOwner + amountTokensForOwners % 5));
+            tokenReward.transfer(msg.sender, amountForOneOwner + amountTokensForOwners % 5);
+        } else {
+            tokenReward.transfer(msg.sender, amountForOneOwner);
         }
     }
     
@@ -173,7 +178,7 @@ contract Crowdsale {
         msg.sender.transfer(wei_change);    // Відправ решту Покупцю
     }
 
-    function refund() payable public { //???
+    function refund() public {
         require(isIcoFail());
 
         uint valueToRefund = balanceOf[msg.sender]; // Сумма для возврата инвестору
