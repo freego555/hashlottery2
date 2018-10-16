@@ -161,7 +161,8 @@ contract Crowdsale {
     }
 
     function invest() payable public {
-        require(!isIcoEnd() && msg.value > 0);  // Триває ICO та отримані кошти?
+        require(!isIcoEnd(), "ICO is ended"); // Триває ICO
+        require(msg.value > 0, "Value is 0");  // Отримані кошти?
         uint buyer_wei = msg.value;             // Кількість відправлених коштів Покупцем
         uint actually_wei;                      // Кількість фактично отриманих коштів
         uint256 token_count;                    // Порахована кількість токенів
@@ -179,9 +180,11 @@ contract Crowdsale {
     }
 
     function refund() public {
-        require(isIcoFail());
+        uint balanceOfSender = balanceOf[msg.sender];
+        require(isIcoFail(), "ICO isn't failed");
+        require(balanceOfSender != 0, "Balance is 0");
 
-        uint valueToRefund = balanceOf[msg.sender]; // Сумма для возврата инвестору
+        uint valueToRefund = balanceOfSender; // Сумма для возврата инвестору
         balanceOf[msg.sender] = 0;
 
         multisigContract.getCoinsAfterNegativeIco(msg.sender, valueToRefund); // Инициируем возврат средств инвестору c multisig-контракта
