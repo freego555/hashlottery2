@@ -152,10 +152,11 @@ contract Crowdsale {
         if (balanceOf[msg.sender] == 0) {
             // new buyer
             if ((countOfFirstBuyers < limitOfFirstBuyers) && !_pre_calc) {
-                if (reachedLimit) {// recalc
-                    token_count_buyed = token_count_buyed * 8333 / 10000;
-                }
                 bonus2 = calcBonus2(token_count_buyed);
+                uint256 fixTotal = token_count_buyed + bonus2 - max_allowed;
+                if (fixTotal > 0) {// recalc
+                    (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
+                }
                 countOfFirstBuyers++;
             }
         } else {
@@ -168,17 +169,11 @@ contract Crowdsale {
         // BONUS 3 //- Также необходимо предусмотреть начисление одного бонусного токена за каждые 100 купленных токенов.
         //предполагается что подаренные по п2 считаются подарочными и в подсчете не учитываются
         uint256 bonus3 = calcBonus3(tokenExistsLeftWithoutBonus, token_count_buyed);
-        if (max_allowed - token_count_buyed - bonus2 - bonus3 < 0) {
+        uint256 fixTotal = token_count_buyed + bonus2 + bonus3 - max_allowed;
+        if (fixTotal > 0) {
             // if reached limit
-            token_count_buyed -= token_count_buyed / 100;
-            if (bonus2 > 0) {
-                //if bonus2 applied previously recount bonus2 for checndes buyed count
-                bonus2 = calcBonus2(token_count_buyed);
-            }
-            if (bonus3 > 0) {
-                //bonus3 recalculate
-                bonus3 = calcBonus3(tokenExistsLeftWithoutBonus, token_count_buyed);
-            }
+            (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
+            bonus3 = calcBonus3(tokenExistsLeftWithoutBonus, token_count_buyed);
         }
         // end BONUS 3
         token_count_bonus = bonus2 + bonus3;
@@ -193,7 +188,16 @@ contract Crowdsale {
     }
 
     function calcBonus2(uint256 buyed) returns (uint256 bonus2){
-        return buyed * 2 / 10;
+        return buyed / 5;
+    }
+
+    function fixBonus2(uint256 fixTotal, uint256 bonus, uint256 buyed) returns (uint256 bonusFixed, uint256 buyedFixed){
+        if (fixTotal > 0) {// recalc
+            bonusFixed = bonus - calcBonus2(fixTotal);
+            buyedFixed = buyed - bonusFix;
+            return (bonusFixed, buyedFixed);
+        }
+        return (bonus, buyed);
     }
 
     function calcBonus3(uint256 buyedWithoutBonus, uint256 buyed) returns (uint256 bonus3){
