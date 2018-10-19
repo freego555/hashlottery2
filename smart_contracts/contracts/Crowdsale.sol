@@ -142,7 +142,7 @@ contract Crowdsale {
         }
 
         token_count_buyed = _wei_amount / newPrice;
-        if (max_allowed - token_count_buyed < 0) {// if reached limit
+        if (token_count_buyed >  max_allowed) {// if reached limit
             reachedLimit = true;
             token_count_buyed = max_allowed;
         }
