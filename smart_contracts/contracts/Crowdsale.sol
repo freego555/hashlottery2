@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.4.24;
 
 contract TokenERC20 {
     function transfer(address receiver, uint256 amount) external returns(bool);
