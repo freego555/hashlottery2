@@ -1,17 +1,81 @@
 pragma solidity ^0.4.23;
+import "./MigrationAgent.sol";
 
 contract TokenERC20 {
-    string public name;
-    string public symbol;
-    uint8 public decimals = 0;
-    uint256 public totalSupply;
-    mapping(address => uint256) public balanceOf;
+    string public name; // Migrate ??
+    string public symbol; // Migrate ??
+    uint8 public decimals = 0; // Migrate ?
+    uint256 public totalSupply; // Migrate
+    mapping(address => uint256) public balanceOf; // Migrate
     mapping(address => mapping(address => uint256)) public allowance;
     address public owner;
+    bool firstSupplyTokens = false;
+
+    modifier isSetFirstSupplyTokens(){
+        require(firstSupplyTokens == true, "Tokens was supply");
+        _;
+    }
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
     event TokensEmitted(uint256 tokensSupplyed, uint256 totalTokens);
+
+    // For migration ERC20
+    event Migrate(address indexed _from, address indexed _to, uint256 _value);
+    address public migrationAgent;
+    uint256 public totalMigrated;
+    bool migrationStatus = false;
+
+    modifier isNotSetMigrationAgent(){
+        require(migrationAgent != address(0), "Migration Agent was set earlly");
+        _;
+    }
+
+    modifier isMigrationAgent(){
+        require(migrationAgent == address(0), "Migration Agent wasn't set earlly");
+        _;
+    }
+
+    modifier isValue(uint _value){
+        require(_value > 0, "Value can't should be grate than 0");
+        _;
+    }
+
+    modifier isValueGTBalance(uint _value, address _sender){
+        require(_value <= balanceOf[_sender], "Value can't be less than 0");
+        _;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner of contract can call this");
+        _;
+    }
+
+    modifier isMigrationNotRun(){
+        require(migrationStatus != true, "Sorry, but we detect migration to new token. You must miggrate all your tokens to new ERC20 token");
+        _;
+    }
+
+    function setMigrationAgent(address _agent) external isNotSetMigrationAgent() onlyOwner() {
+        migrationAgent = _agent;
+    }
+
+    // User calls function for migrate his tokens to new ERC20 token
+    function migrateTokens(uint _value) external 
+        isMigrationAgent() 
+        isValue(_value) 
+        isValueGTBalance(_value, msg.sender){
+
+        if(!migrationStatus){
+            migrationStatus = true;
+        }
+
+        balanceOf[msg.sender] -= _value;
+        totalSupply -= _value;
+        totalMigrated += _value;
+        MigrationAgent(migrationAgent).migrateFrom(msg.sender, _value);
+        emit Migrate(msg.sender, migrationAgent, _value);
+    }
 
     constructor() public {
         name = "LotStock";
@@ -19,15 +83,16 @@ contract TokenERC20 {
         owner = msg.sender;
     }
 
-    function supplyTokens() public returns (bool success) {
+    function supplyTokens() public isSetFirstSupplyTokens() returns (bool success) {
         require(owner == msg.sender, "Not Authorized");
         totalSupply = 100000;
         balanceOf[msg.sender] = totalSupply;
         emit TokensEmitted(totalSupply, totalSupply);
+        firstSupplyTokens = true;
         return true;
     }
 
-    function emitMoreTokens(uint256 tokens, address receiver) public returns (bool success) {
+    function emitMoreTokens(uint256 tokens, address receiver) public isMigrationNotRun() returns (bool success) {
         require(owner == msg.sender, "Not Authorized");
         totalSupply += tokens;
         balanceOf[receiver] += tokens;
@@ -35,7 +100,7 @@ contract TokenERC20 {
         return true;
     }
 
-    function _transfer(address _from, address _to, uint _value) internal {
+    function _transfer(address _from, address _to, uint _value) internal isMigrationNotRun() {
         require(balanceOf[_from] >= _value, "Not enough funds");
         require(_to == address(0), "Try send funds to 0-address");
         balanceOf[_from] -= _value;
