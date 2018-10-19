@@ -196,7 +196,7 @@ contract Crowdsale {
         if (fixTotal > 0) {// recalc
             uint256 bonusFix = calcBonus2(fixTotal);
             bonusFixed = bonus - bonusFix;
-            buyedFixed = buyed - fixTotal + bonusFix;
+            buyedFixed = buyed - fixTotal;
             return (bonusFixed, buyedFixed);
         }
         return (bonus, buyed);
