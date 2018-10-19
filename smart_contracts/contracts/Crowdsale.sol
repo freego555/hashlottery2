@@ -26,8 +26,8 @@ contract Crowdsale {
     MultiSigWallet public multisigContract; // контракт Multisig
     mapping(address => uint256) public balanceOf; // перечень кто сколько внес средств
     mapping(address => uint256) public balanceOfBonusFirstBuyers;
-    mapping(address => bool) public balanceOfTokenBonus; // total balance of bonus tokens
-    mapping(address => bool) public balanceOfTokenBuyed; // total balance of buyed tokens
+    mapping(address => uint256) public balanceOfTokenBonus; // total balance of bonus tokens
+    mapping(address => uint256) public balanceOfTokenBuyed; // total balance of buyed tokens
     mapping(address => bool) public owners;
     mapping(address => bool) public ownerGetTokens;
     bool isFirstOwnerGetRestTokens; // один из владельцев ICO уже забрал вероятный остаток от деления на 5
@@ -133,6 +133,7 @@ contract Crowdsale {
         bool reachedLimit = false;
         uint256 max_allowed = amountTokensForSale - amountOfSoldTokens;
         uint256 tokenExistsLeftWithoutBonus;
+        uint256 fixTotal;
         // for bonus3
 
         // BONUS 1 //- Те инвесторы, которые приобретут токены в первые 2 дня должны получить скидку в 10%
@@ -154,7 +155,7 @@ contract Crowdsale {
             if ((countOfFirstBuyers < limitOfFirstBuyers) && !_pre_calc) {
                 bonus2 = calcBonus2(token_count_buyed);
                 if (token_count_buyed + bonus2 > max_allowed) {// recalc
-                    uint256 fixTotal = token_count_buyed + bonus2 - max_allowed;
+                    fixTotal = token_count_buyed + bonus2 - max_allowed;
                     (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
                 }
                 countOfFirstBuyers++;
@@ -171,7 +172,7 @@ contract Crowdsale {
         uint256 bonus3 = calcBonus3(tokenExistsLeftWithoutBonus, token_count_buyed);
         if (token_count_buyed + bonus2 + bonus3 > max_allowed) {
             // if reached limit
-            uint256 fixTotal = token_count_buyed + bonus2 + bonus3 - max_allowed;
+            fixTotal = token_count_buyed + bonus2 + bonus3 - max_allowed;
             (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
             bonus3 = calcBonus3(tokenExistsLeftWithoutBonus, token_count_buyed);
         }
@@ -193,8 +194,9 @@ contract Crowdsale {
 
     function fixBonus2(uint256 fixTotal, uint256 bonus, uint256 buyed) returns (uint256 bonusFixed, uint256 buyedFixed){
         if (fixTotal > 0) {// recalc
-            bonusFixed = bonus - calcBonus2(fixTotal);
-            buyedFixed = buyed - bonusFix;
+            uint256 bonusFix = calcBonus2(fixTotal);
+            bonusFixed = bonus - bonusFix;
+            buyedFixed = buyed - fixTotal + bonusFix;
             return (bonusFixed, buyedFixed);
         }
         return (bonus, buyed);
