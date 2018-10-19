@@ -1,14 +1,6 @@
 pragma solidity ^0.4.25;
-
-contract TokenERC20 {
-    function transfer(address receiver, uint256 amount) external returns(bool);
-    function balanceOf(address receiver) external view returns(uint256);
-    function totalSupply() external returns(uint256);
-}
-
-contract MultiSigWallet {
-    function getCoinsAfterNegativeIco(address _investor, uint256 value) public;
-}
+import './MultiSigWallet.sol';
+import './TokenERC20.sol';
 
 contract Crowdsale {
     address public multisigContractAddress; // куда перечисляются средства
@@ -126,6 +118,8 @@ contract Crowdsale {
      */
     function calcTokenAmount(uint256 _wei_amount, bool _pre_calc)
     public returns (uint256 _token_count, uint256 _wei_change){
+
+        require(isInit, "Crowdsale contract must be init");
 
         uint256 newPrice = price;
         uint256 token_count_bonus = 0;
