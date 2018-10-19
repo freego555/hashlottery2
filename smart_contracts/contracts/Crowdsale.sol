@@ -1,14 +1,20 @@
-pragma solidity ^0.4.24;
-
-contract TokenERC20 {
-    function transfer(address receiver, uint256 amount) external returns(bool);
-    function balanceOf(address receiver) external view returns(uint256);
-    function totalSupply() external returns(uint256);
-}
-
-contract MultiSigWallet {
-    function getCoinsAfterNegativeIco(address _investor, uint256 value) public;
-}
+//<<<<<<< HEAD
+//pragma solidity ^0.4.24;
+//
+//contract TokenERC20 {
+//    function transfer(address receiver, uint256 amount) external returns(bool);
+//    function balanceOf(address receiver) external view returns(uint256);
+//    function totalSupply() external returns(uint256);
+//}
+//
+//contract MultiSigWallet {
+//    function getCoinsAfterNegativeIco(address _investor, uint256 value) public;
+//}
+//=======
+pragma solidity ^0.4.25;
+import './MultiSigWallet.sol';
+import './TokenERC20.sol';
+//>>>>>>> feature-crowdsale
 
 contract Crowdsale {
     address public multisigContractAddress; // куда перечисляются средства
@@ -127,6 +133,8 @@ contract Crowdsale {
     function calcTokenAmount(uint256 _wei_amount, bool _pre_calc)
     public returns (uint256 _token_count, uint256 _wei_change){
 
+        require(isInit, "Crowdsale contract must be init");
+
         uint256 newPrice = price;
         uint256 token_count_bonus = 0;
         uint256 token_count_buyed = 0;
@@ -230,11 +238,10 @@ contract Crowdsale {
     }
 
     function refund() public {
-        uint balanceOfSender = balanceOf[msg.sender];
+        uint valueToRefund = balanceOf[msg.sender]; // Sum for refund to investor
         require(isIcoFail(), "ICO isn't failed");
-        require(balanceOfSender != 0, "Balance is 0");
+        require(valueToRefund != 0, "Balance is 0");
 
-        uint valueToRefund = balanceOfSender; // Сумма для возврата инвестору
         balanceOf[msg.sender] = 0;
 
         multisigContract.getCoinsAfterNegativeIco(msg.sender, valueToRefund); // Инициируем возврат средств инвестору c multisig-контракта
