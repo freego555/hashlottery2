@@ -153,8 +153,8 @@ contract Crowdsale {
             // new buyer
             if ((countOfFirstBuyers < limitOfFirstBuyers) && !_pre_calc) {
                 bonus2 = calcBonus2(token_count_buyed);
-                uint256 fixTotal = token_count_buyed + bonus2 - max_allowed;
-                if (fixTotal > 0) {// recalc
+                if (token_count_buyed + bonus2 > max_allowed) {// recalc
+                    uint256 fixTotal = token_count_buyed + bonus2 - max_allowed;
                     (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
                 }
                 countOfFirstBuyers++;
@@ -169,9 +169,9 @@ contract Crowdsale {
         // BONUS 3 //- Также необходимо предусмотреть начисление одного бонусного токена за каждые 100 купленных токенов.
         //предполагается что подаренные по п2 считаются подарочными и в подсчете не учитываются
         uint256 bonus3 = calcBonus3(tokenExistsLeftWithoutBonus, token_count_buyed);
-        uint256 fixTotal = token_count_buyed + bonus2 + bonus3 - max_allowed;
-        if (fixTotal > 0) {
+        if (token_count_buyed + bonus2 + bonus3 > max_allowed) {
             // if reached limit
+            uint256 fixTotal = token_count_buyed + bonus2 + bonus3 - max_allowed;
             (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
             bonus3 = calcBonus3(tokenExistsLeftWithoutBonus, token_count_buyed);
         }
