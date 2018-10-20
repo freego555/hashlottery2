@@ -27,12 +27,12 @@ contract TokenERC20 {
     bool migrationStatus = false;
 
     modifier isNotSetMigrationAgent(){
-        require(migrationAgent != address(0), "Migration Agent was set earlly");
+        require(migrationAgent == address(0), "Migration Agent was set earlly");
         _;
     }
 
-    modifier isMigrationAgent(){
-        require(migrationAgent == address(0), "Migration Agent wasn't set earlly");
+    modifier isSetMigrationAgent(){
+        require(migrationAgent != address(0), "Migration Agent wasn't set earlly");
         _;
     }
 
@@ -56,19 +56,26 @@ contract TokenERC20 {
         _;
     }
 
+    modifier isItCallFormMigrationAgent(){
+        require(msg.sender == migrationAgent, "Sorry, its calls only from migrationAgent");
+        _;
+    }
+
     function setMigrationAgent(address _agent) external isNotSetMigrationAgent() onlyOwner() {
         migrationAgent = _agent;
     }
 
-    // User calls function for migrate his tokens to new ERC20 token
-    function migrateTokens(uint _value) external 
-        isMigrationAgent() 
-        isValue(_value) 
-        isValueGTBalance(_value, msg.sender){
-
+    function setMigrationStatus() public isSetMigrationAgent() isItCallFormMigrationAgent(){
         if(!migrationStatus){
             migrationStatus = true;
         }
+    }
+
+    // User calls function for migrate his tokens to new ERC20 token
+    function migrateTokens(uint _value) external 
+        isSetMigrationAgent() 
+        isValue(_value) 
+        isValueGTBalance(_value, msg.sender){
 
         balanceOf[msg.sender] -= _value;
         totalSupply -= _value;
