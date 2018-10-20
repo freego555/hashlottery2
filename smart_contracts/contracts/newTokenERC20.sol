@@ -1,7 +1,28 @@
 pragma solidity ^0.4.24;
 import "./TokenERC20.sol";
 
-contract newTokenERC20 is TokenERC20{
+contract newTokenERC20 {
+
+    /******* EXTEND **************/
+
+    address public migrationAgent;
+    bool migrationStatus = false;
+    uint256 public totalSupply; // Migrate
+    mapping(address => uint256) public balanceOf; // Migrate
+
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    modifier isSetMigrationAgent(){
+        require(migrationAgent != address(0), "Migration Agent wasn't set earlly");
+        _;
+    }
+
+    modifier isItCallFormMigrationAgent(){
+        require(msg.sender == migrationAgent, "Sorry, its calls only from migrationAgent");
+        _;
+    }
+
+    /******* EXTEND **************/
 
     modifier isMigrationRun(){
         require(migrationStatus == true, "Sorry, but we not detect migration to new token.");
