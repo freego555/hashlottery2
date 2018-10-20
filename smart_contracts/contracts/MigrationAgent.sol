@@ -48,15 +48,17 @@ contract MigrationAgent {
         owner = msg.sender;
     }
 
-    function startMigrationFrom(address _oldToken) public onlyOwner() isNotSetOldToken(){
+    function startMigrationFrom(address _oldToken, address _newToken) public 
+    onlyOwner() 
+    isNotSetOldToken() 
+    isNotSetNewToken() 
+    isNotFinalizeMigration(){
         oldToken = _oldToken;
         totalSupply = TokenERC20(_oldToken).totalSupply();
 
-        TokenERC20(_oldToken).setMigrationStatus();
-    }
-
-    function setNewToken(address _newToken) public onlyOwner() isNotSetNewToken() isNotFinalizeMigration(){
         newToken = _newToken;
+
+        TokenERC20(_oldToken).setMigrationStatus();
     }
 
     function isTotalSumValid(uint _value) private view{

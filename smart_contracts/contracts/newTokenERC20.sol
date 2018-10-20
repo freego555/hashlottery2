@@ -3,8 +3,6 @@ import "./TokenERC20.sol";
 
 contract newTokenERC20 is TokenERC20{
 
-    bool finalizeMigrationStatus = false;
-
     modifier isMigrationRun(){
         require(migrationStatus == true, "Sorry, but we not detect migration to new token.");
         _;
