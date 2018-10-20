@@ -8,6 +8,7 @@ contract TokenERC20 {
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
     address public owner;
+    bool private isTokensSupplied = false;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
@@ -19,10 +20,12 @@ contract TokenERC20 {
         owner = msg.sender;
     }
 
-    function supplyTokens() public returns (bool success) {
+    function supplyTokens(address contract_address) public returns (bool success) {
         require(owner == msg.sender, "Not Authorized");
+        require(isTokensSupplied == false, "Tokens already supplied");
         totalSupply = 100000;
-        balanceOf[msg.sender] = totalSupply;
+        balanceOf[contract_address] = totalSupply;
+        isTokensSupplied = true;
         emit TokensEmitted(totalSupply, totalSupply);
         return true;
     }
