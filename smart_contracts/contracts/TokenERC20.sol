@@ -9,13 +9,7 @@ contract TokenERC20 {
     mapping(address => uint256) public balanceOf; // Migrate
     mapping(address => mapping(address => uint256)) public allowance;
     address public owner;
-    bool firstSupplyTokens = false;
     bool private isTokensSupplied = false;
-
-    modifier isSetFirstSupplyTokens(){
-        require(firstSupplyTokens == true, "Tokens was supply");
-        _;
-    }
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
@@ -99,7 +93,6 @@ contract TokenERC20 {
         balanceOf[contract_address] = totalSupply;
         isTokensSupplied = true;
         emit TokensEmitted(totalSupply, totalSupply);
-        firstSupplyTokens = true;
         return true;
     }
 

@@ -15,7 +15,7 @@ contract newTokenERC20 is TokenERC20{
         _;
     }
 
-    function createTokens(address _to, uint _value) public isMigrationRun(){
+    function createTokens(address _to, uint _value) public isMigrationRun() isSetMigrationAgent() isItCallFormMigrationAgent(){
         balanceOf[_to] += _value;
         totalSupply += _value;
         emit Transfer(migrationAgent, _to, _value);
