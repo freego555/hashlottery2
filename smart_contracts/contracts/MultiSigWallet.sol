@@ -67,7 +67,7 @@ contract MultiSigWallet {
         }
     }
     
-    function setOwnerCoinsPart() internal isIcoEnd(true) {
+    function setOwnerCoinsPart() private isIcoEnd(true) {
         ownerPart = this.balance/5;
         setOwnerCoinsPartStatus = true;
     }

@@ -14,8 +14,8 @@ contract TokenERC20 {
     event TokensEmitted(uint256 tokensSupplyed, uint256 totalTokens);
 
     constructor() public {
-        name = 'LotStock';
-        symbol = 'L$';
+        name = "LotStock";
+        symbol = "L$";
         owner = msg.sender;
     }
 
