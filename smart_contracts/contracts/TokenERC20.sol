@@ -1,4 +1,4 @@
-pragma solidity ^0.4.23;
+pragma solidity ^0.4.24;
 import "./MigrationAgent.sol";
 
 contract TokenERC20 {
@@ -10,6 +10,7 @@ contract TokenERC20 {
     mapping(address => mapping(address => uint256)) public allowance;
     address public owner;
     bool firstSupplyTokens = false;
+    bool private isTokensSupplied = false;
 
     modifier isSetFirstSupplyTokens(){
         require(firstSupplyTokens == true, "Tokens was supply");
@@ -90,10 +91,13 @@ contract TokenERC20 {
         owner = msg.sender;
     }
 
-    function supplyTokens() public isSetFirstSupplyTokens() returns (bool success) {
+
+    function supplyTokens(address contract_address) public returns (bool success) {
         require(owner == msg.sender, "Not Authorized");
+        require(isTokensSupplied == false, "Tokens already supplied");
         totalSupply = 100000;
-        balanceOf[msg.sender] = totalSupply;
+        balanceOf[contract_address] = totalSupply;
+        isTokensSupplied = true;
         emit TokensEmitted(totalSupply, totalSupply);
         firstSupplyTokens = true;
         return true;
