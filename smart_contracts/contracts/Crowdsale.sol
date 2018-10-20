@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.4.24;
 import './MultiSigWallet.sol';
 import './TokenERC20.sol';
 
@@ -27,7 +27,7 @@ contract Crowdsale {
     bool isSetTokenReward;
     bool isSetMultisig;
     
-    event FundTransfer(address backer, uint amount, bool isContribution);
+    event FundTransfer(address backer, uint256 amount, bool isContribution);
     
     constructor() public {
         owner = msg.sender;
@@ -119,13 +119,14 @@ contract Crowdsale {
     function calcTokenAmount(uint256 _wei_amount, bool _pre_calc)
     public returns (uint256 _token_count, uint256 _wei_change){
 
-        require(isInit, "Crowdsale contract must be init");
+//        require(isInit, "Crowdsale contract must be init");
 
         uint256 newPrice = price;
         uint256 token_count_bonus = 0;
         uint256 token_count_buyed = 0;
         bool reachedLimit = false;
-        uint256 max_allowed = amountTokensForSale - amountOfSoldTokens;
+//        uint max_allowed = 40000;//amountTokensForSale - amountOfSoldTokens;
+        uint max_allowed = amountTokensForSale - amountOfSoldTokens;
         uint256 tokenExistsLeftWithoutBonus;
         uint256 fixTotal;
         // for bonus3
@@ -182,7 +183,7 @@ contract Crowdsale {
         return (token_count_bonus + token_count_buyed, _wei_change);
     }
 
-    function calcBonus2(uint256 buyed) returns (uint256 bonus2){
+    function calcBonus2(uint256 buyed) private returns (uint256){
         return buyed / 5;
     }
 
@@ -196,7 +197,7 @@ contract Crowdsale {
         return (bonus, buyed);
     }
 
-    function calcBonus3(uint256 buyedWithoutBonus, uint256 buyed) returns (uint256 bonus3){
+    function calcBonus3(uint256 buyedWithoutBonus, uint256 buyed) private returns (uint256 bonus3){
         return (buyedWithoutBonus + buyed) / 100;
     }
 
@@ -206,8 +207,8 @@ contract Crowdsale {
 
     function invest() payable public {
         require(!isIcoEnd() && msg.value > 0);  // Триває ICO та отримані кошти?
-        uint buyer_wei = msg.value;             // Кількість відправлених коштів Покупцем
-        uint actually_wei;                      // Кількість фактично отриманих коштів
+        uint256 buyer_wei = msg.value;             // Кількість відправлених коштів Покупцем
+        uint256 actually_wei;                      // Кількість фактично отриманих коштів
         uint256 token_count;                    // Порахована кількість токенів
         uint256 wei_change;                     // Решта від відправлених коштів Покупця та фактичної вартості токенів
         (token_count, wei_change) = calcTokenAmount(buyer_wei, false); // Порахуй кількість токенів та решту коштів
