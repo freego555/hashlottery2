@@ -10,7 +10,7 @@ contract MultiSigWallet {
     uint ownerPart;
     bool setOwnerCoinsPartStatus  = false;
     
-    function constructor() public {
+    constructor() public {
         owners[0x896ab7b50d7bce2961072fef0a7225376e88ba7e] = true;
         owners[0x2dbc56b412ef3f70bee2ef3662e850f49c831052] = true;
         owners[0xf7a67efba2a97f86228a7e36b996b34e0a417763] = true;
