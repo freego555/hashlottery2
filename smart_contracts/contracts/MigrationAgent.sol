@@ -20,7 +20,12 @@ contract MigrationAgent {
     }
 
     modifier isSetOldToken(){
-        require(oldToken != address(0), "New token wasn't set");
+        require(oldToken != address(0), "Old token wasn't set");
+        _;
+    }
+
+    modifier isNotSetOldToken(){
+        require(oldToken == address(0), "Old token was set");
         _;
     }
 
@@ -39,10 +44,15 @@ contract MigrationAgent {
         _;
     }
 
-    constructor(address _oldToken) public {
+    constructor() public {
         owner = msg.sender;
+    }
+
+    function startMigrationFrom(address _oldToken) public onlyOwner() isNotSetOldToken(){
         oldToken = _oldToken;
         totalSupply = TokenERC20(_oldToken).totalSupply();
+
+        TokenERC20(_oldToken).setMigrationStatus();
     }
 
     function setNewToken(address _newToken) public onlyOwner() isNotSetNewToken() isNotFinalizeMigration(){
@@ -65,6 +75,7 @@ contract MigrationAgent {
     }
 
     function finalizeMigration() public onlyOwner() isNotFinalizeMigration() {
+        newTokenERC20(newToken).finalizeMigration();
         finalizeMigrationStatus = true;
         oldToken = address(0);
         newToken = address(0);

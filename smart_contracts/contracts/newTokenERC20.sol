@@ -25,5 +25,6 @@ contract newTokenERC20 is TokenERC20{
 
     function finalizeMigration() public isCallFromMigrationAgent() {
         migrationAgent = address(0);
+        migrationStatus = false;
     }
 }
