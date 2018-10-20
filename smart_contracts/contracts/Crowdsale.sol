@@ -1,5 +1,4 @@
 pragma solidity ^0.4.24;
-
 import './MultiSigWallet.sol';
 import './TokenERC20.sol';
 
@@ -28,7 +27,7 @@ contract Crowdsale {
     bool isSetTokenReward;
     bool isSetMultisig;
     
-    event FundTransfer(address backer, uint amount, bool isContribution);
+    event FundTransfer(address backer, uint256 amount, bool isContribution);
     
     constructor() public {
         owner = msg.sender;
@@ -183,7 +182,7 @@ contract Crowdsale {
         return (token_count_bonus + token_count_buyed, _wei_change);
     }
 
-    function calcBonus2(uint256 buyed) returns (uint256 bonus2){
+    function calcBonus2(uint256 buyed) private returns (uint256){
         return buyed / 5;
     }
 
@@ -197,7 +196,7 @@ contract Crowdsale {
         return (bonus, buyed);
     }
 
-    function calcBonus3(uint256 buyedWithoutBonus, uint256 buyed) returns (uint256 bonus3){
+    function calcBonus3(uint256 buyedWithoutBonus, uint256 buyed) private pure returns (uint256 bonus3){
         return (buyedWithoutBonus + buyed) / 100;
     }
 
