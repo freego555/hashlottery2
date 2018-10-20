@@ -27,7 +27,7 @@ module.exports = function (deployer) {
 
                             return sig.setCrowdSaleContractAddress(crowd.address).then(function () {
                                     console.log("Crowdsale set to MultiSigWallet success");
-
+                                    
                                     return crowd.init().then(function () {
                                         console.log("Crowdsale init success");
 

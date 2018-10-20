@@ -179,7 +179,8 @@ contract Crowdsale {
         }
 
         _wei_change = _wei_amount - (token_count_buyed * newPrice);
-        return (token_count_bonus + token_count_buyed, _wei_change);
+        token_count_buyed += token_count_bonus;
+        return (token_count_buyed, _wei_change);
     }
 
     function calcBonus2(uint256 buyed) private returns (uint256){
