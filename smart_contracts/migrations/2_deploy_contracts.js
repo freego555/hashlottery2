@@ -19,21 +19,20 @@ module.exports = function (deployer) {
                     sig = i;
                     console.log("MultiSigWallet deployed success");
 
-                    return crowd.setTokenUsedAsReward(TokenERC20.address).then(function () {
+                    return crowd.setTokenUsedAsReward(token.address).then(function () {
                         console.log("TokenERC20 set to Crowdsale success");
                         //
-                        return crowd.setMultisig(MultiSigWallet.address).then(function () {
+                        return crowd.setMultisig(sig.address).then(function () {
                             console.log("MultiSigWallet set to Crowdsale success");
 
-                            return crowd.init().then(function () {
-                                console.log("Crowdsale init success");
-
-                                return sig.setCrowdSaleContractAddress(Crowdsale.address).then(function () {
+                            return sig.setCrowdSaleContractAddress(crowd.address).then(function () {
                                     console.log("Crowdsale set to MultiSigWallet success");
+                                    
+                                    return crowd.init().then(function () {
+                                        console.log("Crowdsale init success");
 
-                                    console.log("DONE -- DEPLOY -- DONE");
-
-                                    return true;
+                                        console.log("DONE -- DEPLOY -- DONE");
+                                        return true;
                                 });
                             });
                         })

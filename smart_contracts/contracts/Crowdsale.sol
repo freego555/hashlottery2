@@ -119,14 +119,13 @@ contract Crowdsale {
     function calcTokenAmount(uint256 _wei_amount, bool _pre_calc)
     public returns (uint256 _token_count, uint256 _wei_change){
 
-//        require(isInit, "Crowdsale contract must be init");
+        require(isInit, "Crowdsale contract must be init");
 
         uint256 newPrice = price;
         uint256 token_count_bonus = 0;
         uint256 token_count_buyed = 0;
         bool reachedLimit = false;
-//        uint max_allowed = 40000;//amountTokensForSale - amountOfSoldTokens;
-        uint max_allowed = amountTokensForSale - amountOfSoldTokens;
+        uint256 max_allowed = amountTokensForSale - amountOfSoldTokens;
         uint256 tokenExistsLeftWithoutBonus;
         uint256 fixTotal;
         // for bonus3
@@ -180,7 +179,8 @@ contract Crowdsale {
         }
 
         _wei_change = _wei_amount - (token_count_buyed * newPrice);
-        return (token_count_bonus + token_count_buyed, _wei_change);
+        token_count_buyed += token_count_bonus;
+        return (token_count_buyed, _wei_change);
     }
 
     function calcBonus2(uint256 buyed) private returns (uint256){
