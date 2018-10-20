@@ -1,20 +1,7 @@
-//<<<<<<< HEAD
-//pragma solidity ^0.4.24;
-//
-//contract TokenERC20 {
-//    function transfer(address receiver, uint256 amount) external returns(bool);
-//    function balanceOf(address receiver) external view returns(uint256);
-//    function totalSupply() external returns(uint256);
-//}
-//
-//contract MultiSigWallet {
-//    function getCoinsAfterNegativeIco(address _investor, uint256 value) public;
-//}
-//=======
-pragma solidity ^0.4.25;
+pragma solidity ^0.4.24;
+
 import './MultiSigWallet.sol';
 import './TokenERC20.sol';
-//>>>>>>> feature-crowdsale
 
 contract Crowdsale {
     address public multisigContractAddress; // куда перечисляются средства

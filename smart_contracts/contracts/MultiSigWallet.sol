@@ -1,9 +1,6 @@
 pragma solidity ^0.4.24;
 
-contract Crowdsale {
-    function isIcoEnd() external returns(bool);
-    function isIcoFail() external returns(bool);
-}
+import './Crowdsale.sol';
 
 contract MultiSigWallet {
     
