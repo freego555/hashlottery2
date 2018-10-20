@@ -185,9 +185,9 @@ gulp.task("watch", function() {
 });
 
 /* Task Default */
-// gulp.task("default", ["build", "webserver", "watch"]);
+gulp.task("default", ["build", "webserver", "watch"]);
 
-gulp.task("default", ["build"]);
+// gulp.task("default", ["build"]);
 
 /* Task Clean (delete folder [build/]) */
 gulp.task("clean", () => {
