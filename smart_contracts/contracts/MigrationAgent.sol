@@ -15,17 +15,17 @@ contract MigrationAgent {
     }
 
     modifier isNotSetNewToken(){
-        require(oldToken == address(0), "New token wasn't setted");
+        require(newToken == address(0), "New token wasn't set");
         _;
     }
 
     modifier isSetOldToken(){
-        require(oldToken != address(0), "New token wasn't setted");
+        require(oldToken != address(0), "New token wasn't set");
         _;
     }
 
     modifier isSetNewToken(){
-        require(newToken != address(0), "New token wasn't setted");
+        require(newToken != address(0), "New token wasn't set");
         _;
     }
 
@@ -56,6 +56,7 @@ contract MigrationAgent {
     function migrateFrom(address _from, uint256 _value) public 
         isNotFinalizeMigration()
         isCallFromOldToken(msg.sender)
+        isSetOldToken()
         isSetNewToken(){
 
         isTotalSumValid(_value);
