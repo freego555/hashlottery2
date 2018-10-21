@@ -183,11 +183,11 @@ contract Crowdsale {
         return (token_count_buyed, _wei_change);
     }
 
-    function calcBonus2(uint256 buyed) private returns (uint256){
+    function calcBonus2(uint256 buyed) private pure returns (uint256){
         return buyed / 5;
     }
 
-    function fixBonus2(uint256 fixTotal, uint256 bonus, uint256 buyed) returns (uint256 bonusFixed, uint256 buyedFixed){
+    function fixBonus2(uint256 fixTotal, uint256 bonus, uint256 buyed) private pure returns (uint256 bonusFixed, uint256 buyedFixed){
         if (fixTotal > 0) {// recalc
             uint256 bonusFix = calcBonus2(fixTotal);
             bonusFixed = bonus - bonusFix;
