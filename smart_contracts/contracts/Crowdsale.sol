@@ -98,7 +98,7 @@ contract Crowdsale {
     }
     
     function isIcoEnd() public view returns(bool) {
-        return now > deadline || amountOfSoldTokens >= amountTokensForSale;
+        return isInit && (now > deadline || amountOfSoldTokens >= amountTokensForSale);
     }
     
     function isIcoFail() public view returns(bool) {
