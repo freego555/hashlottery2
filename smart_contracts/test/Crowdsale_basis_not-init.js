@@ -5,6 +5,7 @@ contract('Crowdsale (NOT init)', function(accounts) {
     //let numBefore = 0;
     //let numBeforeEach = 0;
     var crowdsaleWithoutInit;
+    //var crowdsaleInitialized;
 
     var creator = accounts[0];
     var owner = accounts[0];
@@ -12,7 +13,7 @@ contract('Crowdsale (NOT init)', function(accounts) {
 
     before(async function() {
         crowdsaleWithoutInit = await Crowdsale.new();
-        //var crowdsaleInitialized = await Crowdsale.deployed();
+        //crowdsaleInitialized = await Crowdsale.deployed();
         //var multisig = await MultiSigWallet.deployed();
         //numBefore++;
     });
