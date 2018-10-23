@@ -4,15 +4,16 @@ var MultiSigWallet = artifacts.require("./MultiSigWallet.sol");
 contract('Crowdsale (NOT init)', function(accounts) {
     //let numBefore = 0;
     //let numBeforeEach = 0;
+    var crowdsaleWithoutInit;
+
+    var creator = accounts[0];
+    var owner = accounts[0];
+    var stranger = accounts[9];
 
     before(async function() {
-        var creator = accounts[0];
-        var owner = accounts[0];
-        var stranger = accounts[9];
-
-        var crowdsaleWithoutInit = await Crowdsale.new();
-        var crowdsaleInitialized = await Crowdsale.deployed();
-        var multisig = await MultiSigWallet.deployed();
+        crowdsaleWithoutInit = await Crowdsale.new();
+        //var crowdsaleInitialized = await Crowdsale.deployed();
+        //var multisig = await MultiSigWallet.deployed();
         //numBefore++;
     });
 
@@ -36,7 +37,6 @@ contract('Crowdsale (NOT init)', function(accounts) {
         it('Owner should be the account that create contract', async function() { // ???
             //console.log("!!!!!!!!Number of beforeEach(): " + numBeforeEach);
             //console.log(await crowdsaleInitialized.multisigContractAddress());
-
             let owner = await crowdsaleWithoutInit.owner();
             assert.isTrue(owner == creator, 'Owner is NOT creator of contract');
         });
