@@ -134,6 +134,10 @@ contract Crowdsale {
             // предполагается что скидка сохраняется только на покупки в указанный период
             newPrice = newPrice * 9 / 10;
         }
+		
+		if(_wei_amount < newPrice){ // если не хватает денег на даже один токен
+			return (0, 0, _wei_amount);
+		}
 
         token_count_buyed = _wei_amount / newPrice;
         if (token_count_buyed >  max_allowed) {// if reached limit
@@ -151,7 +155,6 @@ contract Crowdsale {
                     fixTotal = token_count_buyed + bonus2 - max_allowed;
                     (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
                 }
-                countOfFirstBuyers++;
             }
         } else {
             tokenExistsLeftWithoutBonus = balanceOfTokenBuyed[msg.sender] % 100;
@@ -207,10 +210,16 @@ contract Crowdsale {
         uint256 wei_change;                     // Решта від відправлених коштів Покупця та фактичної вартості токенів
         (token_count, token_count_bonus, wei_change) = calcTokenAmount(buyer_wei, false); // Порахуй кількість токенів та решту коштів
     
-        balanceOfTokenBonus[msg.sender] += token_count_bonus;
-        balanceOfTokenBuyed[msg.sender] += token_count;
-        token_count+=token_count_bonus;
-        
+		if(token_count > 0){
+		    balanceOfTokenBonus[msg.sender] += token_count_bonus;
+		    balanceOfTokenBuyed[msg.sender] += token_count;
+		    token_count+=token_count_bonus;
+		    
+	 		if (countOfFirstBuyers < limitOfFirstBuyers) {
+		       countOfFirstBuyers++;
+		    }
+		}
+
         actually_wei = buyer_wei - wei_change;
 
         amountOfSoldTokens += token_count;             // Додай кількість зібраних коштів
