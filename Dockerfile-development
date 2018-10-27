@@ -4,10 +4,8 @@ COPY . /var/www/hashlottery/
 
 WORKDIR /var/www/hashlottery/
 
-RUN npm install && npm i -g gulp
+RUN npm install
 
-RUN npm rebuild node-sass
-
-RUN gulp
+RUN npm build
 
 CMD cp -rp /var/www/hashlottery/build /var/www/front-dev/

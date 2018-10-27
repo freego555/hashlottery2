@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="msapplication-config" content="../browserconfig.xml" />
+  <meta(name="Highway Academy" content="Hash lottery" )/>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat+Alternates:400,500,600,700" rel="stylesheet">
+
+  <title>History</title>
+
+  <link rel="manifest" href="../manifest.json">
+
+  <link rel="stylesheet" href="../css/font-awesome.css">
+  <link rel="stylesheet" href="../dist/css/app.css">
+</head>
+<body>
+  <div class="headerBar">
+    <div class="wrapper">
+      <img src="../img/cabinetLogo.png" alt="" class="headerBar__logo">
+    </div>
+  </div>
+  <div class="history">
+    <p class="history__title border">
+      История розыгрышей  
+    </p>
+    <div class="history__container">
+      <div class="history__table">
+        <div class="history__row head">
+          <div class="history__table-id">
+            <p class="history__table-text">
+              №
+            </p>
+          </div>
+          <div class="history__table-date">
+            <p class="history__table-text">
+              Дата
+            </p>
+          </div>
+          <div class="history__table-number">
+            <p class="history__table-text">
+              Выигрышные цифры
+            </p>
+          </div>
+          <div class="history__table-sum">
+            <p class="history__table-text">
+              Сумма
+            </p>
+          </div>
+          <div class="history__table-successUser">
+            <p class="history__table-text">
+              Победители
+            </p>
+          </div>
+        </div>
+        <div class="history__row">
+          <div class="history__table-id">
+            <p class="history__table-text">
+              21
+            </p>
+          </div>
+          <div class="history__table-date">
+            <p class="history__table-text">
+              25.07.2018
+            </p>
+          </div>
+          <div class="history__table-number">
+            <p class="history__table-text">
+              1 24 26
+            </p>
+          </div>
+          <div class="history__table-sum">
+            <p class="history__table-text">
+              33456
+            </p>
+          </div>
+          <div class="history__table-successUser">
+            <p class="history__table-text">
+              0x1a2b3c…0x1a2b3c…0x1a2b3c…0x1a2b3c…0x1a2b3c…0x1a2b3c…
+            </p>
+          </div>
+        </div>
+        <div class="history__row">
+          <div class="history__table-id">
+            <p class="history__table-text">
+              21
+            </p>
+          </div>
+          <div class="history__table-date">
+            <p class="history__table-text">
+              25.07.2018
+            </p>
+          </div>
+          <div class="history__table-number">
+            <p class="history__table-text">
+              1 24 26
+            </p>
+          </div>
+          <div class="history__table-sum">
+            <p class="history__table-text">
+              33456
+            </p>
+          </div>
+          <div class="history__table-successUser">
+            <p class="history__table-text">
+              0x1a2b3c…0x1a2b3c…0x1a2b3c…0x1a2b3c…0x1a2b3c…0x1a2b3c…
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="history__footer">
+        <a href="identificationPage.html" class="btn">Вернуться на главную</a>
+        <div class="pagination">
+          <button class="pagination__btnNav prev">
+            <i class="fa fa-angle-left"></i>
+          </button>
+          <button class="pagination__btn">1</button>
+          <button class="pagination__btn gray">2</button>
+          <button class="pagination__btn red">3</button>
+          <button class="pagination__btn">4</button>
+          <button class="pagination__btn">5</button>
+          <button class="pagination__btnNav next">
+            <i class="fa fa-angle-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/main.js"></script>
+  <script>
+    function getFileName () {
+      var file = document.getElementById('uploaded-file').value;
+      file = file.replace (/\\/g, '/').split('/').pop();
+      document.getElementById('file-name').innerHTML = 'Имя файла: ' + file; 
+    }
+  </script>
+</body>
+</html>
