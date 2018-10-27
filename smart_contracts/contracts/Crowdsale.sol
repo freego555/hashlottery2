@@ -212,16 +212,16 @@ contract Crowdsale {
         uint256 wei_change;                     // Решта від відправлених коштів Покупця та фактичної вартості токенів
         (token_count, token_count_bonus, wei_change) = calcTokenAmount(buyer_wei, false); // Порахуй кількість токенів та решту коштів
     
-		if(token_count > 0){
-		    balanceOfTokenBonus[msg.sender] += token_count_bonus;
-		    balanceOfTokenBuyed[msg.sender] += token_count;
-		    token_count+=token_count_bonus;
-		    
-	 		if (countOfFirstBuyers < limitOfFirstBuyers) {
-		       countOfFirstBuyers++;
-		    }
-		}
-
+		require(token_count > 0, "You can't invest because wei_amount less than price of one token");
+        
+	    balanceOfTokenBonus[msg.sender] += token_count_bonus;
+	    balanceOfTokenBuyed[msg.sender] += token_count;
+	    token_count+=token_count_bonus;
+	    
+ 		if ((countOfFirstBuyers < limitOfFirstBuyers) && (balanceOf[msg.sender] == 0)) {
+           countOfFirstBuyers++;
+        }
+		
         actually_wei = buyer_wei - wei_change;
 
         amountOfSoldTokens += token_count;             // Додай кількість зібраних коштів
