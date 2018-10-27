@@ -11,7 +11,7 @@ testrpc --account="" --gasPrice 0
 truffle migrate --reset --all
 
 # 3. запуск теста одного файла
-truffle test ./test/Crowdsale_test.js
+truffle test ./test/Crowdsale_calcTokenAmount.js
 
 truffle test ./test/Crowdsale_basis_not-init.js
 
