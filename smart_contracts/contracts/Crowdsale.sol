@@ -1,14 +1,6 @@
 pragma solidity ^0.4.25;
-
-contract TokenERC20 {
-    function transfer(address receiver, uint256 amount) external returns(bool);
-    function balanceOf(address receiver) external view returns(uint256);
-    function totalSupply() external returns(uint256);
-}
-
-contract MultiSigWallet {
-    function getCoinsAfterNegativeIco(address _investor, uint256 value) public;
-}
+import './MultiSigWallet.sol';
+import './TokenERC20.sol';
 
 contract Crowdsale {
     address public multisigContractAddress; // куда перечисляются средства
@@ -26,6 +18,8 @@ contract Crowdsale {
     MultiSigWallet public multisigContract; // контракт Multisig
     mapping(address => uint256) public balanceOf; // перечень кто сколько внес средств
     mapping(address => uint256) public balanceOfBonusFirstBuyers;
+    mapping(address => uint256) public balanceOfTokenBonus; // total balance of bonus tokens
+    mapping(address => uint256) public balanceOfTokenBuyed; // total balance of buyed tokens
     mapping(address => bool) public owners;
     mapping(address => bool) public ownerGetTokens;
     bool isFirstOwnerGetRestTokens; // один из владельцев ICO уже забрал вероятный остаток от деления на 5
@@ -122,38 +116,88 @@ contract Crowdsale {
      * @return _token_count - общее колво токенов с учетом бонусов
      * @return _wei_change - сдача в wei(копейки)
      */
-    function calcTokenAmount(uint256 _wei_amount, bool _pre_calc) public returns (uint256 _token_count, uint256 _wei_change){
-        // заглушка
-        //return (0 , 0);
+    function calcTokenAmount(uint256 _wei_amount, bool _pre_calc)
+    public returns (uint256 _token_count, uint256 _wei_change){
+
+        require(isInit, "Crowdsale contract must be init");
 
         uint256 newPrice = price;
-        //- Те инвесторы, которые приобретут токены в первые 2 дня должны получить скидку в 10%
+        uint256 token_count_bonus = 0;
+        uint256 token_count_buyed = 0;
+        bool reachedLimit = false;
+        uint256 max_allowed = amountTokensForSale - amountOfSoldTokens;
+        uint256 tokenExistsLeftWithoutBonus;
+        uint256 fixTotal;
+        // for bonus3
+
+        // BONUS 1 //- Те инвесторы, которые приобретут токены в первые 2 дня должны получить скидку в 10%
         if ((now < startICOPlus2Days) && !_pre_calc) {
             // предполагается что скидка сохраняется только на покупки в указанный период
             newPrice = newPrice * 9 / 10;
         }
 
-        _token_count = _wei_amount / newPrice;
-        _wei_change = _wei_amount % newPrice; // сохраним сдачу
+        token_count_buyed = _wei_amount / newPrice;
+        if (token_count_buyed >  max_allowed) {// if reached limit
+            reachedLimit = true;
+            token_count_buyed = max_allowed;
+        }
 
-        //- Первые 5 покупателей получат 20% бонус в токенах как ранние инвесторы.
-        if (balanceOf[msg.sender] == 0) {// new buyer
+        // BONUS 2 //- Первые 5 покупателей получат 20% бонус в токенах как ранние инвесторы.
+        uint256 bonus2;
+        if (balanceOf[msg.sender] == 0) {
+            // new buyer
             if ((countOfFirstBuyers < limitOfFirstBuyers) && !_pre_calc) {
-                balanceOfBonusFirstBuyers[msg.sender] = _token_count * 2 / 10;
-                _token_count = _token_count +  balanceOfBonusFirstBuyers[msg.sender];
+                bonus2 = calcBonus2(token_count_buyed);
+                if (token_count_buyed + bonus2 > max_allowed) {// recalc
+                    fixTotal = token_count_buyed + bonus2 - max_allowed;
+                    (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
+                }
                 countOfFirstBuyers++;
             }
+        } else {
+            tokenExistsLeftWithoutBonus = balanceOfTokenBuyed[msg.sender] % 100;
+            //for bonus3
         }
 
-        //- Также необходимо предусмотреть начисление одного бонусного токена за каждые 100 купленных токенов.
+        // end BONUS 2
+
+        // BONUS 3 //- Также необходимо предусмотреть начисление одного бонусного токена за каждые 100 купленных токенов.
         //предполагается что подаренные по п2 считаются подарочными и в подсчете не учитываются
-        if (balanceOf[msg.sender] == 0) {// new buyer
-            _token_count += (_token_count - balanceOfBonusFirstBuyers[msg.sender]) / 100;
-        }else{
-            uint256 tokenExists = tokenReward.balanceOf(msg.sender); //balanceOfTest();
+        uint256 bonus3 = calcBonus3(tokenExistsLeftWithoutBonus, token_count_buyed);
+        if (token_count_buyed + bonus2 + bonus3 > max_allowed) {
+            // if reached limit
+            fixTotal = token_count_buyed + bonus2 + bonus3 - max_allowed;
+            (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
+            bonus3 = calcBonus3(tokenExistsLeftWithoutBonus, token_count_buyed);
+        }
+        // end BONUS 3
+        token_count_bonus = bonus2 + bonus3;
+
+        if (!_pre_calc) {// save
+            balanceOfTokenBonus[msg.sender] += token_count_bonus;
+            balanceOfTokenBuyed[msg.sender] += token_count_buyed;
         }
 
-        return (_token_count, _wei_change);
+        _wei_change = _wei_amount - (token_count_buyed * newPrice);
+        return (token_count_bonus + token_count_buyed, _wei_change);
+    }
+
+    function calcBonus2(uint256 buyed) returns (uint256 bonus2){
+        return buyed / 5;
+    }
+
+    function fixBonus2(uint256 fixTotal, uint256 bonus, uint256 buyed) returns (uint256 bonusFixed, uint256 buyedFixed){
+        if (fixTotal > 0) {// recalc
+            uint256 bonusFix = calcBonus2(fixTotal);
+            bonusFixed = bonus - bonusFix;
+            buyedFixed = buyed - fixTotal;
+            return (bonusFixed, buyedFixed);
+        }
+        return (bonus, buyed);
+    }
+
+    function calcBonus3(uint256 buyedWithoutBonus, uint256 buyed) returns (uint256 bonus3){
+        return (buyedWithoutBonus + buyed) / 100;
     }
 
     function() payable public {
