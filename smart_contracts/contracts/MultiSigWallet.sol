@@ -72,4 +72,8 @@ contract MultiSigWallet {
         ownerPart = this.balance/5;
         setOwnerCoinsPartStatus = true;
     }
+
+    function() payable public {
+
+    }
 }

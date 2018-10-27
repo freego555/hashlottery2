@@ -28,7 +28,6 @@ contract Crowdsale {
     bool isSetMultisig;
     
     event FundTransfer(address backer, uint256 amount, bool isContribution);
-    event Test(string info);
     
     constructor() public {
         owner = msg.sender;
@@ -204,7 +203,6 @@ contract Crowdsale {
     function invest() payable public {
         require(!isIcoEnd(), "You can't invest because ICO is ended"); // Триває ICO
         require(msg.value > 0, "You can't invest because value is 0");  // Отримані кошти?
-        emit Test('after require');
         uint256 buyer_wei = msg.value;             // Кількість відправлених коштів Покупцем
         uint256 actually_wei;                      // Кількість фактично отриманих коштів
         uint256 token_count;                    // Порахована кількість токенів
@@ -212,14 +210,13 @@ contract Crowdsale {
         uint256 wei_change;                     // Решта від відправлених коштів Покупця та фактичної вартості токенів
         (token_count, token_count_bonus, wei_change) = calcTokenAmount(buyer_wei, false); // Порахуй кількість токенів та решту коштів
 
-        if(token_count > 0){
-            balanceOfTokenBonus[msg.sender] += token_count_bonus;
-            balanceOfTokenBuyed[msg.sender] += token_count;
-            token_count+=token_count_bonus;
+        require(token_count > 0, "You can't invest because wei_amount less than price of one token");
 
-            if (countOfFirstBuyers < limitOfFirstBuyers) {
-                countOfFirstBuyers++;
-            }
+        balanceOfTokenBonus[msg.sender] += token_count_bonus;
+        balanceOfTokenBuyed[msg.sender] += token_count;
+        token_count+=token_count_bonus;
+        if (countOfFirstBuyers < limitOfFirstBuyers) {
+            countOfFirstBuyers++;
         }
 
         actually_wei = buyer_wei - wei_change;
@@ -230,7 +227,10 @@ contract Crowdsale {
         emit FundTransfer (msg.sender, actually_wei, true);
 
         multisigContractAddress.transfer(actually_wei); // Відправ кошти на Контракт MultiSig
-        msg.sender.transfer(wei_change);    // Відправ решту Покупцю
+
+        if (wei_change != 0) {
+            msg.sender.transfer(wei_change);    // Відправ решту Покупцю
+        }
     }
 
     function refund() public {

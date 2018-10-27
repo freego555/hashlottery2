@@ -2,10 +2,7 @@ var Crowdsale = artifacts.require("./Crowdsale.sol");
 var MultiSigWallet = artifacts.require("./MultiSigWallet.sol");
 
 contract('Crowdsale (NOT init)', function(accounts) {
-    //let numBefore = 0;
-    //let numBeforeEach = 0;
     var crowdsaleWithoutInit;
-    //var crowdsaleInitialized;
 
     var creator = accounts[0];
     var owner = accounts[0];

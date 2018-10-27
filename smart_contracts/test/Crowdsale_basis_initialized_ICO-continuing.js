@@ -1,31 +1,19 @@
 var Crowdsale = artifacts.require("./Crowdsale.sol");
-var MultiSigWallet = artifacts.require("./MultiSigWallet.sol");
 var TokenERC20 = artifacts.require("./TokenERC20.sol");
+var MultiSigWallet = artifacts.require("./MultiSigWallet.sol");
 
 const helper = require("./helpers/truffleTestHelper");
 
 contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
-    //var crowdsale;
-
     var owner = accounts[0];
     var investor = accounts[1];
-
-    //beforeEach(async function() {
-        //crowdsale = await Crowdsale.deployed();
-//        try {
-//            await crowdsale.init();
-//        } catch(e) {
-//            console.log('!!! Already INIT() !!!');
-//        }
-        //numBeforeEach++;
-    //})
 
     describe('Check init()', function() {
         it('startICO() should be more than 0', async function(){
             let crowdsale = await Crowdsale.deployed();
 
             let startICO = await crowdsale.startICO();
-            //console.log(numBeforeEach);
+
             assert.isTrue(startICO > 0, 'startICO() isn\'t more than 0');
         });
 
@@ -35,7 +23,6 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
             let startICO = await crowdsale.startICO();
             let startICOPlus2Days = await crowdsale.startICOPlus2Days();
             let twoDaysInSeconds = 24 * 2 * 60 * 60;
-            //console.log(numBeforeEach);
 
             startICO = startICO.plus(twoDaysInSeconds);
 
@@ -48,7 +35,6 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
             let startICO = await crowdsale.startICO();
             let deadline = await crowdsale.deadline();
             let sevenDaysInSeconds = 24 * 7 * 60 * 60;
-            //console.log(numBeforeEach);
 
             startICO = startICO.plus(sevenDaysInSeconds);
 
@@ -59,10 +45,6 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
             let crowdsale = await Crowdsale.deployed();
 
             let price = await crowdsale.price();
-            //console.log(numBeforeEach);
-
-//            console.log(price);
-//            console.log(web3.toWei(0.25));
 
             assert.isTrue(price == web3.toWei(0.25), 'price() isn\'t 0.25 Ether');
         });
@@ -70,21 +52,10 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
         it('amountTokensForSale() should be 40% of total supply of tokens', async function() {
             let crowdsale = await Crowdsale.deployed();
             token     = await TokenERC20.deployed();
-            //console.log(numBeforeEach);
 
             let amountTokensForSale = await crowdsale.amountTokensForSale();
             let totalSupply = await token.totalSupply();
             let checkAmountTokensForSale = Math.floor(totalSupply * 40 / 100);
-
-//            try {
-//                await crowdsale.init();
-//            } catch(e) {
-//                console.log('!!! Already INIT() !!!');
-//            }
-
-//            console.log(amountTokensForSale);
-//            console.log(totalSupply);
-//            console.log(checkAmountTokensForSale);
 
             assert.isTrue(amountTokensForSale == checkAmountTokensForSale, 'amountTokensForSale() isn\'t 40% of total supply of tokens');
         });
@@ -92,15 +63,10 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
         it('amountTokensForOwners() should be the rest of total supply of tokens after sale for investors', async function(){
             let crowdsale = await Crowdsale.deployed();
             token     = await TokenERC20.deployed();
-            //console.log(numBeforeEach);
 
             let amountTokensForOwners = await crowdsale.amountTokensForOwners();
             let totalSupply = await token.totalSupply();
             let checkAmountTokensForOwners = totalSupply - Math.floor(totalSupply * 40 / 100);
-
-//            console.log(amountTokensForOwners);
-//            console.log(totalSupply);
-//            console.log(checkAmountTokensForOwners);
 
             assert.isTrue(amountTokensForOwners == checkAmountTokensForOwners, 'amountTokensForOwners() isn\'t the rest of total supply of tokens after sale for investors');
         });
@@ -108,8 +74,6 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
         it('limitOfFirstBuyers() should be 5', async function(){
             let crowdsale = await Crowdsale.deployed();
             let limitOfFirstBuyers = await crowdsale.limitOfFirstBuyers();
-
-            //console.log(limitOfFirstBuyers);
 
             assert.isTrue(limitOfFirstBuyers == 5, 'limitOfFirstBuyers() isn\'t 5');
         });
@@ -129,39 +93,26 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
             assert.isTrue(isICOEnd == false, 'When tokens was NOT sold isIcoEnd() isn\'t false');
         });
 
-//        it('When some amount of tokens was sold isIcoEnd() should be false', async function(){
-//            let crowdsale = await Crowdsale.deployed();
-//            //let crowdsale = await Crowdsale.new();
-//
-////            try {
-////                await crowdsale.init();
-////            } catch(e) {
-////                console.log(e);
-////                console.log('!!! Already INIT() !!!');
-////            }
-//
-////            let owner = accounts[0];
-////            await crowdsale.send(web3.toWei(10), {from: owner})
-//
-//            let priceOfOneToken = web3.toWei(0.25);
-//            let test = web3.toWei(0.05);
-//            console.log(await crowdsale.amountTokensForSale());
-//            console.log(priceOfOneToken);
-//            console.log((20 * priceOfOneToken) + test);
-//            console.log(await crowdsale.calcTokenAmount((20 * priceOfOneToken) + test, false));
-//            await crowdsale.send(20 * priceOfOneToken, {from: investor});
-//
-//            console.log('test');
-//            let isICOEnd = await crowdsale.isIcoEnd();
-//            let amountOfSoldTokens = await crowdsale.amountOfSoldTokens();
-//            console.log(isICOEnd);
-//            console.log(amountOfSoldTokens);
-//            if (amountOfSoldTokens == 0) {
-//                throw Error('Amount of sold tokens is equal 0');
-//            }
-//
-//            assert.isTrue(isICOEnd == false, 'When some amount of tokens was sold isIcoEnd() isn\'t false');
-//        });
+        it('When some amount of tokens was sold isIcoEnd() should be false', async function(){
+            let crowdsale = await Crowdsale.deployed();
+
+            let priceOfOneToken = web3.toWei(0.25);
+
+//            console.log("balance investor: ", await web3.eth.getBalance(investor).toString(10));
+
+            await crowdsale.invest({from: investor, value: 20 * priceOfOneToken});
+
+//            console.log("balance multisig: ", await web3.eth.getBalance(MultiSigWallet.address).toString(10));
+//            console.log("balance investor: ", await web3.eth.getBalance(investor).toString(10));
+
+            let isICOEnd = await crowdsale.isIcoEnd();
+            let amountOfSoldTokens = await crowdsale.amountOfSoldTokens();
+            if (amountOfSoldTokens == 0) {
+                throw Error('Amount of sold tokens is equal 0');
+            }
+
+            assert.isTrue(isICOEnd == false, 'When some amount of tokens was sold isIcoEnd() isn\'t false');
+        });
 
 //        it('When tokens was sold isIcoEnd() should be true', async function(){
 //            let crowdsale = await Crowdsale.deployed();
