@@ -1,6 +1,6 @@
 var Crowdsale = artifacts.require("./Crowdsale.sol");
 var TokenERC20 = artifacts.require("./TokenERC20.sol");
-var MultiSigWallet = artifacts.require("./MultiSigWallet.sol");
+var MultiSigWallet = artifacts.require("./MultiSigWallet.sol"); // test
 
 const helper = require("./helpers/truffleTestHelper");
 

@@ -1,5 +1,4 @@
 var Crowdsale = artifacts.require("./Crowdsale.sol");
-var MultiSigWallet = artifacts.require("./MultiSigWallet.sol");
 
 contract('Crowdsale (NOT init)', function(accounts) {
     var crowdsaleWithoutInit;
@@ -10,31 +9,15 @@ contract('Crowdsale (NOT init)', function(accounts) {
 
     before(async function() {
         crowdsaleWithoutInit = await Crowdsale.new();
-        //crowdsaleInitialized = await Crowdsale.deployed();
-        //var multisig = await MultiSigWallet.deployed();
-        //numBefore++;
-    });
-
-    beforeEach(async function() {
-        //numBeforeEach++;
     });
 
     describe('Check first init in constructor', function() {
         it('Owner should be set', async function() {
-            //console.log("!!!!!!!!Number of before(): " + numBefore);
-            //console.log("!!!!!!!!Number of beforeEach(): " + numBeforeEach);
-            //await crowdsaleInitialized.setMultisig("0x2dbc56b412ef3f70bee2ef3662e850f49c831052");
-            //console.log(multisig.address);
-            //await crowdsaleInitialized.setMultisig(multisig.address);
-            //console.log(await crowdsaleInitialized.multisigContractAddress());
-
             let owner = await crowdsaleWithoutInit.owner();
             assert.isTrue(owner != 0x0, 'Owner is NOT set');
         });
 
-        it('Owner should be the account that create contract', async function() { // ???
-            //console.log("!!!!!!!!Number of beforeEach(): " + numBeforeEach);
-            //console.log(await crowdsaleInitialized.multisigContractAddress());
+        it('Owner should be the account that create contract', async function() {
             let owner = await crowdsaleWithoutInit.owner();
             assert.isTrue(owner == creator, 'Owner is NOT creator of contract');
         });
@@ -79,10 +62,6 @@ contract('Crowdsale (NOT init)', function(accounts) {
 
     describe('Check init()', function() {
         it('Check init() is available only for owner', async function() {
-            //console.log("!!!!!!!!Number of before(): " + numBefore);
-            //console.log("!!!!!!!!Number of beforeEach(): " + numBeforeEach);
-            //console.log(await crowdsaleInitialized.multisigContractAddress());
-
             try {
                 await crowdsaleWithoutInit.init({from: stranger});
             }
