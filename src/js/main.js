@@ -18,6 +18,22 @@ document.addEventListener("DOMContentLoaded", function(){
             button.innerHTML = 'Показать больше'
         }
     })
+
+    const keystoreInput = document.querySelector('#uploaded-file') ;
+    // keystoreInput.onchange = function(event) {
+    keystoreInput.addEventListener('change', () => {
+      // copied from getFileName
+      // var file = document.getElementById('uploaded-file').value;
+      // file = file.replace (/\\/g, '/').split('/').pop();
+      // document.getElementById('file-name').innerHTML = 'Имя файла: ' + file;
+
+
+      console.log('keystoreInput onchange');
+       var fileList = keystoreInput.files;
+       //TODO do something with fileList.
+      console.log(fileList);
+    });
+
 });
 
 // (function($) {
