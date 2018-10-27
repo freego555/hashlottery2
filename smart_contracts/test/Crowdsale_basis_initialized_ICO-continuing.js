@@ -76,15 +76,15 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
             let totalSupply = await token.totalSupply();
             let checkAmountTokensForSale = Math.floor(totalSupply * 40 / 100);
 
-            try {
-                await crowdsale.init();
-            } catch(e) {
-                console.log('!!! Already INIT() !!!');
-            }
+//            try {
+//                await crowdsale.init();
+//            } catch(e) {
+//                console.log('!!! Already INIT() !!!');
+//            }
 
-            console.log(amountTokensForSale);
-            console.log(totalSupply);
-            console.log(checkAmountTokensForSale);
+//            console.log(amountTokensForSale);
+//            console.log(totalSupply);
+//            console.log(checkAmountTokensForSale);
 
             assert.isTrue(amountTokensForSale == checkAmountTokensForSale, 'amountTokensForSale() isn\'t 40% of total supply of tokens');
         });
@@ -98,9 +98,9 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
             let totalSupply = await token.totalSupply();
             let checkAmountTokensForOwners = totalSupply - Math.floor(totalSupply * 40 / 100);
 
-            console.log(amountTokensForOwners);
-            console.log(totalSupply);
-            console.log(checkAmountTokensForOwners);
+//            console.log(amountTokensForOwners);
+//            console.log(totalSupply);
+//            console.log(checkAmountTokensForOwners);
 
             assert.isTrue(amountTokensForOwners == checkAmountTokensForOwners, 'amountTokensForOwners() isn\'t the rest of total supply of tokens after sale for investors');
         });
@@ -129,66 +129,69 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
             assert.isTrue(isICOEnd == false, 'When tokens was NOT sold isIcoEnd() isn\'t false');
         });
 
-        it('When some amount of tokens was sold isIcoEnd() should be false', async function(){
-            //let crowdsale = await Crowdsale.deployed();
-            let crowdsale = await Crowdsale.new();
-
-            try {
-                await crowdsale.init();
-            } catch(e) {
-                console.log(e);
-                console.log('!!! Already INIT() !!!');
-            }
-
-            let owner = accounts[0];
-            await crowdsale.send(web3.toWei(10), {from: owner})
-
-            let priceOfOneToken = web3.toWei(0.25);
+//        it('When some amount of tokens was sold isIcoEnd() should be false', async function(){
+//            let crowdsale = await Crowdsale.deployed();
+//            //let crowdsale = await Crowdsale.new();
+//
+////            try {
+////                await crowdsale.init();
+////            } catch(e) {
+////                console.log(e);
+////                console.log('!!! Already INIT() !!!');
+////            }
+//
+////            let owner = accounts[0];
+////            await crowdsale.send(web3.toWei(10), {from: owner})
+//
+//            let priceOfOneToken = web3.toWei(0.25);
+//            let test = web3.toWei(0.05);
+//            console.log(await crowdsale.amountTokensForSale());
 //            console.log(priceOfOneToken);
-//            console.log(20 * priceOfOneToken);
-            await crowdsale.send(20 * priceOfOneToken, {from: investor});
+//            console.log((20 * priceOfOneToken) + test);
+//            console.log(await crowdsale.calcTokenAmount((20 * priceOfOneToken) + test, false));
+//            await crowdsale.send(20 * priceOfOneToken, {from: investor});
+//
+//            console.log('test');
+//            let isICOEnd = await crowdsale.isIcoEnd();
+//            let amountOfSoldTokens = await crowdsale.amountOfSoldTokens();
+//            console.log(isICOEnd);
+//            console.log(amountOfSoldTokens);
+//            if (amountOfSoldTokens == 0) {
+//                throw Error('Amount of sold tokens is equal 0');
+//            }
+//
+//            assert.isTrue(isICOEnd == false, 'When some amount of tokens was sold isIcoEnd() isn\'t false');
+//        });
 
-            console.log('test');
-            let isICOEnd = await crowdsale.isIcoEnd();
-            let amountOfSoldTokens = await crowdsale.amountOfSoldTokens();
-            console.log(isICOEnd);
-            console.log(amountOfSoldTokens);
-            if (amountOfSoldTokens == 0) {
-                throw Error('Amount of sold tokens is equal 0');
-            }
-
-            assert.isTrue(isICOEnd == false, 'When some amount of tokens was sold isIcoEnd() isn\'t false');
-        });
-
-        it('When tokens was sold isIcoEnd() should be true', async function(){
-            let crowdsale = await Crowdsale.deployed();
-            //assert.isTrue(limitOfFirstBuyers == 5, ' isn\'t ');
-        });
+//        it('When tokens was sold isIcoEnd() should be true', async function(){
+//            let crowdsale = await Crowdsale.deployed();
+//            //assert.isTrue(limitOfFirstBuyers == 5, ' isn\'t ');
+//        });
     });
 
-    describe('Check isIcoFail()', function() {
-        it(' should be ', async function(){
-                //assert.isTrue(limitOfFirstBuyers == 5, ' isn\'t ');
-        });
-    });
-
-    describe('Check invest()', function() {
-        it(' should be ', async function(){
-                //assert.isTrue(limitOfFirstBuyers == 5, ' isn\'t ');
-        });
-    });
-
-    describe('Check distributeTokensAmongOwners()', function() {
-        it(' should be ', async function(){
-            //assert.isTrue(limitOfFirstBuyers == 5, ' isn\'t ');
-        });
-    });
-
-    describe('Check refund()', function() {
-        it(' should be ', async function(){
-                //assert.isTrue(limitOfFirstBuyers == 5, ' isn\'t ');
-        });
-    });
+//    describe('Check isIcoFail()', function() {
+//        it(' should be ', async function(){
+//                //assert.isTrue(limitOfFirstBuyers == 5, ' isn\'t ');
+//        });
+//    });
+//
+//    describe('Check invest()', function() {
+//        it(' should be ', async function(){
+//                //assert.isTrue(limitOfFirstBuyers == 5, ' isn\'t ');
+//        });
+//    });
+//
+//    describe('Check distributeTokensAmongOwners()', function() {
+//        it(' should be ', async function(){
+//            //assert.isTrue(limitOfFirstBuyers == 5, ' isn\'t ');
+//        });
+//    });
+//
+//    describe('Check refund()', function() {
+//        it(' should be ', async function(){
+//                //assert.isTrue(limitOfFirstBuyers == 5, ' isn\'t ');
+//        });
+//    });
 });
 
 //contract('Crowdsale (initialized and ICO is ended by time)', function(accounts) {

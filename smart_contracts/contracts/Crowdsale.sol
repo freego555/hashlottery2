@@ -118,13 +118,11 @@ contract Crowdsale {
      * @return _wei_change - сдача в wei(копейки)
      */
     function calcTokenAmount(uint256 _wei_amount, bool _pre_calc)
-    public returns (uint256 _token_count, uint256 _wei_change){
+    public view returns (uint256 token_count_buyed, uint256 token_count_bonus, uint256 _wei_change){
 
         require(isInit, "Crowdsale contract must be init");
 
         uint256 newPrice = price;
-        uint256 token_count_bonus = 0;
-        uint256 token_count_buyed = 0;
         bool reachedLimit = false;
         uint256 max_allowed = amountTokensForSale - amountOfSoldTokens;
         uint256 tokenExistsLeftWithoutBonus;
@@ -135,6 +133,10 @@ contract Crowdsale {
         if ((now < startICOPlus2Days) && !_pre_calc) {
             // предполагается что скидка сохраняется только на покупки в указанный период
             newPrice = newPrice * 9 / 10;
+        }
+
+        if(_wei_amount < newPrice){ // если не хватает денег на даже один токен
+            return (0, 0, _wei_amount);
         }
 
         token_count_buyed = _wei_amount / newPrice;
@@ -153,7 +155,6 @@ contract Crowdsale {
                     fixTotal = token_count_buyed + bonus2 - max_allowed;
                     (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
                 }
-                countOfFirstBuyers++;
             }
         } else {
             tokenExistsLeftWithoutBonus = balanceOfTokenBuyed[msg.sender] % 100;
@@ -174,14 +175,8 @@ contract Crowdsale {
         // end BONUS 3
         token_count_bonus = bonus2 + bonus3;
 
-        if (!_pre_calc) {// save
-            balanceOfTokenBonus[msg.sender] += token_count_bonus;
-            balanceOfTokenBuyed[msg.sender] += token_count_buyed;
-        }
-
         _wei_change = _wei_amount - (token_count_buyed * newPrice);
-        token_count_buyed += token_count_bonus;
-        return (token_count_buyed, _wei_change);
+        return (token_count_buyed, token_count_bonus, _wei_change);
     }
 
     function calcBonus2(uint256 buyed) private pure returns (uint256){
@@ -213,14 +208,24 @@ contract Crowdsale {
         uint256 buyer_wei = msg.value;             // Кількість відправлених коштів Покупцем
         uint256 actually_wei;                      // Кількість фактично отриманих коштів
         uint256 token_count;                    // Порахована кількість токенів
+        uint256 token_count_bonus;
         uint256 wei_change;                     // Решта від відправлених коштів Покупця та фактичної вартості токенів
-        emit Test('before calcTokenAmount()');
-        (token_count, wei_change) = calcTokenAmount(buyer_wei, false); // Порахуй кількість токенів та решту коштів
+        (token_count, token_count_bonus, wei_change) = calcTokenAmount(buyer_wei, false); // Порахуй кількість токенів та решту коштів
+
+        if(token_count > 0){
+            balanceOfTokenBonus[msg.sender] += token_count_bonus;
+            balanceOfTokenBuyed[msg.sender] += token_count;
+            token_count+=token_count_bonus;
+
+            if (countOfFirstBuyers < limitOfFirstBuyers) {
+                countOfFirstBuyers++;
+            }
+        }
+
         actually_wei = buyer_wei - wei_change;
 
         amountOfSoldTokens += token_count;             // Додай кількість зібраних коштів
         balanceOf[msg.sender] += actually_wei;         // Додай кількість до вкладених коштів Покупцем
-        emit Test('before tokenReward.transfer()');
         tokenReward.transfer(msg.sender, token_count); // Перерахуй кількість токенів на рахунок покупця
         emit FundTransfer (msg.sender, actually_wei, true);
 

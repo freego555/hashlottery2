@@ -27,16 +27,15 @@ module.exports = function (deployer) {
 
                             return sig.setCrowdSaleContractAddress(crowd.address).then(function () {
                                 console.log("Crowdsale set to MultiSigWallet success");
-                                    
-								crowd.init().then(function () {
-                                    console.log("Crowdsale init success");
-                                });
 
-                                token.supplyTokens(crowd.address).then(function () {
+                                return token.supplyTokens(crowd.address).then(function () {
                                     console.log("Supply tokens is success");
-								});
 
-								console.log("DONE -- DEPLOY -- DONE");
+                                    return crowd.init().then(function () {
+                                        console.log("Crowdsale init success");
+                                        console.log("DONE -- DEPLOY -- DONE");
+                                    });
+								});
                             });
                         })
 
