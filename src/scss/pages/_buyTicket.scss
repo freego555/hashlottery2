@@ -1,0 +1,151 @@
+.wrapLottery {
+  padding-bottom: 60px;
+  &.buyTicket {
+    .buyTicket__title {
+      @include title(20px, 600, 60px);
+    }
+  }
+  &__timer {
+    margin-bottom: 26px;
+    background-color: #ECECEC;
+    border-radius: 6px;
+    padding: 30px 0;
+    @include display-flex(column, center, center);
+    #clock {
+      display: flex;
+    }
+    .textTime {
+      font-size: 24px;
+      color: #272E40;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .semicolon {
+      color: #272E40;
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      right: -16px;
+      bottom: 15px;
+    }
+    .semicolonItem {
+      width: 8px;
+      height: 8px;
+      background: #272E40;
+      display: block;
+      border-radius: 50%;
+      margin-bottom: 12px;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    .subText {
+      font-weight: 500;
+      font-size: 12px;
+      color: #272E40;
+    }
+  }
+  .itemTime {
+    margin-right: 24px;
+    position: relative;
+    width: 60px;
+    height: 64px;
+    border-radius: 3px;
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  &__timer-title {
+    margin-bottom: 14px;
+    font-size: 18px;
+    color: #272E40;
+    font-weight: 500;
+    text-align: center;
+  }
+  &__textBold {
+    font-size: 18px;
+    color: #272E40;
+    font-weight: bold;
+    margin-bottom: 30px;
+    &.center {
+      text-align: center;
+    }
+    .price {
+      color: #E60041;
+    }
+  }
+  &__wrapSelect {
+    height: 50px;
+    margin-bottom: 30px;
+    .list {
+      width: 100%;
+    }
+    .select {
+      width: 100%;
+      height: 50px;
+    }
+    .nice-select {
+      position: relative;
+      border: none;
+      line-height: 50px;
+      background-color: #ECECEC;
+      border-radius: 5px;
+      color: #272E40;
+      font-size: 16px;
+      font-weight: 500;
+      &:after {
+        margin: 0;
+        width: 54px;
+        top: 0;
+        right: 0;
+        height: 50px;
+        border-radius: 0 5px 5px 0 ;
+        border: none;
+        transform: inherit;
+        background-color: $red;
+      }
+      &:before {
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        content: '';
+        width: 14px;
+        height: 20px;
+        z-index: 100;
+        background: url('/dist/img/iconSelect.png') no-repeat;
+        background-size: contain;
+      }
+    }
+  }
+  .lotteryMain__headText {
+    float: none;
+    max-width: 100%;
+    margin-bottom: 30px;
+    font-weight: bold;
+    font-size: 18px;
+  }
+  .redLink {
+    color:  $red;
+    text-decoration: underline;
+  }
+  &__wrapInputRow {
+    @include display-flex(row, space-between, inherit);
+    .inputRow {
+      max-width: 140px;
+    }
+  }
+  &__message {
+    font-size: 16px;
+    text-align: center;
+    color: $red;
+    font-weight: bold;
+    margin-bottom: 30px;
+    line-height: 24px;
+  }
+}
