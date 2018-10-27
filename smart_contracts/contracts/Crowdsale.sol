@@ -28,6 +28,7 @@ contract Crowdsale {
     bool isSetMultisig;
     
     event FundTransfer(address backer, uint256 amount, bool isContribution);
+    event Test(string info);
     
     constructor() public {
         owner = msg.sender;
@@ -80,8 +81,8 @@ contract Crowdsale {
         bool isOwnerOfICO = owners[msg.sender];
         bool isOwnerGetTokens = ownerGetTokens[msg.sender];
         require(isOwnerOfICO, "Only owner of ICO can call this");
-        require(isOwnerGetTokens, "Owner has already get tokens");
-        require(isIcoEnd(), "ICO has already end");
+        require(!isOwnerGetTokens, "Owner has already get tokens");
+        require(isIcoEnd(), "ICO isn't ended");
         require(!isIcoFail(), "ICO is failed");
 
         ownerGetTokens[msg.sender] = true;
@@ -206,17 +207,20 @@ contract Crowdsale {
     }
 
     function invest() payable public {
-        require(!isIcoEnd(), "ICO is ended"); // Триває ICO
-        require(msg.value > 0, "Value is 0");  // Отримані кошти?
-        uint buyer_wei = msg.value;             // Кількість відправлених коштів Покупцем
-        uint actually_wei;                      // Кількість фактично отриманих коштів
+        require(!isIcoEnd(), "You can't invest because ICO is ended"); // Триває ICO
+        require(msg.value > 0, "You can't invest because value is 0");  // Отримані кошти?
+        emit Test('after require');
+        uint256 buyer_wei = msg.value;             // Кількість відправлених коштів Покупцем
+        uint256 actually_wei;                      // Кількість фактично отриманих коштів
         uint256 token_count;                    // Порахована кількість токенів
         uint256 wei_change;                     // Решта від відправлених коштів Покупця та фактичної вартості токенів
+        emit Test('before calcTokenAmount()');
         (token_count, wei_change) = calcTokenAmount(buyer_wei, false); // Порахуй кількість токенів та решту коштів
         actually_wei = buyer_wei - wei_change;
 
         amountOfSoldTokens += token_count;             // Додай кількість зібраних коштів
         balanceOf[msg.sender] += actually_wei;         // Додай кількість до вкладених коштів Покупцем
+        emit Test('before tokenReward.transfer()');
         tokenReward.transfer(msg.sender, token_count); // Перерахуй кількість токенів на рахунок покупця
         emit FundTransfer (msg.sender, actually_wei, true);
 
