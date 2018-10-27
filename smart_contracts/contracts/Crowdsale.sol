@@ -64,15 +64,17 @@ contract Crowdsale {
         require(!isInit, "Crowdsale contract already init");
         require(isSetTokenReward, "Token isn't set");
         require(isSetMultisig, "Multisig isn't set");
+		uint256 totalSupply = tokenReward.totalSupply();
+   		require(totalSupply > 0, "Supply tokens is not done yet");
         
         isInit = true;
         startICO = now;
         startICOPlus2Days = startICO + 2 days;
         deadline = startICO + 7 days;
         price = 250000000000000000; // Цена в wei = 0.25ETH 
-        amountTokensForSale = tokenReward.totalSupply() * 40 / 100; // Отправим указанный процент токенов для продажи на crowdsale
+        amountTokensForSale = totalSupply * 40 / 100; // Отправим указанный процент токенов для продажи на crowdsale
      //   amountTokensForSale = 100000 * 40 / 100; // Отправим указанный процент токенов для продажи на crowdsale
-        amountTokensForOwners = tokenReward.totalSupply() - amountTokensForSale; // Остаток токенов равномерно распределим среди владельцев ICO при успешном окончании
+        amountTokensForOwners = totalSupply - amountTokensForSale; // Остаток токенов равномерно распределим среди владельцев ICO при успешном окончании
         limitOfFirstBuyers = 5; // фиксируем колво первых покупателей
     }
     
