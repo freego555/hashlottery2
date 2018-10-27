@@ -122,7 +122,7 @@ contract Crowdsale {
     function calcTokenAmount(uint256 _wei_amount, bool _pre_calc)
     public view returns (uint256 token_count_buyed, uint256 token_count_bonus, uint256 _wei_change){
 
-       // require(isInit, "Crowdsale contract must be init");
+        require(isInit, "Crowdsale contract must be init");
 
         uint256 newPrice = price;
         bool reachedLimit = false;
