@@ -106,7 +106,7 @@ contract TokenERC20 {
 
     function _transfer(address _from, address _to, uint _value) internal isMigrationNotRun() {
         require(balanceOf[_from] >= _value, "Not enough funds");
-        require(_to == address(0), "Try send funds to 0-address");
+        require(_to != address(0), "Try send funds to 0-address");
         balanceOf[_from] -= _value;
         balanceOf[_to] += _value;
         emit Transfer(_from, _to, _value);

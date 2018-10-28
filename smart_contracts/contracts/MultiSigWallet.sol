@@ -1,5 +1,6 @@
 pragma solidity ^0.4.24;
-import "./Crowdsale.sol";
+
+import './Crowdsale.sol';
 
 contract MultiSigWallet {
     
@@ -70,5 +71,9 @@ contract MultiSigWallet {
     function setOwnerCoinsPart() private isIcoEnd(true) {
         ownerPart = this.balance/5;
         setOwnerCoinsPartStatus = true;
+    }
+
+    function() payable public {
+
     }
 }
