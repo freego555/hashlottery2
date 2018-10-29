@@ -11,15 +11,15 @@ module.exports = function (deployer) {
         var token, crowd, sig;
 
         deployer.deploy(TokenERC20).then(function (i) {
-            token = i;
+            token = i; // get instance of TokenERC20
             console.log("TokenERC20 deployed success");
 
             return deployer.deploy(Crowdsale).then(function (i) {
-                crowd = i;
+                crowd = i; // get instance of Crowdsale
                 console.log("Crowdsale deployed success");
 
                 return deployer.deploy(MultiSigWallet).then(function (i) {
-                    sig = i;
+                    sig = i; // get instance of MultiSigWallet
                     console.log("MultiSigWallet deployed success");
 
                     return deployer.deploy(newTokenERC20).then(function (i) {
