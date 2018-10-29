@@ -64,8 +64,8 @@ contract Crowdsale {
         require(!isInit, "Crowdsale contract already init");
         require(isSetTokenReward, "Token isn't set");
         require(isSetMultisig, "Multisig isn't set");
-		uint256 totalSupply = tokenReward.totalSupply();
-   		require(totalSupply > 0, "Supply tokens is not done yet");
+        uint256 totalSupply = tokenReward.totalSupply();
+        require(totalSupply > 0, "Supply tokens is not done yet");
         
         isInit = true;
         startICO = now;

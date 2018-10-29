@@ -57,13 +57,13 @@ contract MultiSigWallet {
                 setOwnerCoinsPart();
             }
             msg.sender.transfer(ownerPart);
-            ownersGetCoins[msg.sender] == true;
+            ownersGetCoins[msg.sender] = true;
         }
     }
     
     // Call from terminal
     function setCrowdSaleContractAddress(address _crowdSaleContract) public onlyOwner() {
-        if(crowdSaleContract != address(0)){
+        if(crowdSaleContract == address(0)){
             crowdSaleContract = _crowdSaleContract;
         }
     }
