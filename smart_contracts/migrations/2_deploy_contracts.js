@@ -47,7 +47,7 @@ module.exports = function (deployer) {
                                                     console.log("Crowdsale init success");
                                                     console.log("DONE -- DEPLOY -- DONE");
                                                 });
-								            });
+                                            });
                                         });
                                     })
                                 });
