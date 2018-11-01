@@ -67,10 +67,10 @@ contract TokenERC20 {
     }
 
     // User calls function for migrate his tokens to new ERC20 token
-    function migrateTokens(uint _value) external 
-        isSetMigrationAgent() 
-        isValue(_value) 
-        isValueGTBalance(_value, msg.sender){
+    function migrateTokens(uint _value) external
+    isSetMigrationAgent()
+    isValue(_value)
+    isValueGTBalance(_value, msg.sender){
 
         balanceOf[msg.sender] -= _value;
         totalSupply -= _value;
