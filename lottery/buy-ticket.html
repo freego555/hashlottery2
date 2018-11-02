@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="msapplication-config" content="../browserconfig.xml" />
+  <meta(name="Highway Academy" content="Hash lottery" )/>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat+Alternates:400,500,600,700" rel="stylesheet">
+
+  <title>Buy a Ticket</title>
+
+  <link rel="manifest" href="../manifest.json">
+
+  <link rel="stylesheet" href="../css/font-awesome.css">
+  <link rel="stylesheet" href="../dist/css/app.css">
+</head>
+<body>
+  <div class="headerBar">
+    <div class="wrapper">
+      <img src="../img/cabinetLogo.png" alt="" class="headerBar__logo">
+    </div>
+  </div>
+  <div class="wrapLottery buyTicket">
+    <div class="wrapForm">
+      <p class="buyTicket__title border">
+        Покупка билетов
+      </p>
+      <div class="wrapLottery__timer">
+        <p class="wrapLottery__timer-title">
+          До окончания продажи
+        </p>
+        <div id="clock"></div>
+      </div>
+      <p class="wrapLottery__textBold">Стоимость билета: <span class="price">0000000000000000 </span>ЕТН</p>
+      <div class="inputRow">
+        <p class="inputRow__label">
+          Я хочу оплатить с этого кошелька
+        </p>
+        <div class="inputRow__wrapInput">
+          <input type="text" class="inputRow__itemInput">
+        </div>
+        <p class="errorText">Текст ошибки</p>
+      </div>
+      <div class="inputRow">
+        <p class="inputRow__label">
+          Я хочу купить билеты на сумму:
+        </p>
+        <div class="inputRow__wrapInput">
+          <input type="text" class="inputRow__itemInput">
+        </div>
+        <p class="errorText">Текст ошибки</p>
+      </div>
+      <p class="wrapLottery__textBold center">
+        Вы получите <span class="price">100</span> билетов
+      </p>
+      <div class="formShipment__footer">
+        <a href="#" class="button">
+          Купить
+        </a>
+        <a href="#" class="button cancel">
+          Отмена
+        </a>
+      </div>
+    </div>
+  </div>
+  <script src='../js/parts/jquery-3.2.1.min.js'></script>
+  <script src='../js/parts/jquery.countdown.min.js'></script>
+  <script src="../dist/js/app.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#clock').countdown('2020/10/10', function(event) {
+      var $this = $(this).html(event.strftime(''
+        + `<div class="itemTime">
+            <span class="textTime">%H</span>
+            <span class="subText">часов</span>
+            <span class="semicolon">
+              <span class="semicolonItem"></span>
+              <span class="semicolonItem"></span>
+            </span>
+          </div>`
+        + `<div class="itemTime">
+            <span class="textTime">%M</span>
+            <span class="subText">минут</span>
+            <span class="semicolon">
+              <span class="semicolonItem"></span>
+              <span class="semicolonItem"></span>
+            </span>
+          </div>`
+        + `<div class="itemTime">
+            <span class="textTime">%S</span>
+            <span class="subText">секунд</span>
+          </div>`));
+    });
+    });
+  </script>
+</body>
+</html>

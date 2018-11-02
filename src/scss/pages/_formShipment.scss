@@ -1,0 +1,79 @@
+.formShipment {
+  padding-top: 60px;
+  .wrapForm__form-title {
+    margin-bottom: 60px;
+  }
+  &__hash {
+    font-weight: 600;
+    color: #272E40;
+    font-size: 18px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  &__footer {
+    display: flex;
+    .button {
+      &:first-child {
+        margin-right: 10px;
+      }
+      &.cancel {
+        max-width: 182px;
+      }
+    }
+  }
+  &__labelRow {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    .inputRow__label {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.tooltip {
+  &__icon {
+    cursor: pointer;
+    position: relative;
+    vertical-align: middle;
+    width: 14px;
+    margin-left: 3px;
+    display: inline-block;
+    height: 16px;
+    background: url('/dist/img/iconTooltip.png') no-repeat;
+    background-size: contain;
+  }
+  &__content {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    padding: 12px;
+    width: 300px;
+    background: #272E40;
+    color: #fff;
+    border-radius: 3px;
+    display: none;
+    span {
+      font-family: "Montserrat Alternates";
+    }
+    &:after {
+      width: 10px;
+      height: 10px;
+      background: #272E40;
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+    }
+  }
+  &:hover {
+    .tooltip__content {
+      display: block;
+    }
+  }
+}

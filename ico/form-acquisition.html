@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="msapplication-config" content="./browserconfig.xml" />
+  <meta(name="Highway Academy" content="Hash lottery" )/>
+
+  <title>Form of Acquisition</title>
+
+  <link rel="manifest" href="../manifest.json">
+
+  <link rel="stylesheet" href="../css/font-awesome.css">
+   <link rel="stylesheet" href="../dist/css/app.css">
+</head>
+
+<body>
+  <section class="acquisition backgroundRed">
+    <div class="acquisition__wrap">
+      <div class="acquisition__head">
+        <a class="acquisition__logo" href="/">
+          <img class="acquisition__logo-img" src="../img/logo pink.svg" alt="company-logo">
+        </a>
+      </div>
+      <form class="acquisition--form">
+        <p class="acquisition--form__title">
+          Форма приобретения акций  
+        </p>
+        <p class="acquisition--form__text">
+          Укажите кошелек, с которого будут переведены средства
+        </p>
+        <div class="uploadRow">
+          <div class="file-upload">
+            <label>
+              <input type="file" name="file"  id="uploaded-file">
+              <span>Выбрать</span>
+            </label>
+          </div>
+          <div id="file-name">Файл не выбран</div>
+        </div>
+        <div class="inputRow">
+          <p class="inputRow__label">
+            Введите пароль
+          </p>
+          <div class="inputRow__wrapInput">
+            <input type="text" class="inputRow__itemInput">
+          </div>
+          <p class="errorText">Текст ошибки</p>
+        </div>
+        <div class="inputRow border">
+          <p class="inputRow__label">
+            Сколько средств вы хотите инвестировать?
+          </p>
+          <div class="inputRow__wrapInput">
+            <input type="text" class="inputRow__itemInput">
+          </div>
+          <p class="errorText">Текст ошибки</p>
+        </div>
+        <p class="acquisition__footer-text">Вы получите <span>100</span> акций</p>
+        <div class="acquisition__buttons">
+          <a href="notification-acquisition1.html" class="button">
+            Инвестировать
+          </a>
+          <a href="/" class="button cancel">
+            Отмена
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="../dist/js/app.js"></script>
+</body>
+
+</html>

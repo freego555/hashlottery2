@@ -64,14 +64,16 @@ contract Crowdsale {
         require(!isInit, "Crowdsale contract already init");
         require(isSetTokenReward, "Token isn't set");
         require(isSetMultisig, "Multisig isn't set");
+        uint256 totalSupply = tokenReward.totalSupply();
+        require(totalSupply > 0, "Supply tokens is not done yet");
         
         isInit = true;
         startICO = now;
         startICOPlus2Days = startICO + 2 days;
         deadline = startICO + 7 days;
-        price = 250000000000000000; // Цена в wei = 0.25ETH
-        amountTokensForSale = tokenReward.totalSupply() * 40 / 100; // Отправим указанный процент токенов для продажи на crowdsale
-        amountTokensForOwners = tokenReward.totalSupply() - amountTokensForSale; // Остаток токенов равномерно распределим среди владельцев ICO при успешном окончании
+        price = 250000000000000000; // Цена в wei = 0.25ETH 
+        amountTokensForSale = totalSupply * 40 / 100; // Отправим указанный процент токенов для продажи на crowdsale
+        amountTokensForOwners = totalSupply - amountTokensForSale; // Остаток токенов равномерно распределим среди владельцев ICO при успешном окончании
         limitOfFirstBuyers = 5; // фиксируем колво первых покупателей
     }
     
@@ -80,8 +82,8 @@ contract Crowdsale {
         bool isOwnerOfICO = owners[msg.sender];
         bool isOwnerGetTokens = ownerGetTokens[msg.sender];
         require(isOwnerOfICO, "Only owner of ICO can call this");
-        require(isOwnerGetTokens, "Owner has already get tokens");
-        require(isIcoEnd(), "ICO has already end");
+        require(!isOwnerGetTokens, "Owner has already get tokens");
+        require(isIcoEnd(), "ICO isn't ended");
         require(!isIcoFail(), "ICO is failed");
 
         ownerGetTokens[msg.sender] = true;
@@ -98,7 +100,7 @@ contract Crowdsale {
     }
     
     function isIcoEnd() public view returns(bool) {
-        return now > deadline || amountOfSoldTokens >= amountTokensForSale;
+        return isInit && (now > deadline || amountOfSoldTokens >= amountTokensForSale);
     }
     
     function isIcoFail() public view returns(bool) {
@@ -117,13 +119,11 @@ contract Crowdsale {
      * @return _wei_change - сдача в wei(копейки)
      */
     function calcTokenAmount(uint256 _wei_amount, bool _pre_calc)
-    public returns (uint256 _token_count, uint256 _wei_change){
+    public view returns (uint256 token_count_buyed, uint256 token_count_bonus, uint256 _wei_change){
 
         require(isInit, "Crowdsale contract must be init");
 
         uint256 newPrice = price;
-        uint256 token_count_bonus = 0;
-        uint256 token_count_buyed = 0;
         bool reachedLimit = false;
         uint256 max_allowed = amountTokensForSale - amountOfSoldTokens;
         uint256 tokenExistsLeftWithoutBonus;
@@ -134,6 +134,10 @@ contract Crowdsale {
         if ((now < startICOPlus2Days) && !_pre_calc) {
             // предполагается что скидка сохраняется только на покупки в указанный период
             newPrice = newPrice * 9 / 10;
+        }
+
+        if(_wei_amount < newPrice){ // если не хватает денег на даже один токен
+            return (0, 0, _wei_amount);
         }
 
         token_count_buyed = _wei_amount / newPrice;
@@ -152,7 +156,6 @@ contract Crowdsale {
                     fixTotal = token_count_buyed + bonus2 - max_allowed;
                     (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
                 }
-                countOfFirstBuyers++;
             }
         } else {
             tokenExistsLeftWithoutBonus = balanceOfTokenBuyed[msg.sender] % 100;
@@ -173,21 +176,15 @@ contract Crowdsale {
         // end BONUS 3
         token_count_bonus = bonus2 + bonus3;
 
-        if (!_pre_calc) {// save
-            balanceOfTokenBonus[msg.sender] += token_count_bonus;
-            balanceOfTokenBuyed[msg.sender] += token_count_buyed;
-        }
-
         _wei_change = _wei_amount - (token_count_buyed * newPrice);
-        token_count_buyed += token_count_bonus;
-        return (token_count_buyed, _wei_change);
+        return (token_count_buyed, token_count_bonus, _wei_change);
     }
 
-    function calcBonus2(uint256 buyed) private returns (uint256){
+    function calcBonus2(uint256 buyed) private pure returns (uint256){
         return buyed / 5;
     }
 
-    function fixBonus2(uint256 fixTotal, uint256 bonus, uint256 buyed) returns (uint256 bonusFixed, uint256 buyedFixed){
+    function fixBonus2(uint256 fixTotal, uint256 bonus, uint256 buyed) private pure returns (uint256 bonusFixed, uint256 buyedFixed){
         if (fixTotal > 0) {// recalc
             uint256 bonusFix = calcBonus2(fixTotal);
             bonusFixed = bonus - bonusFix;
@@ -197,7 +194,7 @@ contract Crowdsale {
         return (bonus, buyed);
     }
 
-    function calcBonus3(uint256 buyedWithoutBonus, uint256 buyed) private returns (uint256 bonus3){
+    function calcBonus3(uint256 buyedWithoutBonus, uint256 buyed) private pure returns (uint256 bonus3){
         return (buyedWithoutBonus + buyed) / 100;
     }
 
@@ -206,12 +203,24 @@ contract Crowdsale {
     }
 
     function invest() payable public {
-        require(!isIcoEnd() && msg.value > 0);  // Триває ICO та отримані кошти?
+        require(!isIcoEnd(), "You can't invest because ICO is ended"); // Триває ICO
+        require(msg.value > 0, "You can't invest because value is 0");  // Отримані кошти?
         uint256 buyer_wei = msg.value;             // Кількість відправлених коштів Покупцем
         uint256 actually_wei;                      // Кількість фактично отриманих коштів
         uint256 token_count;                    // Порахована кількість токенів
+        uint256 token_count_bonus;
         uint256 wei_change;                     // Решта від відправлених коштів Покупця та фактичної вартості токенів
-        (token_count, wei_change) = calcTokenAmount(buyer_wei, false); // Порахуй кількість токенів та решту коштів
+        (token_count, token_count_bonus, wei_change) = calcTokenAmount(buyer_wei, false); // Порахуй кількість токенів та решту коштів
+
+        require(token_count > 0, "You can't invest because wei_amount less than price of one token");
+
+        balanceOfTokenBonus[msg.sender] += token_count_bonus;
+        balanceOfTokenBuyed[msg.sender] += token_count;
+        token_count+=token_count_bonus;
+        if ((countOfFirstBuyers < limitOfFirstBuyers) && (balanceOf[msg.sender] == 0)) {
+            countOfFirstBuyers++;
+        }
+
         actually_wei = buyer_wei - wei_change;
 
         amountOfSoldTokens += token_count;             // Додай кількість зібраних коштів
@@ -220,13 +229,17 @@ contract Crowdsale {
         emit FundTransfer (msg.sender, actually_wei, true);
 
         multisigContractAddress.transfer(actually_wei); // Відправ кошти на Контракт MultiSig
-        msg.sender.transfer(wei_change);    // Відправ решту Покупцю
+
+        if (wei_change != 0) {
+            msg.sender.transfer(wei_change);    // Відправ решту Покупцю
+        }
     }
 
     function refund() public {
-        require(isIcoFail());
+        uint valueToRefund = balanceOf[msg.sender]; // Sum for refund to investor
+        require(isIcoFail(), "ICO isn't failed");
+        require(valueToRefund != 0, "Balance is 0");
 
-        uint valueToRefund = balanceOf[msg.sender]; // Сумма для возврата инвестору
         balanceOf[msg.sender] = 0;
 
         multisigContract.getCoinsAfterNegativeIco(msg.sender, valueToRefund); // Инициируем возврат средств инвестору c multisig-контракта

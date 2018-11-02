@@ -1,5 +1,6 @@
 pragma solidity ^0.4.24;
-import "./Crowdsale.sol";
+
+import './Crowdsale.sol';
 
 contract MultiSigWallet {
     
@@ -56,13 +57,13 @@ contract MultiSigWallet {
                 setOwnerCoinsPart();
             }
             msg.sender.transfer(ownerPart);
-            ownersGetCoins[msg.sender] == true;
+            ownersGetCoins[msg.sender] = true;
         }
     }
     
     // Call from terminal
     function setCrowdSaleContractAddress(address _crowdSaleContract) public onlyOwner() {
-        if(crowdSaleContract != address(0)){
+        if(crowdSaleContract == address(0)){
             crowdSaleContract = _crowdSaleContract;
         }
     }
@@ -70,5 +71,9 @@ contract MultiSigWallet {
     function setOwnerCoinsPart() private isIcoEnd(true) {
         ownerPart = this.balance/5;
         setOwnerCoinsPartStatus = true;
+    }
+
+    function() payable public {
+
     }
 }
