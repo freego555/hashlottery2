@@ -22,9 +22,10 @@ module.exports = {
             network_id: "*" // Match any network id
         },
         production: {
-            host: "127.0.0.1",
+            host: "localhost",
             port: 8545,
-            network_id: "29092018"
+            network_id: 29092018,
+            gas: 4600000,
         }
     }
 };

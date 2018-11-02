@@ -48,10 +48,10 @@ contract MigrationAgent {
         owner = msg.sender;
     }
 
-    function startMigrationFrom(address _oldToken, address _newToken) public 
-    onlyOwner() 
-    isNotSetOldToken() 
-    isNotSetNewToken() 
+    function startMigrationFrom(address _oldToken, address _newToken) public
+    onlyOwner()
+    isNotSetOldToken()
+    isNotSetNewToken()
     isNotFinalizeMigration(){
         oldToken = _oldToken;
         totalSupply = TokenERC20(_oldToken).totalSupply();
@@ -62,14 +62,14 @@ contract MigrationAgent {
     }
 
     function isTotalSumValid(uint _value) private view{
-        require(TokenERC20(oldToken).totalSupply() + newTokenERC20(newToken).totalSupply() != totalSupply - _value, "");
+        require(TokenERC20(oldToken).totalSupply() + newTokenERC20(newToken).totalSupply() == totalSupply - _value, "");
     }
 
-    function migrateFrom(address _from, uint256 _value) public 
-        isNotFinalizeMigration()
-        isCallFromOldToken(msg.sender)
-        isSetOldToken()
-        isSetNewToken(){
+    function migrateFrom(address _from, uint256 _value) public
+    isNotFinalizeMigration()
+    isCallFromOldToken(msg.sender)
+    isSetOldToken()
+    isSetNewToken(){
 
         isTotalSumValid(_value);
         newTokenERC20(newToken).createTokens(_from, _value);
