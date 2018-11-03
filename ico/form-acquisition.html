@@ -36,7 +36,7 @@
         <div class="uploadRow">
           <div class="file-upload">
             <label>
-              <input type="file" name="file"  id="uploaded-file">
+              <input type="file" name="file" id="uploaded-file-ico">
               <span>Выбрать</span>
             </label>
           </div>
@@ -47,7 +47,7 @@
             Введите пароль
           </p>
           <div class="inputRow__wrapInput">
-            <input type="text" class="inputRow__itemInput">
+            <input type="text" id="keystore_password" class="inputRow__itemInput">
           </div>
           <p class="errorText">Текст ошибки</p>
         </div>
@@ -72,6 +72,9 @@
       </div>
     </div>
   </section>
+  <div class="loader" style="display:none">
+    <img src="/dist/img/loader.png" alt="" class="loader__img">
+  </div>
   <script src="/dist/js/app.js"></script>
 </body>
 

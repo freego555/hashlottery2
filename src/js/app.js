@@ -18,6 +18,8 @@ if (typeof window.web3 !== 'undefined') {
     window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 }
 
+function test() {
+
 var TokenERC20 = new window.web3.eth.Contract(tokenAbi, '0x1ac6c8469d54e008f8398eaaef07dd95ab8388cd', {
     from: '0xf7a67efba2a97f86228a7e36b996b34e0a417763', // default from address
     gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
@@ -32,6 +34,7 @@ TokenERC20.methods.balanceOf('0xc1fd2bf5f3f9c8f0ba39557dc5d93c13d5d1095d').call(
 
 //console.log('account', window.accountObject)
 
+}
 
 /** Identification Page */
 
@@ -39,11 +42,11 @@ TokenERC20.methods.balanceOf('0xc1fd2bf5f3f9c8f0ba39557dc5d93c13d5d1095d').call(
 $(document).ready(function() {
     const reader = new FileReader()
     console.log('ready', reader)
-
-    document.getElementById('uploaded-file').addEventListener('change', e => {
-        const val = document.getElementById('uploaded-file').file
-        console.log('val', val)
-    })
+    //
+    // document.getElementById('uploaded-file').addEventListener('change', e => {
+    //     const val = document.getElementById('uploaded-file').file
+    //     console.log('val', val)
+    // })
 
 })
 

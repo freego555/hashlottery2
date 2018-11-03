@@ -13,6 +13,7 @@ module.exports = {
     entry: {
         app: [
             './js/app.js',
+            './js/ico.js',
             './scss/main.scss'
         ]
     },
