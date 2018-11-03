@@ -1,4 +1,5 @@
 import Web3 from 'web3'
+import adresses from '../../smart_contracts/conract_addresses'
 import TokenERC20JSON from '../../smart_contracts/build/contracts/TokenERC20'
 
 const tokenAbi = TokenERC20JSON.abi
@@ -18,7 +19,7 @@ if (typeof window.web3 !== 'undefined') {
     window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 }
 
-var TokenERC20 = new window.web3.eth.Contract(tokenAbi, '0x1ac6c8469d54e008f8398eaaef07dd95ab8388cd', {
+var TokenERC20 = new window.web3.eth.Contract(tokenAbi, adresses.tokenERC20, {
     from: '0xf7a67efba2a97f86228a7e36b996b34e0a417763', // default from address
     gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
 });
@@ -26,11 +27,11 @@ var TokenERC20 = new window.web3.eth.Contract(tokenAbi, '0x1ac6c8469d54e008f8398
 console.log('web3v', window.web3.version)
 console.log('TokenERC20', TokenERC20)
 
-TokenERC20.methods.balanceOf('0xc1fd2bf5f3f9c8f0ba39557dc5d93c13d5d1095d').call().then(receipt => console.log('Result:', receipt))
+TokenERC20.methods.balanceOf(adresses.crowdSale).call().then(receipt => console.log('Result:', receipt))
 
-//window.accountObject = window.web3.eth.accounts.decrypt({"address":"f7a67efba2a97f86228a7e36b996b34e0a417763","crypto":{"cipher":"aes-128-ctr","ciphertext":"782e36ba5fb3d13f33ed34bf6afb5c3f280fa04397970123f34dc709faa6567f","cipherparams":{"iv":"b3f097c743863cb249b2add8409cb5c9"},"kdf":"scrypt","kdfparams":{"dklen":32,"n":262144,"p":1,"r":8,"salt":"66ce03a42a37b9d9bd6b6570bf04b76c7113b506eadcc413277b70749cc70c9b"},"mac":"8a7ef8c6f525454c11dd4219217664c97f8aee6f7e2a4d7000812775de642f95"},"id":"1eee9865-47bc-46c3-87d6-9c0f2f265f13","version":3}, 'kos542910')
+window.accountObject = window.web3.eth.accounts.decrypt({"address":"f7a67efba2a97f86228a7e36b996b34e0a417763","crypto":{"cipher":"aes-128-ctr","ciphertext":"782e36ba5fb3d13f33ed34bf6afb5c3f280fa04397970123f34dc709faa6567f","cipherparams":{"iv":"b3f097c743863cb249b2add8409cb5c9"},"kdf":"scrypt","kdfparams":{"dklen":32,"n":262144,"p":1,"r":8,"salt":"66ce03a42a37b9d9bd6b6570bf04b76c7113b506eadcc413277b70749cc70c9b"},"mac":"8a7ef8c6f525454c11dd4219217664c97f8aee6f7e2a4d7000812775de642f95"},"id":"1eee9865-47bc-46c3-87d6-9c0f2f265f13","version":3}, 'kos542910')
 
-//console.log('account', window.accountObject)
+console.log('account', window.accountObject)
 
 
 /** Identification Page */
