@@ -5,71 +5,67 @@ import Web3 from 'web3'
 // import CrowdsaleJSON from '../../smart_contracts/build/contracts/Crowdsale'
 // const CrowdsaleAbi = CrowdsaleJSON.abi
 
-
 var Crowdsale_address = '0x8cdb757f8eadac1dbe5062240cd8c920d8e4303a' // from test local
 
 /**
  * connect
  */
 if (typeof window.web3 !== 'undefined') {
-  console.log("Using web3 detected from external source like Metamask");
+  console.log('Using web3 detected from external source like Metamask')
   window.web3 = new Web3(window.web3.currentProvider)
 } else {
-  console.log("Using localhost");
+  console.log('Using localhost')
   // Set the provider you want from Web3.providers
   window.web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:8545'))
 }
 
 /** Identification Page */
 
-function invest () {
+function invest (moneyEth) {
   console.log('invest inside')
 
   // var privateKeySaved = sessionStorage.getItem('privateKey');
-  var privateKeySaved = '0xa95fcd0643446b359ef39e35a22316380c4a9fe52201fceba095e33677efddbc'; // from local
-  var privateKeySaved = 'e331b6d69882b4cb4ea581d88e0b604039a3de5967688d3dcffdd2270c0fd109'; // from local
-  // var addressSaved = sessionStorage.getItem('address');
+  // var privateKeySaved = '0xa95fcd0643446b359ef39e35a22316380c4a9fe52201fceba095e33677efddbc' // from local
+  // var privateKeySaved = 'e331b6d69882b4cb4ea581d88e0b604039a3de5967688d3dcffdd2270c0fd109' // from local
+  // var addressSaved = sessionStorage.getItem('address')
 
-
-  var Tx = require('ethereumjs-tx');
+  var Tx = require('ethereumjs-tx')
   var privateKey = new Buffer('a95fcd0643446b359ef39e35a22316380c4a9fe52201fceba095e33677efddbc', 'hex')
 
-  // web3.eth.sendTransaction({
-  //   from: '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe',
-  //   to: '0x11f4d0A3c12e86B4b5F39B213F7E19D048276DAe',
-  //   value: '1000000000000000'
-  // })
+  window.web3.eth.getTransactionCount(Crowdsale_address)
+    .then(console.log);
+
+  let value = window.web3.utils.toWei(moneyEth)
+  console.log('money value Wei', value)
 
   var rawTx = {
-    nonce: '0x11',
+    nonce: '0x17',
     gasPrice: '0x09184e72a000',
     gasLimit: '0x2710',
     to: Crowdsale_address,
-    value: '0x1000001000000000',
+    value: '0x' + value,
     // data: '0x7f7465737432000000000000000000000000000000000000000000000000000000600057'
   }
 
-  var tx = new Tx(rawTx);
-  tx.sign(privateKey);
+  var tx = new Tx(rawTx)
+  tx.sign(privateKey)
 
-  var serializedTx = tx.serialize();
-
-// console.log(serializedTx.toString('hex'));
-// 0xf889808609184e72a00082271094000000000000000000000000000000000000000080a47f74657374320000000000000000000000000000000000000000000000000000006000571ca08a8bbf888cfa37bbf0bb965423625641fc956967b81d12e23709cead01446075a01ce999b56a8a88504be365442ea61239198e23d1fce7d00fcfc5cd3b44b7215f
+  var serializedTx = tx.serialize()
 
   window.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
-    .on('receipt', console.log);
+    .on('receipt', console.log)
 
- // see eth.getTransactionReceipt() for details
+  // see eth.getTransactionReceipt() for details
 
 }
 
 $(document).ready(function () {
 
+
   // console.log('ready', reader)
 
-  // var privateKeySaved = sessionStorage.getItem('privateKey');
-  // var addressSaved = sessionStorage.getItem('address');
+  var privateKeySaved = sessionStorage.getItem('privateKey')
+  var addressSaved = sessionStorage.getItem('address')
   //
   // if(typeof privateKeySaved != 'undefined' && typeof addressSaved != 'undefined'){
   //
@@ -112,11 +108,24 @@ $(document).ready(function () {
    * invest button
    */
   var investButton = document.getElementById('authorize'),
-    passwordInput = document.getElementById('keystore_password')
+    passwordInput = document.getElementById('keystore_password'),
+    moneyInput = document.getElementById('eth_amount')
 
   if (investButton) {
     investButton.addEventListener('click', function (e) {
       e.preventDefault()
+
+      if (typeof privateKeySaved != 'undefined') {
+
+        $.when()
+          .then(function () {
+            let ethAmount = moneyInput.value
+            invest(ethAmount)
+          })
+
+        return
+      }
+
       if (typeof keyStoreFormatted == 'undefined') {
         alert('keystore file not set')
         return
@@ -147,7 +156,7 @@ $(document).ready(function () {
 
       }).then(function () {
 
-        invest();
+        invest()
 
       }).catch(function (e) {
 
