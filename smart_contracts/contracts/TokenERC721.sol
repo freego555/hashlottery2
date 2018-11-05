@@ -5,7 +5,7 @@ contract TokenERC721 {
     string public symbol;
     uint256 public totalSupply;
     uint16 public allowedToMintInOneTransaction = 1000;
-    mapping(uint256 => uint256) public totalTicketsInDraw; // [draw] = amount of tickets // ??? Добавил это поле, т.к. в SGH41 есть пункт "Количество выпущенных билетов в розыгрыше"
+    mapping(uint256 => uint256) public totalTicketsInDraw; // [draw] = amount of tickets
     mapping(address => uint256) public balanceOf; // [owner] = tokenId
     mapping(uint256 => address) public ownerOf; // [tokenId] = owner of token
     mapping(address => mapping(uint256 => uint256)) public tokenOfOwnerByIndex; //[owner][index] = tokenId
@@ -36,7 +36,7 @@ contract TokenERC721 {
         isSetAddressOfContractTicketsSale = true;
     }
 
-    function mint(address _owner, uint256 _amountOfTokens, uint256 _numberOfDraw) public { // ??? Эта функция может вызываться только контрактом продажи билетов?
+    function mint(address _owner, uint256 _amountOfTokens, uint256 _numberOfDraw) public {
         require(isSetAddressOfContractTicketsSale, "Address of the contract TicketsSale doesn't set yet.");
         require(msg.sender == addressOfContractTicketsSale, "Sender should be the contract TicketsSale.");
         require(_owner != address(0), "Owner cannot be 0.");
