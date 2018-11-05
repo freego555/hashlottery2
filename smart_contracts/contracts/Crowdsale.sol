@@ -23,7 +23,7 @@ contract Crowdsale {
     mapping(address => bool) public owners;
     mapping(address => bool) public ownerGetTokens;
     bool isFirstOwnerGetRestTokens; // один из владельцев ICO уже забрал вероятный остаток от деления на 5
-    bool isInit;
+    bool public isInit;
     bool isSetTokenReward;
     bool isSetMultisig;
     

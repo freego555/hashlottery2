@@ -1,7 +1,7 @@
 const contractAddresses = {
-    tokenERC20: '0x1ac6c8469d54e008f8398eaaef07dd95ab8388cd',
-    crowdSale: '0xc1fd2bf5f3f9c8f0ba39557dc5d93c13d5d1095d',
-    multiSig: '0x0c0c48a9e8d12ac10e1d586d217bd8fecbd417cb'
+    tokenERC20: '0x35ffc4418de58b0b1e63c9b1a8f36439e339414e',
+    crowdSale: '0xcc9e9b9d03db958fe75dfdc4a694563243f084b0',
+    multiSig: '0x84d48b91cee0450cbff73dac9b8120b656ea7418'
 }
 
 export default contractAddresses;

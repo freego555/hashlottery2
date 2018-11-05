@@ -6,8 +6,8 @@ contract MultiSigWallet {
     
     mapping(address => bool) public owners;
     mapping(address => bool) public ownersGetCoins;
-    address crowdSaleContract;
-    address owner;
+    address public crowdSaleContract;
+    address public owner;
     uint ownerPart;
     bool setOwnerCoinsPartStatus  = false;
     
