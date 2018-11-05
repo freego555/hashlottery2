@@ -1,8 +1,10 @@
 import Web3 from 'web3'
 import adresses from '../../smart_contracts/conract_addresses'
 import TokenERC20JSON from '../../smart_contracts/build/contracts/TokenERC20'
+import CrowdSaleJSON from '../../smart_contracts/build/contracts/Crowdsale'
 
 const tokenAbi = TokenERC20JSON.abi
+const crowdsaleAbi = CrowdSaleJSON.abi
 
 /**
  *
@@ -14,9 +16,11 @@ const tokenAbi = TokenERC20JSON.abi
 
 if (typeof window.web3 !== 'undefined') {
     window.web3 = new Web3(web3.currentProvider);
+  console.log('Using web3 detected from external source like Metamask')
 } else {
-    // Set the provider you want from Web3.providers
-    window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+  console.log('Using ', addresses.host)
+  // Set the provider you want from Web3.providers
+  window.web3 = new Web3(new Web3.providers.HttpProvider(addresses.host))
 }
 
 var TokenERC20 = new window.web3.eth.Contract(tokenAbi, adresses.tokenERC20, {
@@ -38,12 +42,12 @@ console.log('account', window.accountObject)
 /** Identification Page */
 
 
-$(document).ready(function() {
-    const reader = new FileReader()
+$(document).ready(function () {
+  const reader = new FileReader()
     console.log('ready', reader)
-    //
-    // document.getElementById('uploaded-file').addEventListener('change', e => {
-    //     const val = document.getElementById('uploaded-file').file
+  //
+  // document.getElementById('uploaded-file').addEventListener('change', e => {
+  //     const val = document.getElementById('uploaded-file').file
     //     console.log('val', val)
     // })
 

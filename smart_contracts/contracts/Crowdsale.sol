@@ -119,7 +119,7 @@ contract Crowdsale {
      * @return _wei_change - сдача в wei(копейки)
      */
     function calcTokenAmount(uint256 _wei_amount, bool _pre_calc)
-    public view returns (uint256 token_count_buyed, uint256 token_count_bonus, uint256 _wei_change){
+    public view returns (uint256 token_count_buyed, uint256 token_count_bonus, uint256 _wei_change, uint256 bonuses){
 
         require(isInit, "Crowdsale contract must be init");
 
@@ -134,10 +134,11 @@ contract Crowdsale {
         if ((now < startICOPlus2Days) && !_pre_calc) {
             // предполагается что скидка сохраняется только на покупки в указанный период
             newPrice = newPrice * 9 / 10;
+            bonuses += 100;
         }
 
         if(_wei_amount < newPrice){ // если не хватает денег на даже один токен
-            return (0, 0, _wei_amount);
+            return (0, 0, _wei_amount, 0);
         }
 
         token_count_buyed = _wei_amount / newPrice;
@@ -156,6 +157,7 @@ contract Crowdsale {
                     fixTotal = token_count_buyed + bonus2 - max_allowed;
                     (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
                 }
+                bonuses += 20;
             }
         } else {
             tokenExistsLeftWithoutBonus = balanceOfTokenBuyed[msg.sender] % 100;
@@ -173,11 +175,14 @@ contract Crowdsale {
             (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
             bonus3 = calcBonus3(tokenExistsLeftWithoutBonus, token_count_buyed);
         }
+        if (bonus3 > 0) {
+            bonuses += 3;
+        }
         // end BONUS 3
         token_count_bonus = bonus2 + bonus3;
 
         _wei_change = _wei_amount - (token_count_buyed * newPrice);
-        return (token_count_buyed, token_count_bonus, _wei_change);
+        return (token_count_buyed, token_count_bonus, _wei_change, bonuses);
     }
 
     function calcBonus2(uint256 buyed) private pure returns (uint256){
@@ -210,7 +215,7 @@ contract Crowdsale {
         uint256 token_count;                    // Порахована кількість токенів
         uint256 token_count_bonus;
         uint256 wei_change;                     // Решта від відправлених коштів Покупця та фактичної вартості токенів
-        (token_count, token_count_bonus, wei_change) = calcTokenAmount(buyer_wei, false); // Порахуй кількість токенів та решту коштів
+        (token_count, token_count_bonus, wei_change, ) = calcTokenAmount(buyer_wei, false); // Порахуй кількість токенів та решту коштів
 
         require(token_count > 0, "You can't invest because wei_amount less than price of one token");
 
