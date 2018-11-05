@@ -4,38 +4,63 @@ contract TokenERC721 {
     string public name;
     string public symbol;
     uint256 public totalSupply;
+    uint16 public allowedToMintInOneTransaction = 1000;
+    mapping(uint256 => uint256) public totalTicketsInDraw; // [draw] = amount of tickets // ??? Добавил это поле, т.к. в SGH41 есть пункт "Количество выпущенных билетов в розыгрыше"
     mapping(address => uint256) public balanceOf; // [owner] = tokenId
     mapping(uint256 => address) public ownerOf; // [tokenId] = owner of token
     mapping(address => mapping(uint256 => uint256)) public tokenOfOwnerByIndex; //[owner][index] = tokenId
     mapping(uint256 => uint256) public indexOfTokenForOwner; // [tokenId] = position in user's wallet
     mapping(address => mapping(uint256 => address)) public allowance; // [owner][tokenId] = reciever
     mapping(uint256 => bool) public tokenExists; // [tokenId] = token is exist
-    mapping(address => mapping(uint256 => uint16[3])) public combinationOfLotteryTicketOfOwner; // [owner][tokenId] = combination of lottery ticket
+    mapping(address => mapping(uint256 => uint8[3])) public combinationOfLotteryTicketOfOwner; // [owner][tokenId] = combination of lottery ticket
 
     address public admin;
+    address public addressOfContractTicketsSale;
+    bool public isSetAddressOfContractTicketsSale;
 
     event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);
     event Approval(address indexed _owner, address indexed _approved, uint256 _tokenId);
+    event Mint(address _owner, uint16 _amountOfTokens);
 
     constructor() public {
-        admin = msg.sender;
         name = "hashlottery2";
         symbol = "HL2";
+        admin = msg.sender;
     }
 
-    function mint(address _owner, uint256 _tokenId) public {
+    function setAddressOfContractTicketsSale(address _address) public {
         require(msg.sender == admin, "Only admin of contract can call this.");
-        require(!tokenExists[_tokenId], "Token by id has already exist."); //require(!tokenExists[_tokenId], "Token by id " + _tokenId + "has already exist.");
-        require(_owner != address(0), "Owner cannot be 0");
+        require(!isSetAddressOfContractTicketsSale, "Address of contract TicketsSale already set.");
 
-        uint256 indexOfNextToken = balanceOf[_owner];
+        addressOfContractTicketsSale = _address;
+        isSetAddressOfContractTicketsSale = true;
+    }
 
-        totalSupply += 1;
-        tokenExists[_tokenId] = true;
-        ownerOf[_tokenId] = _owner;
-        tokenOfOwnerByIndex[_owner][indexOfNextToken] = _tokenId;
-        indexOfTokenForOwner[_tokenId] = indexOfNextToken;
-        balanceOf[_owner] += 1;
+    function mint(address _owner, uint256 _amountOfTokens, uint256 _numberOfDraw) public { // ??? Эта функция может вызываться только контрактом продажи билетов?
+        require(isSetAddressOfContractTicketsSale, "Address of the contract TicketsSale doesn't set yet.");
+        require(msg.sender == addressOfContractTicketsSale, "Sender should be the contract TicketsSale.");
+        require(_owner != address(0), "Owner cannot be 0.");
+        require(_amountOfTokens <= allowedToMintInOneTransaction, "Owner cannot mint more than 1000 tickets in one transaction.");
+
+        uint256 indexOfNextToken = balanceOf[_owner]; // index to put to tokenOfOwnerByIndex, indexOfTokenForOwner
+        uint256 idOfNextToken = totalSupply + 1; // id to use as current tokenId
+        uint256 idOfEndToken = idOfNextToken + _amountOfTokens - 1;
+
+        // release specified amount of tickets
+        for (; idOfNextToken <= idOfEndToken; idOfNextToken++) {
+            tokenExists[idOfNextToken] = true;
+            ownerOf[idOfNextToken] = _owner;
+
+            tokenOfOwnerByIndex[_owner][indexOfNextToken] = idOfNextToken;
+            indexOfTokenForOwner[idOfNextToken] = indexOfNextToken;
+            indexOfNextToken++;
+        }
+
+        totalSupply += _amountOfTokens;
+        totalTicketsInDraw[_numberOfDraw] += _amountOfTokens;
+        balanceOf[_owner] += _amountOfTokens;
+
+        emit Mint(_owner, _amountOfTokens);
     }
 
     function transfer(address _to, uint256 _tokenId) public {
@@ -43,7 +68,7 @@ contract TokenERC721 {
     }
 
     function approve(address _to, uint256 _tokenId) public {
-        require(msg.sender == ownerOf[_tokenId], "Sender isn't an owner of token by id "); // require(msg.sender == ownerOf[_tokenId], "Sender isn't an owner of token by id " + _tokenId);
+        require(msg.sender == ownerOf[_tokenId], "Sender isn't an owner of token by id.");
         require(msg.sender != _to, "Sender cannot be reciever.");
         require(tokenExists[_tokenId], "Token doesn't exist.");
 
@@ -56,18 +81,15 @@ contract TokenERC721 {
         address ownerOfToken = ownerOf[_tokenId];
 
         require(tokenExists[_tokenId], "Token doesn't exist.");
-        require(allowance[ownerOfToken][_tokenId] == msg.sender, "Sender doesn't have approve to get token by id"); // require(allowance[ownerOfToken][msg.sender] == _tokenId, "Sender doesn't have approve to get token by id " + _tokenId);
+        require(allowance[ownerOfToken][_tokenId] == msg.sender, "Sender doesn't have approve to get token by id.");
 
         _transfer(ownerOfToken, msg.sender, _tokenId); // transfer token to reciever and clear allowance
     }
 
-    // function () public { // ??? Фолбэк-функция ведь сейчас не сможет принимать на себя валюту? Или её в таком случае можно было и не объявлять?
-    // }
-
     //=========+++ Additional functions +++==========//
     function _transfer(address _from, address _to, uint256 _tokenId) internal {
-        require(tokenExists[_tokenId], "Token by id would be exist." ); //require(tokenExists[_tokenId], "Token by id " + _tokenId + "would be existed." );
-        require(ownerOf[_tokenId] == _from, "Sender isn't owner of token by id "); //require(ownerOf[_tokenId] == _from, "Sender isn't owner of token by id " + _tokenId);
+        require(tokenExists[_tokenId], "Token by id would be exist." );
+        require(ownerOf[_tokenId] == _from, "Sender isn't owner of token by id.");
         require(_from != _to, "Sender cannot be reciever of token");
         require(_to != address(0), "Reciever cannot be 0");
 
@@ -75,7 +97,6 @@ contract TokenERC721 {
         uint256 indexOfCurrentTokenOfOwner = indexOfTokenForOwner[_tokenId];
         uint256 indexOfNextTokenForReciever = balanceOf[_to];
 
-        //uint256 currentTokenOfOwner = tokenOfOwnerByIndex[_from][indexOfCurrentTokenOfOwner]; // ??? Как поместить туда ссылку, чтобы далее по ней записать туда значение?
         uint256 lastTokenOfOwner = tokenOfOwnerByIndex[_from][indexOfLastTokenOfOwner];
 
         ownerOf[_tokenId] = _to;
