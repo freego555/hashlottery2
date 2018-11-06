@@ -248,7 +248,7 @@
     height: 80px;
     animation: loading 1.5s linear infinite;
   }
-  & .active {
+  &.active {
     display: flex;
   }
 }
