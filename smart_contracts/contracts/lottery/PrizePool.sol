@@ -1,49 +1,111 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.4.25;
 
-contract TicketSalerContract{
-    
-    function isLotteryEnd(){}
+contract LotteryDraw{
+    function isAcceptanceOfApplicationsEnd() public returns(bool){}
+}
+
+contract Kassa{
 }
 
 contract PrizePool {
     
-    public address ContractAddress;
-    uint owner;
+    address public kassaContractAddress;
+    address public lotteryDrawContractAddress;
     
-    function PrizePool() public {
+    LotteryDraw public LotteryDrawContract;
+    Kassa public kassaContract;
+   
+    uint256 public reservedMoney = 0; // зарезервированная часть средств
+    uint256 public fixPrizeAmount = 0; // объем текущего призового фонда
+  
+    address public owner; // владелец контракта
+  
+   constructor() public {
         owner = msg.sender;
     }
     
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner of contract can call this");
+        require(msg.sender == owner
+        , "Only owner of contract can call this"
+        );
         _;
     }
 
-    modifier isLotteryEnd() {
-        require(TicketSalerContract(salerContractAddress).isLotteryEnd(), "Lottery isn't end");
+    modifier isAcceptanceOfApplicationsEnd() {
+        require(LotteryDrawContract.isAcceptanceOfApplicationsEnd()
+        , "Acceptance of applications period isn't end"
+        );
         _;
     }
     
-    modifier isSalerContract() {
-        require(salerContractAddress != address(0) , "salerContractAddress is not set");
-        require(msg.sender == salerContractAddress, "only TicketSalerContract allowed");
+    modifier isKassaContract() {
+        require(kassaContractAddress != address(0) 
+        , "kassaContractAddress is not set"
+        );
+        require(msg.sender == kassaContractAddress
+        , "only kassaContract is allowed"
+        );
         _;
     }
 
-    
-    // Must isIcoEnd => true && isIcoFail => true
-    // Call from Crowdsale.sol
-    function sendToWinner(address _winner, uint value) public isLotteryEnd() isSalerContract(){
-        // todo check if reserver amount < value
-        // amount > 0
-        address(_investor).transfer(value);
+    modifier isLotteryDrawContract() {
+        require(lotteryDrawContractAddress != address(0)
+        , "lotteryDrawContractAddress is not set"
+        );
+        require(msg.sender == lotteryDrawContractAddress
+        , "only lotteryDrawContract is allowed"
+        );
+        _;
     }
     
-   
-    // Call from terminal
-    function setTicketSalerContractAddress(address _ticketSalerContract) public onlyOwner() {
-        require(salerContractAddress == address(0) , "salerContractAddress is already set");
-        salerContractAddress = _ticketSalerContract;
+    function lotterySellingPeriodEnds() public isLotteryDrawContract returns(uint){
+        require(fixPrizeAmount == 0 
+        , "fixPrizeAmount must be 0"
+        );
+        fixPrizeAmount = address(this).balance;
+        return fixPrizeAmount;
+    }
+    
+    function determineWinners(uint winnersCount) public isKassaContract isAcceptanceOfApplicationsEnd returns(uint){
+        require(fixPrizeAmount > 0
+        , 'Fixed Prize Amount must be > 0'
+        );
+        if(winnersCount == 0){
+            return 0;
+        }
+        reservedMoney += fixPrizeAmount;
+        fixPrizeAmount = 0;
+        return fixPrizeAmount/winnersCount;
+    }
+    
+    function sendToWinner(address winner, uint value) public isKassaContract{
+        require(winner != address(0) 
+        , "winner address is not correct"
+        );
+        require(value > 0 
+        , "Value must be > 0"
+        );
+        require(reservedMoney >= value 
+        , "Reserved money amount is not enough"
+        );
+        reservedMoney-=value;
+        address(winner).transfer(value);
+    }
+    
+    function setKassaContractAddressAddress(address _kassaContractAddress) public onlyOwner {
+        require(kassaContractAddress == address(0) 
+        , "kassaContractAddress is already set"
+        );
+        kassaContractAddress = _kassaContractAddress;
+        kassaContract = Kassa(kassaContractAddress);
+    }
+    
+    function setLotteryDrawContractAddress(address _lotteryDrawContractAddress) public onlyOwner {
+        require(lotteryDrawContractAddress == address(0) 
+        , "lotteryDrawContractAddress is already set"
+        );
+        lotteryDrawContractAddress = _lotteryDrawContractAddress;
+        LotteryDrawContract = LotteryDraw(lotteryDrawContractAddress);
     }
 
     function() payable public {
