@@ -11,9 +11,6 @@ contract PrizePool {
     
     address public kassaContractAddress;
     address public lotteryDrawContractAddress;
-    
-    LotteryDraw public LotteryDrawContract;
-    Kassa public kassaContract;
    
     uint256 public reservedMoney = 0; // зарезервированная часть средств
     uint256 public fixPrizeAmount = 0; // объем текущего призового фонда
@@ -32,7 +29,7 @@ contract PrizePool {
     }
 
     modifier isAcceptanceOfApplicationsEnd() {
-        require(LotteryDrawContract.isAcceptanceOfApplicationsEnd()
+        require(LotteryDraw(lotteryDrawContractAddress).isAcceptanceOfApplicationsEnd()
         , "Acceptance of applications period isn't end"
         );
         _;
@@ -97,7 +94,6 @@ contract PrizePool {
         , "kassaContractAddress is already set"
         );
         kassaContractAddress = _kassaContractAddress;
-        kassaContract = Kassa(kassaContractAddress);
     }
     
     function setLotteryDrawContractAddress(address _lotteryDrawContractAddress) public onlyOwner {
@@ -105,7 +101,6 @@ contract PrizePool {
         , "lotteryDrawContractAddress is already set"
         );
         lotteryDrawContractAddress = _lotteryDrawContractAddress;
-        LotteryDrawContract = LotteryDraw(lotteryDrawContractAddress);
     }
 
     function() payable public {
