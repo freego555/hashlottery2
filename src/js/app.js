@@ -1,13 +1,5 @@
-import addresses from '../../smart_contracts/conract_addresses'
-import TokenERC20JSON from '../../smart_contracts/build/contracts/TokenERC20'
-import CrowdSaleJSON from '../../smart_contracts/build/contracts/Crowdsale'
-import MultiSigWalletJSON from '../../smart_contracts/build/contracts/MultiSigWallet'
-import {getWeb3, getNonce} from './service'
-import {getOwnership, balanceOf, transfer} from './transactions'
-
-const tokenAbi = TokenERC20JSON.abi
-const crowdsaleAbi = CrowdSaleJSON.abi
-const multysigAbi = MultiSigWalletJSON.abi
+import {getWeb3} from './service'
+import {getOwnership, balanceOf, transfer, approve, allowance} from './transactions'
 
 /**
  *
@@ -18,9 +10,7 @@ const multysigAbi = MultiSigWalletJSON.abi
 const web3 = getWeb3();
 let decrypted = null
 
-const TokenERC20 = new web3.eth.Contract(tokenAbi, addresses.tokenERC20);
-const CrowdSale = new web3.eth.Contract(crowdsaleAbi, addresses.crowdSale);
-const MultiSigWallet = new web3.eth.Contract(multysigAbi, addresses.multiSig);
+const loader = $(".loader")[0]
 
 // get account address from session storage or set it to null
 let walletAccountSaved = localStorage.getItem('privateKey') ? JSON.parse(localStorage.getItem('privateKey')) : null
@@ -51,13 +41,16 @@ if (window.location.pathname === '/cabinet/main-page.html') {
     walletAddress.textContent = walletAccountSaved.address
     balanceOf(walletAccountSaved.address).then(receipt => {
       tokensBalance.textContent = receipt
-    }).catch(err => console.log('Error getting balanceOf: ', err))
+    }).catch(err => {
+      console.log('Error getting balanceOf: ', err)
+      alert('Ошибка получения данных баланса')
+    })
     getOwnership(walletAccountSaved.address).then(receipt => {
       ownership.textContent = `${receipt / 100}%`
-    }).catch(err => console.log('Error getting ownership: ', err))
-    console.log('transferred walletAccountSaved', walletAccountSaved.address)
-    console.log('addresses.crowdSale', addresses.crowdSale)
-
+    }).catch(err => {
+      console.log('Error getting ownership: ', err)
+      alert('Ошибка получения данных процента владения')
+    })
   } else {
     confirm('NOT AUTHORIZED')
     window.location.pathname = '/'
@@ -81,13 +74,70 @@ else if (window.location.pathname === '/cabinet/form-shipment.html') {
       transfer(walletAccountSaved.address, e.target[0].value, e.target[1].value, decrypted)
         .then(receipt => {
           console.log('Success', receipt)
+          alert('Акции успешно переведены')
+          window.location.pathname = '/cabinet/main-page.html'
         }).catch(err => {
         console.log('Error', err)
+        alert('Ошибка! Транзакция не выполнена!')
         })
     })
-    console.log('transferred walletAccountSaved', walletAccountSaved.address)
-    console.log('addresses.crowdSale', addresses.crowdSale)
+    $(shipmentForm).on('reset', () => {
+      if(confirm('Вернуться на главную?')) {
+        window.location.pathname = '/cabinet/main-page.html'
+      }
+    })
+  } else {
+    confirm('NOT AUTHORIZED')
+    window.location.pathname = '/'
+  }
+}
 
+
+/** Access shares Page*/
+
+else if (window.location.pathname === '/cabinet/acces-shares.html') {
+  console.log('acces-shares')
+  if (walletAccountSaved) {
+    const walletAddress = document.querySelector('#wallet_address');
+    const accessForm = document.querySelector('#access_form');
+    //const spenderAddressInput = document.querySelector('#spender_address');
+    const allowedTokens = document.querySelector('#token_allowed');
+    walletAddress.textContent = walletAccountSaved.address;
+    $(loader).removeClass('active')
+    $('#access_form #spender_address').bind('input', e => {
+      if(/^0x([A-Fa-f0-9]{40})$/.test(e.target.value)) {
+        $(loader).addClass('active')
+        allowance(walletAccountSaved.address, e.target.value).then(res => {
+          $(loader).removeClass('active')
+          allowedTokens.textContent = res
+        }).catch((err => {
+          console.log('Error getting allowance', err)
+          alert('Ошибка получения доступных акций')
+          $(loader).removeClass('active')
+        }))
+      }
+    })
+    $(accessForm).on('submit', e => {
+      e.preventDefault()
+      console.log('submitted', e)
+      $(loader).addClass('active')
+      approve(walletAccountSaved.address, e.target[0].value, e.target[1].value, decrypted)
+        .then(receipt => {
+          console.log('Success', receipt)
+          $(loader).removeClass('active')
+          alert('Права на распоряжение вашими акциями переданы')
+          window.location.pathname = '/cabinet/main-page.html'
+        }).catch(err => {
+        console.log('Error', err)
+        $(loader).removeClass('active')
+        alert('Ошибка! Транзакция не выполнена!')
+      })
+    })
+    $(accessForm).on('reset', () => {
+      if(confirm('Вернуться на главную?')) {
+        window.location.pathname = '/cabinet/main-page.html'
+      }
+    })
   } else {
     confirm('NOT AUTHORIZED')
     window.location.pathname = '/'
@@ -109,7 +159,6 @@ $(document).ready(function () {
     } else {
       walletAccountSaved = null
       let keyStoreFormatted
-      const loader = $(".loader")[0]
       $(loader).removeClass('active')
 
       /**
@@ -175,17 +224,13 @@ $(document).ready(function () {
               return true
             }).then(function () {
             $(loader).removeClass('active')
-            // alert('your password was get')
-            // invest();
-            console.log('invest try here', moneyInput)
 
             if (!!localStorage.getItem('privateKey') && !!moneyInput) {
 
               $.when()
                 .then(function () {
                   let ethAmount = moneyInput.value
-                  //invest(ethAmount)
-                  console.log('start invest function', ethAmount)
+                  console.log('ФУНКЦИЮ ИНВЕСТИРОВАНИЯ ИНИЦИАЛИЗИРОВАТЬ ЗДЕСЬ!', ethAmount)
                 })
 
               return true

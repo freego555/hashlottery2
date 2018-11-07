@@ -17,7 +17,31 @@ const MultiSigWallet = new web3.eth.Contract(multysigAbi, addresses.multiSig);
 export const transfer = (_from, _to, _value, decrypted) => {
   const data = TokenERC20.methods.transfer(_to, _value).encodeABI()
 
+  const pr = new Promise((resolve, reject) => {
+    const createTransaction = (nonceGot) => {
+      const transactionObj = {
+        nonce: nonceGot,
+        from: _from,
+        gas: 53000,
+        to: addresses.tokenERC20,
+        value: 0,
+        data
+      }
 
+
+      return decrypted.signTransaction(transactionObj).then(transaction => {
+        resolve(web3.eth.sendSignedTransaction(transaction.rawTransaction))
+      })
+    }
+
+    getNonce(_from, createTransaction)
+  });
+
+  return pr;
+}
+
+export const approve = (_from, _spender, _value, decrypted) => {
+  const data = TokenERC20.methods.approve(_spender, _value).encodeABI()
 
   const pr = new Promise((resolve, reject) => {
     const createTransaction = (nonceGot) => {
@@ -26,6 +50,7 @@ export const transfer = (_from, _to, _value, decrypted) => {
         from: _from,
         gas: 53000,
         to: addresses.tokenERC20,
+        value: 0,
         data
       }
 
@@ -47,4 +72,8 @@ export const balanceOf = (_address) => {
 
 export const getOwnership = (_address) => {
   return TokenERC20.methods.getOwnership(_address).call()
+}
+
+export const allowance = (_address_owner, _address_spender) => {
+  return TokenERC20.methods.allowance(_address_owner, _address_spender).call()
 }
