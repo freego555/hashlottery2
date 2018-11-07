@@ -8,7 +8,7 @@
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="theme-color" content="#ffffff">
   <meta name="msapplication-config" content="../browserconfig.xml" />
-  <meta(name="Highway Academy" content="Hash lottery" )/>
+  <meta name="Highway Academy" content="Hash lottery"/>
   <link href="https://fonts.googleapis.com/css?family=Montserrat+Alternates:400,500,600,700" rel="stylesheet">
 
   <title>Form Shipment</title>
@@ -31,7 +31,7 @@
       </div>
     </div>
   </div>
-  <div class="formShipment">
+  <form class="formShipment" id="shipment_form">
     <div class="wrapForm">
       <p class="wrapForm__form-title">
         Хотите отправить ваши акции на другой кошелек? Легко!
@@ -46,8 +46,8 @@
           </span>
         </span>
       </p>
-      <p class="formShipment__hash">
-        0x1a2b3c4d0x1a2b3c4d0x1a2b3c4d0x1a2b3c4d...
+      <p id="wallet_address" class="formShipment__hash">
+        0x0
       </p>
       <div class="inputRow">
         <p class="inputRow__label">
@@ -60,24 +60,20 @@
             </span>
           </span>
         </p>
-        <input type="text" class="inputRow__itemInput">
+        <input type="text" id="receiver_address" name="receiver_address" pattern="^0x([A-Fa-f0-9]{40})$" class="inputRow__itemInput">
       </div>
       <div class="inputRow">
         <p class="inputRow__label">
             Введите количество акций, которые вы хотите отправить
         </p>
-        <input type="text" class="inputRow__itemInput">
+        <input type="text" pattern="\d*" id="tokens_to_send" name="tokens_to_send" class="inputRow__itemInput">
       </div>
       <div class="formShipment__footer">
-        <a href="#" class="button">
-          Отправить
-        </a>
-        <a href="#" class="button cancel">
-          Отмена
-        </button>
+        <button type="submit" href="#" class="button" >Отправить</button>
+        <input type="reset" href="#" class="button cancel"  value="Отмена" />
       </div>
     </div>
-  </div>
-  <script src="/js/bundle.js"></script>
+  </form>
+  <script src="../dist/js/app.js"></script>
 </body>
 </html>

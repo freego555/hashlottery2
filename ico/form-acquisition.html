@@ -8,13 +8,13 @@
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="theme-color" content="#ffffff">
   <meta name="msapplication-config" content="./browserconfig.xml" />
-  <meta(name="Highway Academy" content="Hash lottery" )/>
+  <meta name="Highway Academy" content="Hash lottery"/>
 
   <title>Form of Acquisition</title>
 
-  <link rel="manifest" href="../manifest.json">
+  <!--<link rel="manifest" href="../manifest.json">-->
 
-  <link rel="stylesheet" href="../css/font-awesome.css">
+  <!--<link rel="stylesheet" href="../css/font-awesome.css">-->
    <link rel="stylesheet" href="../dist/css/app.css">
 </head>
 
@@ -47,7 +47,7 @@
             Введите пароль
           </p>
           <div class="inputRow__wrapInput">
-            <input type="text" class="inputRow__itemInput">
+            <input type="password" id="keystore_password" class="inputRow__itemInput">
           </div>
           <p class="errorText">Текст ошибки</p>
         </div>
@@ -56,22 +56,25 @@
             Сколько средств вы хотите инвестировать?
           </p>
           <div class="inputRow__wrapInput">
-            <input type="text" class="inputRow__itemInput">
+            <input type="text" id="eth_amount" class="inputRow__itemInput">
           </div>
           <p class="errorText">Текст ошибки</p>
         </div>
         <p class="acquisition__footer-text">Вы получите <span>100</span> акций</p>
         <div class="acquisition__buttons">
-          <a href="notification-acquisition1.html" class="button">
+          <a id="authorize" href="notification-acquisition1.html" class="button">
             Инвестировать
           </a>
-          <a href="/" class="button cancel">
+          <a href="#" class="button cancel">
             Отмена
           </a>
         </div>
-      </div>
+      </form>
     </div>
   </section>
+  <div class="loader active">
+    <img src="../src/img/loader.png" alt="" class="loader__img">
+  </div>
   <script src="../dist/js/app.js"></script>
 </body>
 
