@@ -8,7 +8,7 @@
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="theme-color" content="#ffffff">
   <meta name="msapplication-config" content="../browserconfig.xml" />
-  <meta(name="Highway Academy" content="Hash lottery" )/>
+  <meta name="Highway Academy" content="Hash lottery"/>
   <link href="https://fonts.googleapis.com/css?family=Montserrat+Alternates:400,500,600,700" rel="stylesheet">
 
   <title>Identification Page </title>
@@ -35,7 +35,7 @@
       <div class="uploadRow">
         <div class="file-upload">
           <label>
-            <input type="file" name="file" onchange="getFileName()" id="uploaded-file">
+            <input type="file" name="file" id="uploaded-file">
             <span>Выбрать</span>
           </label>
         </div>
@@ -45,12 +45,15 @@
         <p class="inputRow__label">
           Введите пароль 
         </p>
-        <input type="text" class="inputRow__input" />
+        <input type="password" id="keystore_password" class="inputRow__input" />
       </div>
-      <a href="main-page.html" class="button">
+      <a id="authorize" href="#" class="button"> <!-- href="main-page.html" -->
         Подтвердить
       </a> 
     </div>
+  </div>
+  <div class="loader active">
+    <img src="../src/img/loader.png" alt="" class="loader__img">
   </div>
   <script src="../dist/js/app.js"></script>
   <script>

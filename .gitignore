@@ -4,3 +4,9 @@
 build/
 
 node_modules/
+
+dist/
+
+smart_contracts/build/
+
+package-lock.json
