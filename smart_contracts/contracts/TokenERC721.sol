@@ -1,12 +1,16 @@
 pragma solidity ^0.4.24;
 
+ interface Draw {
+     function getStageOfCurrentDraw() view external returns(uint256 drawId, uint8 drawStage);
+ }
+
 contract TokenERC721 {
     string public name;
     string public symbol;
     uint256 public totalSupply;
     uint16 public allowedToMintInOneTransaction = 1000;
     mapping(uint256 => uint256) public totalTicketsInDraw; // [draw] = amount of tickets
-    mapping(address => uint256) public balanceOf; // [owner] = tokenId
+    mapping(address => uint256) public balanceOf; // [owner] = amount of tokens
     mapping(uint256 => address) public ownerOf; // [tokenId] = owner of token
     mapping(address => mapping(uint256 => uint256)) public tokenOfOwnerByIndex; //[owner][index] = tokenId
     mapping(uint256 => uint256) public indexOfTokenForOwner; // [tokenId] = position in user's wallet
@@ -16,11 +20,15 @@ contract TokenERC721 {
 
     address public admin;
     address public addressOfContractTicketsSale;
+    address public addressOfContractDraw;
     bool public isSetAddressOfContractTicketsSale;
+    bool public isSetAddressOfContractDraw;
+
+    Draw public contractDraw;
 
     event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);
     event Approval(address indexed _owner, address indexed _approved, uint256 _tokenId);
-    event Mint(address _owner, uint16 _amountOfTokens);
+    event Mint(address indexed _owner, uint16 _amountOfTokens);
 
     constructor() public {
         name = "hashlottery2";
@@ -36,11 +44,22 @@ contract TokenERC721 {
         isSetAddressOfContractTicketsSale = true;
     }
 
-    function mint(address _owner, uint256 _amountOfTokens, uint256 _numberOfDraw) public {
-        require(isSetAddressOfContractTicketsSale, "Address of the contract TicketsSale doesn't set yet.");
+    function setAddressOfContractDraw(address _address) public {
+        require(msg.sender == admin, "Only admin of contract can call this.");
+        require(!isSetAddressOfContractDraw, "Address of contract Draw already set.");
+
+        addressOfContractDraw = _address;
+        contractDraw = Draw(_address);
+        isSetAddressOfContractDraw = true;
+    }
+
+    function mint(address _owner, uint16 _amountOfTokens) public {
         require(msg.sender == addressOfContractTicketsSale, "Sender should be the contract TicketsSale.");
         require(_owner != address(0), "Owner cannot be 0.");
         require(_amountOfTokens <= allowedToMintInOneTransaction, "Owner cannot mint more than 1000 tickets in one transaction.");
+
+        (uint256 drawId, uint8 drawStage) = contractDraw.getStageOfCurrentDraw();
+        require(drawStage == 1, "Stage of current draw should be 'Sale of tickets'");
 
         uint256 indexOfNextToken = balanceOf[_owner]; // index to put to tokenOfOwnerByIndex, indexOfTokenForOwner
         uint256 idOfNextToken = totalSupply + 1; // id to use as current tokenId
@@ -57,7 +76,7 @@ contract TokenERC721 {
         }
 
         totalSupply += _amountOfTokens;
-        totalTicketsInDraw[_numberOfDraw] += _amountOfTokens;
+        totalTicketsInDraw[drawId] += _amountOfTokens;
         balanceOf[_owner] += _amountOfTokens;
 
         emit Mint(_owner, _amountOfTokens);
@@ -80,7 +99,6 @@ contract TokenERC721 {
     function takeOwnership(uint256 _tokenId) public {
         address ownerOfToken = ownerOf[_tokenId];
 
-        require(tokenExists[_tokenId], "Token doesn't exist.");
         require(allowance[ownerOfToken][_tokenId] == msg.sender, "Sender doesn't have approve to get token by id.");
 
         _transfer(ownerOfToken, msg.sender, _tokenId); // transfer token to reciever and clear allowance
@@ -106,7 +124,7 @@ contract TokenERC721 {
 
         // Delete tokenId for owner from tokenOfOwnerByIndex
         if (indexOfCurrentTokenOfOwner != indexOfLastTokenOfOwner) {
-            tokenOfOwnerByIndex[_from][indexOfCurrentTokenOfOwner] = tokenOfOwnerByIndex[_from][indexOfLastTokenOfOwner];
+            tokenOfOwnerByIndex[_from][indexOfCurrentTokenOfOwner] = lastTokenOfOwner;
             indexOfTokenForOwner[lastTokenOfOwner] = indexOfCurrentTokenOfOwner; // Set new index for last token
         }
 
