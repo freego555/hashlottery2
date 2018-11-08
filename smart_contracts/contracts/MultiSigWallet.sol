@@ -6,23 +6,19 @@ contract MultiSigWallet {
     
     mapping(address => bool) public owners;
     mapping(address => bool) public ownersGetCoins;
-    address crowdSaleContract;
-    address owner;
+    address public crowdSaleContract;
+    address public owner;
     uint ownerPart;
     bool setOwnerCoinsPartStatus  = false;
     
     constructor() public {
-        owners[0x896ab7b50d7bce2961072fef0a7225376e88ba7e] = true;
-        owners[0x2dbc56b412ef3f70bee2ef3662e850f49c831052] = true;
-        owners[0xf7a67efba2a97f86228a7e36b996b34e0a417763] = true;
-        owners[0x94bb857c3a550130120b5bfc1b7de3d478104705] = true;
-        owners[0x44f8fb0c0425471e23cdcc819827aa32cab607a9] = true;
-        
+        owners[0x896ab7b50d7bce2961072fef0a7225376e88ba7e] = true; // Игорь
+        owners[0x94bb857c3a550130120b5bfc1b7de3d478104705] = true; // Маша
+        owners[0x42cf7f102aeb2d387c083548990e3bcc03d33d12] = true; // Костя
+
         ownersGetCoins[0x896ab7b50d7bce2961072fef0a7225376e88ba7e] = false;
-        ownersGetCoins[0x2dbc56b412ef3f70bee2ef3662e850f49c831052] = false;
-        ownersGetCoins[0xf7a67efba2a97f86228a7e36b996b34e0a417763] = false;
         ownersGetCoins[0x94bb857c3a550130120b5bfc1b7de3d478104705] = false;
-        ownersGetCoins[0x44f8fb0c0425471e23cdcc819827aa32cab607a9] = false;
+        ownersGetCoins[0x42cf7f102aeb2d387c083548990e3bcc03d33d12] = false;
         
         owner = msg.sender;
     }
@@ -69,7 +65,7 @@ contract MultiSigWallet {
     }
     
     function setOwnerCoinsPart() private isIcoEnd(true) {
-        ownerPart = this.balance/5;
+        ownerPart = this.balance/3;
         setOwnerCoinsPartStatus = true;
     }
 

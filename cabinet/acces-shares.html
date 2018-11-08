@@ -30,7 +30,7 @@
       </div>
     </div>
   </div>
-  <div class="formShipment">
+  <form class="formShipment" id="access_form">
     <div class="wrapForm">
       <p class="wrapForm__form-title">
         Хотите доверить управление акциями? Выберите доверенное лицо.  
@@ -38,23 +38,23 @@
       <p class="inputRow__label">
         Адрес Вашего кошелька 
       </p>
-      <p class="formShipment__hash">
-        0x1a2b3c4d0x1a2b3c4d0x1a2b3c4d0x1a2b3c4d...
+      <p class="formShipment__hash" id="wallet_address">
+        0x0
       </p>
-      <div class="inputRow error">
+      <div class="inputRow error"><!-- error class makes border red & errorText active -->
         <p class="inputRow__label">
-          Введите адрес кошелька доверенного лица 
+          Введите адрес кошелька доверенного лица
         </p>
         <div class="inputRow__wrapInput">
-          <input type="text" class="inputRow__itemInput">
+          <input type="text" id="spender_address" class="inputRow__itemInput">
         </div>
         <p class="errorText">Текст ошибки</p>
       </div>
       <p class="inputRow__label">
         Количество акций, доступных доверенному лицу на данный момент
       </p>
-      <p class="formShipment__hash">
-        100
+      <p class="formShipment__hash" id="token_allowed">
+        -
       </p>
       <div class="inputRow">
         <p class="inputRow__label">
@@ -64,24 +64,16 @@
           <input type="text" class="inputRow__itemInput">
         </div>
       </div>
-      <!-- <div class="inputRow">
-        <p class="inputRow__label">
-          Введите количество акций, которые вы хотите отправить
-        </p>
-        <div class="inputRow__wrapInput error">
-          <input type="text" class="inputRow__itemInput">
-        </div>
-      </div> -->
       <div class="formShipment__footer">
-        <button class="button">
+        <button type="submit" class="button">
           Подтвердить
         </button>
-        <button class="button cancel">
+        <button type="reset" class="button cancel">
           Отмена
         </button>
       </div>
     </div>
-  </div>
-  <script src="/js/bundle.js"></script>
+  </form>
+  <script src="../dist/js/app.js"></script>
 </body>
 </html>
