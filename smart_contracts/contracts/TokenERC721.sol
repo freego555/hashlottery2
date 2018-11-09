@@ -1,10 +1,22 @@
 pragma solidity ^0.4.24;
 
- interface Draw {
-     function getStageOfCurrentDraw() view external returns(uint256 drawId, uint8 drawStage);
- }
+interface Draw {
+    function getStageOfCurrentDraw() view external returns(uint256 drawId, uint8 drawStage);
+}
 
 contract TokenERC721 {
+    enum Status {
+        NotFilled,
+        Filled,
+        Winning
+    }
+
+    struct DataOfTicket {
+        uint256 drawId;
+        bytes32[3] combinationOfTicket;
+        Status status;
+    }
+
     string public name;
     string public symbol;
     uint256 public totalSupply;
@@ -16,7 +28,7 @@ contract TokenERC721 {
     mapping(uint256 => uint256) public indexOfTokenForOwner; // [tokenId] = position in user's wallet
     mapping(address => mapping(uint256 => address)) public allowance; // [owner][tokenId] = reciever
     mapping(uint256 => bool) public tokenExists; // [tokenId] = token is exist
-    mapping(address => mapping(uint256 => uint8[3])) public combinationOfLotteryTicketOfOwner; // [owner][tokenId] = combination of lottery ticket
+    mapping(uint256 => DataOfTicket) public dataOfTicket; // [tokenId] = data of ticket
 
     address public admin;
     address public addressOfContractTicketsSale;
@@ -29,6 +41,8 @@ contract TokenERC721 {
     event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);
     event Approval(address indexed _owner, address indexed _approved, uint256 _tokenId);
     event Mint(address indexed _owner, uint16 _amountOfTokens);
+    event FillingTicket(uint256 _tokenId);
+    //event TestCombination(bytes32[3] _numbers);
 
     constructor() public {
         name = "hashlottery2";
@@ -36,7 +50,22 @@ contract TokenERC721 {
         admin = msg.sender;
     }
 
-    function setAddressOfContractTicketsSale(address _address) public {
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "Only admin of contract can call this.");
+        _;
+    }
+
+    modifier onlyOwnerOfToken(address _from, uint256 _tokenId) {
+        require(_from == ownerOf[_tokenId], "Sender isn't an owner of token by id.");
+        _;
+    }
+
+    modifier onlyNotFilledTicket(uint256 _tokenId) {
+        require(dataOfTicket[_tokenId].status == Status.NotFilled, "Filled ticket cannot be transfer or fill.");
+        _;
+    }
+
+    function setAddressOfContractTicketsSale(address _address) public onlyAdmin {
         require(msg.sender == admin, "Only admin of contract can call this.");
         require(!isSetAddressOfContractTicketsSale, "Address of contract TicketsSale already set.");
 
@@ -44,7 +73,7 @@ contract TokenERC721 {
         isSetAddressOfContractTicketsSale = true;
     }
 
-    function setAddressOfContractDraw(address _address) public {
+    function setAddressOfContractDraw(address _address) public onlyAdmin {
         require(msg.sender == admin, "Only admin of contract can call this.");
         require(!isSetAddressOfContractDraw, "Address of contract Draw already set.");
 
@@ -57,6 +86,7 @@ contract TokenERC721 {
         require(msg.sender == addressOfContractTicketsSale, "Sender should be the contract TicketsSale.");
         require(_owner != address(0), "Owner cannot be 0.");
         require(_amountOfTokens <= allowedToMintInOneTransaction, "Owner cannot mint more than 1000 tickets in one transaction.");
+        require(isSetAddressOfContractDraw, "Address of contract Draw should be set.");
 
         (uint256 drawId, uint8 drawStage) = contractDraw.getStageOfCurrentDraw();
         require(drawStage == 1, "Stage of current draw should be 'Sale of tickets'");
@@ -69,6 +99,7 @@ contract TokenERC721 {
         for (; idOfNextToken <= idOfEndToken; idOfNextToken++) {
             tokenExists[idOfNextToken] = true;
             ownerOf[idOfNextToken] = _owner;
+            dataOfTicket[idOfNextToken].drawId = drawId;
 
             tokenOfOwnerByIndex[_owner][indexOfNextToken] = idOfNextToken;
             indexOfTokenForOwner[idOfNextToken] = indexOfNextToken;
@@ -86,8 +117,7 @@ contract TokenERC721 {
         _transfer(msg.sender, _to, _tokenId);
     }
 
-    function approve(address _to, uint256 _tokenId) public {
-        require(msg.sender == ownerOf[_tokenId], "Sender isn't an owner of token by id.");
+    function approve(address _to, uint256 _tokenId) public onlyOwnerOfToken(msg.sender, _tokenId) onlyNotFilledTicket(_tokenId) {
         require(msg.sender != _to, "Sender cannot be reciever.");
         require(tokenExists[_tokenId], "Token doesn't exist.");
 
@@ -104,10 +134,25 @@ contract TokenERC721 {
         _transfer(ownerOfToken, msg.sender, _tokenId); // transfer token to reciever and clear allowance
     }
 
+    function fillCombinationOfTicket(uint256 _tokenId, bytes32[3] _numbers) public onlyOwnerOfToken(msg.sender, _tokenId) onlyNotFilledTicket(_tokenId) {
+        require(_numbers[0] != _numbers[1] && _numbers[0] != _numbers[2] && _numbers[1] != _numbers[2], "Numbers cannot repeat.");
+        require(allowance[msg.sender][_tokenId] == address(0), "Sender cannot fill promised token.");
+
+        (uint256 drawIdCurrent, uint8 drawStage) = contractDraw.getStageOfCurrentDraw();
+        uint256 drawIdOfTicket = dataOfTicket[_tokenId].drawId;
+        require(drawIdCurrent == drawIdOfTicket, "Filling of ticket is available only for current draw.");
+        require(drawStage == 1 || drawStage == 2, "Stage of current draw should be 'Sale of tickets' or 'Filling tickets without sale'");
+
+        dataOfTicket[_tokenId].combinationOfTicket = _numbers;
+        dataOfTicket[_tokenId].status = Status.Filled;
+
+        emit FillingTicket(_tokenId);
+        //emit TestCombination(dataOfTicket[_tokenId].combinationOfTicket);
+    }
+
     //=========+++ Additional functions +++==========//
-    function _transfer(address _from, address _to, uint256 _tokenId) internal {
+    function _transfer(address _from, address _to, uint256 _tokenId) internal onlyOwnerOfToken(_from, _tokenId) onlyNotFilledTicket(_tokenId) {
         require(tokenExists[_tokenId], "Token by id would be exist." );
-        require(ownerOf[_tokenId] == _from, "Sender isn't owner of token by id.");
         require(_from != _to, "Sender cannot be reciever of token");
         require(_to != address(0), "Reciever cannot be 0");
 
