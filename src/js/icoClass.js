@@ -1,12 +1,10 @@
 import TokenERC20JSON from '../../smart_contracts/build/contracts/TokenERC20'
 import CrowdSaleJSON from '../../smart_contracts/build/contracts/Crowdsale'
-import contractAddresses from '../../smart_contracts/conract_addresses'
 
 class IcoClass {
 
-  constructor (web3, addresses) {
-    this.web3 = web3
-    this.eth = web3.eth
+  constructor (thisWeb3, addresses) {
+    this.web3 = thisWeb3;
     this.addresses = addresses
     this.tokenAbi = TokenERC20JSON.abi
     this.crowdsaleAbi = CrowdSaleJSON.abi
@@ -18,37 +16,21 @@ class IcoClass {
     this.token_address_el = document.getElementById('token_address')
     this.crowdsale_address_el = document.getElementById('crowdsale_address')
     this.pre_count_el = document.getElementById('token_pre_count')
-  }
 
-  // static async init () {
-  //   const data = await this.bar()
-  //   data.key = value
-  //   return data
-  // }
-  //
-  // static async bar () {
-  //   return {foo: 1, bar: 2}
-  // }
+    this.total_token_count = document.getElementById('total_token_count')
+    this.count_of_sold_tokens = document.getElementById('count_of_sold_tokens')
+    this.total_investor_count = document.getElementById('total_investor_count')
+  }
 
   async init () {
 
-    console.log('init start')
-
-    this.TokenERC20 = await new this.eth.Contract(this.tokenAbi, this.addresses.tokenERC20)
-    this.CrowdSale = await new this.eth.Contract(this.crowdsaleAbi, this.addresses.crowdSale)
+    this.TokenERC20 = await new this.web3.eth.Contract(this.tokenAbi, this.addresses.tokenERC20)
+    this.CrowdSale = await new this.web3.eth.Contract(this.crowdsaleAbi, this.addresses.crowdSale)
 
     await this.interfaceInit()
-
     await this.getAndShowPrice()
     await this.getAndShowAddresses()
-
-    // try {
-    //   let balanceTokensForSale = await TokenERC20.methods.balanceOf(this.addresses.crowdSale).call()
-    //   console.log('balanceTokensForSale:', balanceTokensForSale)
-    // } catch (error) {
-    //   console.log('error#1', error.toString())
-    // }
-
+    await this.getAndShowIcoDetails()
   }
 
   // show price for token
@@ -61,7 +43,6 @@ class IcoClass {
     try {
       let price = await this.CrowdSale.methods.price().call()
 
-      console.log('price of token:', price)
       this.price_per_token_el.innerHTML = price + ' Wei'
     } catch (error) {
       console.log('error#2', error.toString())
@@ -78,66 +59,80 @@ class IcoClass {
     if (this.crowdsale_address_el) {
       this.crowdsale_address_el.innerHTML = this.addresses.crowdSale
     }
-
   }
 
-  async invest (moneyEth) {
+  async getAndShowIcoDetails () {
 
-    console.log('invest inside')
+    if (this.total_token_count) {
+      try {
+        let amountTokensForSale = await this.CrowdSale.methods.amountTokensForSale().call()
+      //  let totalSupply = await this.TokenERC20.methods.totalSupply().call()
 
-    // var privateKeySaved = sessionStorage.getItem('privateKey')
-    // var addressSaved = sessionStorage.getItem('address')
+         this.total_token_count.innerHTML = amountTokensForSale;
+      } catch (error) {
+        console.log('error#3', error.toString())
+      }
+    } // end of total_token_count
 
-    var privateKeySaved = this.addresses.account.privateKey
-    var addressSaved = this.addresses.account.address
-
-    console.log('addressSaved ', addressSaved)
-    console.log('privateKeySaved ', privateKeySaved)
-
-    var Tx = require('ethereumjs-tx')
-    // var privateKey = new Buffer('a95fcd0643446b359ef39e35a22316380c4a9fe52201fceba095e33677efddbc', 'hex')
-
-    // var nonce, moneyValue;
-
-    let nonce = await this.eth.getTransactionCount(addressSaved),
-      moneyValue = await  window.web3.utils.toWei(moneyEth)
-
-    console.log('nonce', nonce)
-    nonce++
-    console.log('nonce', nonce)
-    console.log('money value Wei', moneyValue)
-
-    var rawTx = {
-      nonce: '0x' + nonce,
-      gasPrice: '0x09184e72a000',
-      gasLimit: '0x2710',
-      to: this.addresses.crowdSale,
-      value: '0x' + moneyValue,
-      // data: '0x7f7465737432000000000000000000000000000000000000000000000000000000600057'
+    if (this.count_of_sold_tokens) {
+      try {
+        let count_sold = await this.CrowdSale.methods.amountOfSoldTokens().call()
+        // console.log('count_of_sold_tokens:', count_sold)
+        this.count_of_sold_tokens.innerHTML = count_sold;
+      } catch (error) {
+        console.log('error#4', error.toString())
+      }
     }
 
-    var tx = new Tx(rawTx)
-
-    // var str2 = str1.slice(4, -2);
-
-    // console.log('slice test', privateKeySaved.slice(2))
-
-    var privateKeyBuffer = new Buffer.from(privateKeySaved.slice(2), 'hex')
-    // var privateKeyBuffer = ethJsUtil.ecsign(ethJsUtil.sha256(msg),ethJsUtil.toBuffer('0x...'))
-    tx.sign(privateKeyBuffer)
-
-    var serializedTx = tx.serialize()
-
-    window.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
-      .on('receipt', console.log)
-
-    // see eth.getTransactionReceipt() for details
+    if (this.total_investor_count) {
+      try {
+        let countOfFirstBuyers = await this.CrowdSale.methods.countOfFirstBuyers().call()
+        // console.log('countOfFirstBuyers:', countOfFirstBuyers)
+        this.total_investor_count.innerHTML = countOfFirstBuyers;
+      } catch (error) {
+        console.log('error#5', error.toString())
+      }
+    }
 
   }
 
-  async rememberMe () {
-    sessionStorage.setItem('privateKey', privateKey.privateKey)
-    sessionStorage.setItem('address', privateKey.address)
+  async invest (moneyEth, decrypted) {
+
+    let nonce = await this.web3.eth.getTransactionCount(decrypted.address),
+      moneyWei = await  this.web3.utils.toWei(moneyEth)
+
+    const transactionObj = {
+      nonce: nonce,
+      from: decrypted.address,
+      gas: 900000,
+      gasPrice: 1000000000,
+      to: this.addresses.crowdSale,
+      value: moneyWei,
+      // data
+    }
+    console.log('transactionObj,', transactionObj)
+
+    var transaction = await decrypted.signTransaction(transactionObj)
+    console.log('transaction,', transaction)
+
+    var precalc = await this.CrowdSale.methods.calcTokenAmount(moneyWei, false).call()
+    console.log('precalc', precalc);
+
+    var result = await this.web3.eth.sendSignedTransaction(transaction.rawTransaction)
+
+    if (result.blockHash) {
+      await this.getRedirectionUrl(precalc)
+    } else {
+      console.log('result,', result)
+    }
+
+    return false
+
+  }
+
+  async rememberMe (keyStoreFormatted) {
+    sessionStorage.setItem('privateKey', keyStoreFormatted.privateKey)
+    sessionStorage.setItem('address', keyStoreFormatted.address)
   }
 
   isAuth () {
@@ -152,31 +147,66 @@ class IcoClass {
 
   async preCalc (moneyEth) {
     if (!this.pre_count_el) {
+      console.log('error#31: pre_count_el does not exists')
       return false
     }
 
     try {
-      let moneyWei = await  window.web3.utils.toWei(moneyEth)
-      //calcTokenAmount(uint256 _wei_amount, bool _pre_calc)
-      // let token_count_buyed, token_count_bonus, wei_change, bonuses;
-      let {token_count_buyed, token_count_bonus, wei_change, bonuses} = await this.CrowdSale.methods.calcTokenAmount(moneyWei, true).call()
+      let moneyWei = await  this.web3.utils.toWei(moneyEth)
+      var result = await this.CrowdSale.methods.calcTokenAmount(moneyWei, true).call()
 
-      console.log('token_count_buyed:', token_count_buyed)
-      console.log('token_count_bonus:', token_count_bonus)
-      console.log('wei_change:', wei_change)
-      console.log('bonuses:', bonuses)
+      var token_count = this.calcTokens(result)
 
-      let total = (+token_count_buyed) + (+token_count_bonus)
-
-      this.pre_count_el.innerHTML = 'Вы получите <span>' + total + '</span> акций'
+      this.pre_count_el.innerHTML = 'Вы получите <span>' + token_count + '</span> акций'
       this.pre_count_el.style.display = 'block'
 
-      // this.price_per_token_el.innerHTML = price + ' Wei'
     } catch (error) {
       console.log('error#3', error.toString())
     }
   }
+
+  calcTokens(preCalcResult){
+    var token_count = 0
+    if (typeof preCalcResult._token_count != 'undefined') {
+      token_count = preCalcResult._token_count // for old version of contract
+    } else if (typeof preCalcResult.token_count_buyed != 'undefined') {
+      token_count = (+preCalcResult.token_count_buyed) + (+preCalcResult.token_count_bonus)
+    }
+    return token_count
+  }
+
+  async getRedirectionUrl(precalc){
+    let buyed =  this.calcTokens(precalc);
+
+    sessionStorage.setItem('last_buyed_count', buyed )
+    console.log('success, go to redirect', buyed)
+
+    // precalc.bonus=
+    if(typeof precalc.bonus != 'undefined') {
+
+      var links = new Array();
+      links[100] = '/ico/notification-acquisition2.html';
+      links[20] = '/ico/notification-acquisition3.html';
+      links[3] = '/ico/notification-acquisition4.html';
+      links[123] = '/ico/notification-acquisition5.html';
+      links[120] = '/ico/notification-acquisition6.html';
+      links[103] = '/ico/notification-acquisition7.html';
+      links[23] = '/ico/notification-acquisition8.html';
+
+      if (links[precalc.bonus]) {
+        console.log('redirect to: ', precalc.bonus)
+        // return links[precalc.bonus]
+        window.location.href = links[precalc.bonus];
+
+      }
+    }
+
+    window.location.href ='/ico/notification-acquisition1.html';
+    // return
+
+  }
+
+
 }
 
 export default IcoClass
-// export default { IcoClass }
