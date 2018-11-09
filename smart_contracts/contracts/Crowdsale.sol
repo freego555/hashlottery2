@@ -220,7 +220,7 @@ contract Crowdsale {
         balanceOfTokenBonus[msg.sender] += token_count_bonus;
         balanceOfTokenBuyed[msg.sender] += token_count;
         token_count+=token_count_bonus;
-        if ((countOfFirstBuyers < limitOfFirstBuyers) && (balanceOf[msg.sender] == 0)) {
+        if (balanceOf[msg.sender] == 0) {
             countOfFirstBuyers++;
         }
 

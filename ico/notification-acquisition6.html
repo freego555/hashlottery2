@@ -16,14 +16,14 @@
   <link rel="manifest" href="../manifest.json">
 
   <link rel="stylesheet" href="../css/font-awesome.css">
-   <link rel="stylesheet" href="../dist/css/app.css">
+   <link rel="stylesheet" href="/dist/css/app.css">
 </head>
 <body>
   <div class="acquisition">
     <div class="acquisition__wrap">
       <div class="acquisition__head">
         <a class="acquisition__logo" href="/">
-          <img class="acquisition__logo-img" src="../img/logoIco.png" alt="company-logo">
+          <img class="acquisition__logo-img" src="/dist/img/logoIco.png" alt="company-logo">
         </a>
       </div>
       <div class="acquisition__body">
@@ -41,7 +41,7 @@
             Итого, вы приобрели
           </p>
           <div class="acquisition__rightCol">
-            <span class="acquisition__red">100</span> 
+            <span class="acquisition__red" id="last_buyed_count">?</span>
             <p class="acquisition__row__text">
               акций
             </p>
@@ -52,12 +52,15 @@
         <a href="/" class="button">
           Вернуться на главную
         </a>
-        <a href="notification-acquisition7.html" class="button transparent">
+        <a href="/ico/form-acquisition.html" class="button transparent">
           Инвестировать еще
         </a>
       </div>
     </div>
   </div>
-  <script src="../dist/js/app.js"></script>
+  <div class="loader active">
+    <img src="/dist/img/loader.png" alt="" class="loader__img">
+  </div>
+  <script src="/dist/js/app.js"></script>
 </body>
 </html>
