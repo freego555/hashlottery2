@@ -117,7 +117,7 @@ contract Crowdsale {
      * @return _wei_change - сдача в wei(копейки)
      */
     function calcTokenAmount(uint256 _wei_amount, bool _pre_calc)
-    public view returns (uint256 token_count_buyed, uint256 token_count_bonus, uint256 _wei_change, uint256 bonuses){
+    public view returns (uint256 token_count_buyed, uint256 token_count_bonus, uint256 _wei_change, uint8 bonuses){
 
         require(isInit, "Crowdsale contract must be init");
 
