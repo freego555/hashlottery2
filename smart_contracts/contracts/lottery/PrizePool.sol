@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.4.24;
 
 contract LotteryDraw {
     function isAcceptanceOfApplicationsEnd() public returns (bool){}
@@ -88,21 +88,21 @@ contract PrizePool {
         address(winner).transfer(value);
     }
 
-    function setKassaContractAddressAddress(address _kassaContractAddress) public onlyOwner {
-        require(kassaContractAddress == address(0)
+    function setKassaContractAddressAddress(address _address) public onlyOwner {
+        require(_address == address(0)
         , "kassaContractAddress is already set"
         );
-        kassaContractAddress = _kassaContractAddress;
+        kassaContractAddress = _address;
         if (this.isInitComplete()) {
             initComplete = true;
         }
     }
 
-    function setLotteryDrawContractAddress(address _lotteryDrawContractAddress) public onlyOwner {
-        require(lotteryDrawContractAddress == address(0)
+    function setLotteryDrawContractAddress(address _address) public onlyOwner {
+        require(_address == address(0)
         , "lotteryDrawContractAddress is already set"
         );
-        lotteryDrawContractAddress = _lotteryDrawContractAddress;
+        lotteryDrawContractAddress = _address;
         if (this.isInitComplete()) {
             initComplete = true;
         }
