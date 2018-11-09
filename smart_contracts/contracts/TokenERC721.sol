@@ -180,7 +180,11 @@ contract TokenERC721 {
         balanceOf[_from] -= 1;
         balanceOf[_to] += 1;
 
-        allowance[_from][_tokenId] = address(0);
+        // Clear allowance only if it's not zero
+        address zeroAddress = address(0);
+        if (allowance[_from][_tokenId] != zeroAddress) {
+            allowance[_from][_tokenId] = zeroAddress;
+        }
 
         emit Transfer(_from, _to, _tokenId);
     }
