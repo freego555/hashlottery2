@@ -66,7 +66,6 @@ contract TokenERC721 {
     }
 
     function setAddressOfContractTicketsSale(address _address) public onlyAdmin {
-        require(msg.sender == admin, "Only admin of contract can call this.");
         require(!isSetAddressOfContractTicketsSale, "Address of contract TicketsSale already set.");
 
         addressOfContractTicketsSale = _address;
@@ -74,7 +73,6 @@ contract TokenERC721 {
     }
 
     function setAddressOfContractDraw(address _address) public onlyAdmin {
-        require(msg.sender == admin, "Only admin of contract can call this.");
         require(!isSetAddressOfContractDraw, "Address of contract Draw already set.");
 
         addressOfContractDraw = _address;
