@@ -11,6 +11,15 @@ contract TokenERC20 {
     address public owner;
     bool private isTokensSupplied = false;
 
+    // ownership definition
+    uint8 private addressListIndex = 0;
+    struct OwnerStatus {
+        bool isOwnerCurrently;
+        bool isInOwnerAddressesList;
+    }
+    mapping(address => OwnerStatus) public isOwner;
+    address[][] public ownerAddressesLists;
+
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
     event TokensEmitted(uint256 tokensSupplyed, uint256 totalTokens);
@@ -85,7 +94,6 @@ contract TokenERC20 {
         owner = msg.sender;
     }
 
-
     function supplyTokens(address contract_address) public returns (bool success) {
         require(owner == msg.sender, "Not Authorized");
         require(isTokensSupplied == false, "Tokens already supplied");
@@ -109,6 +117,19 @@ contract TokenERC20 {
         require(_to != address(0), "Try send funds to 0-address");
         balanceOf[_from] -= _value;
         balanceOf[_to] += _value;
+        if (balanceOf[_from] == 0) {
+            isOwner[_from].isOwnerCurrently = false;
+        }
+        if (balanceOf[_to] > 0) {
+            isOwner[_to].isOwnerCurrently = true;
+            if (isOwner[_to].isInOwnerAddressesList != false) {
+                isOwner[_to].isInOwnerAddressesList = true;
+                if (ownerAddressesList[addressListIndex].count > 99) {
+                    addressListIndex += 1;
+                }
+                ownerAddressesList[addressListIndex].push(_to);
+            }
+        }
         emit Transfer(_from, _to, _value);
     }
 
@@ -120,7 +141,7 @@ contract TokenERC20 {
     function transferFrom(address _from, address _to, uint256 _value) public
     returns (bool success) {
         require(_value <= allowance[_from][msg.sender], "User is not allowed to perform action");
-        allowance[_from][msg.sender] -= _value;
+        allowance[_from][msg.sender] = _value;
         _transfer(_from, _to, _value);
         return true;
     }
@@ -134,5 +155,13 @@ contract TokenERC20 {
 
     function getOwnership(address account) public view returns (uint256 percentageMultiplied100) {
         return balanceOf[account] * 10000 / totalSupply;
+    }
+
+    function getOwnerArraysCount() public view returns (uint256 ownerArraysCount) {
+        return addressListIndex;
+    }
+
+    function getOwnerAddressesListPart(uint8 index) public view returns (address[] ownerAddressesListPart) {
+        return ownerAddressesList[index];
     }
 }

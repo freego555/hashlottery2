@@ -22,8 +22,8 @@ contract Crowdsale {
     mapping(address => uint256) public balanceOfTokenBuyed; // total balance of buyed tokens
     mapping(address => bool) public owners;
     mapping(address => bool) public ownerGetTokens;
-    bool isFirstOwnerGetRestTokens; // один из владельцев ICO уже забрал вероятный остаток от деления на 5
-    bool isInit;
+    bool isFirstOwnerGetRestTokens; // один из владельцев ICO уже забрал вероятный остаток от деления на 3
+    bool public isInit;
     bool isSetTokenReward;
     bool isSetMultisig;
     
@@ -33,11 +33,9 @@ contract Crowdsale {
         owner = msg.sender;
         
         // Заполним список владельцев ICO
-        owners[0x896ab7b50d7bce2961072fef0a7225376e88ba7e] = true;
-        owners[0x2dbc56b412ef3f70bee2ef3662e850f49c831052] = true;
-        owners[0xf7a67efba2a97f86228a7e36b996b34e0a417763] = true;
-        owners[0x94bb857c3a550130120b5bfc1b7de3d478104705] = true;
-        owners[0x44f8fb0c0425471e23cdcc819827aa32cab607a9] = true;
+        owners[0x896ab7b50d7bce2961072fef0a7225376e88ba7e] = true; // Игорь
+        owners[0x94bb857c3a550130120b5bfc1b7de3d478104705] = true; // Маша
+        owners[0x42cf7f102aeb2d387c083548990e3bcc03d33d12] = true; // Костя
     }
     
     modifier onlyOwner() {
@@ -74,7 +72,7 @@ contract Crowdsale {
         price = 250000000000000000; // Цена в wei = 0.25ETH 
         amountTokensForSale = totalSupply * 40 / 100; // Отправим указанный процент токенов для продажи на crowdsale
         amountTokensForOwners = totalSupply - amountTokensForSale; // Остаток токенов равномерно распределим среди владельцев ICO при успешном окончании
-        limitOfFirstBuyers = 5; // фиксируем колво первых покупателей
+        limitOfFirstBuyers = 5; // фиксируем кол-во первых покупателей
     }
     
     function distributeTokensAmongOwners() public {
@@ -88,12 +86,12 @@ contract Crowdsale {
 
         ownerGetTokens[msg.sender] = true;
 
-        // Распределим остаток токенов среди владельцев ICO. Даем остаток от деления на 5 первому владельцу ICO, который забирает токены.
-        uint amountForOneOwner = amountTokensForOwners / 5;
+        // Распределим остаток токенов среди владельцев ICO. Даем остаток от деления на 3 первому владельцу ICO, который забирает токены.
+        uint amountForOneOwner = amountTokensForOwners / 3;
         if (!isFirstOwnerGetRestTokens) {
-            // Одному из владельцев ICO начисляем также остаток от деления на 5, чтобы точно распределить все токены
+            // Одному из владельцев ICO начисляем также остаток от деления на 3, чтобы точно распределить все токены
             isFirstOwnerGetRestTokens = true;
-            tokenReward.transfer(msg.sender, amountForOneOwner + amountTokensForOwners % 5);
+            tokenReward.transfer(msg.sender, amountForOneOwner + amountTokensForOwners % 3);
         } else {
             tokenReward.transfer(msg.sender, amountForOneOwner);
         }
@@ -119,7 +117,7 @@ contract Crowdsale {
      * @return _wei_change - сдача в wei(копейки)
      */
     function calcTokenAmount(uint256 _wei_amount, bool _pre_calc)
-    public view returns (uint256 token_count_buyed, uint256 token_count_bonus, uint256 _wei_change){
+    public view returns (uint256 token_count_buyed, uint256 token_count_bonus, uint256 _wei_change, uint256 bonuses){
 
         require(isInit, "Crowdsale contract must be init");
 
@@ -134,10 +132,11 @@ contract Crowdsale {
         if ((now < startICOPlus2Days) && !_pre_calc) {
             // предполагается что скидка сохраняется только на покупки в указанный период
             newPrice = newPrice * 9 / 10;
+            bonuses += 100;
         }
 
         if(_wei_amount < newPrice){ // если не хватает денег на даже один токен
-            return (0, 0, _wei_amount);
+            return (0, 0, _wei_amount, 0);
         }
 
         token_count_buyed = _wei_amount / newPrice;
@@ -156,6 +155,7 @@ contract Crowdsale {
                     fixTotal = token_count_buyed + bonus2 - max_allowed;
                     (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
                 }
+                bonuses += 20;
             }
         } else {
             tokenExistsLeftWithoutBonus = balanceOfTokenBuyed[msg.sender] % 100;
@@ -173,11 +173,14 @@ contract Crowdsale {
             (bonus2, token_count_buyed) = fixBonus2(fixTotal, bonus2, token_count_buyed);
             bonus3 = calcBonus3(tokenExistsLeftWithoutBonus, token_count_buyed);
         }
+        if (bonus3 > 0) {
+            bonuses += 3;
+        }
         // end BONUS 3
         token_count_bonus = bonus2 + bonus3;
 
         _wei_change = _wei_amount - (token_count_buyed * newPrice);
-        return (token_count_buyed, token_count_bonus, _wei_change);
+        return (token_count_buyed, token_count_bonus, _wei_change, bonuses);
     }
 
     function calcBonus2(uint256 buyed) private pure returns (uint256){
@@ -210,7 +213,7 @@ contract Crowdsale {
         uint256 token_count;                    // Порахована кількість токенів
         uint256 token_count_bonus;
         uint256 wei_change;                     // Решта від відправлених коштів Покупця та фактичної вартості токенів
-        (token_count, token_count_bonus, wei_change) = calcTokenAmount(buyer_wei, false); // Порахуй кількість токенів та решту коштів
+        (token_count, token_count_bonus, wei_change, ) = calcTokenAmount(buyer_wei, false); // Порахуй кількість токенів та решту коштів
 
         require(token_count > 0, "You can't invest because wei_amount less than price of one token");
 
