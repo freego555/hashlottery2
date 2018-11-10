@@ -25,10 +25,7 @@ contract TicketSale {
     TokenERC721 public ticketContract;
 
     address public PrizePoolAddress; // призовой фонд
-    // PrizePool public pricePoolContract;
-
     address public LotteryIncomeWalletAddress; // кошелек прибыли акционеров
-    //  LotteryIncomeWallet public LotteryIncomeWalletContract;
 
     address public LotteryDrawAddress; //контракт розыгрыша
     Draw public LotteryDrawContract;
@@ -81,7 +78,6 @@ contract TicketSale {
         , "PricePool contract has already set"
         );
         PrizePoolAddress = _address;
-        //   pricePoolContract = PrizePool(_address);
     }
 
     function setIncomeWallet(address _address) public onlyOwner {
@@ -89,7 +85,6 @@ contract TicketSale {
         , "LotteryIncomeWallet contract has already set"
         );
         LotteryIncomeWalletAddress = _address;
-        //   LotteryIncomeWalletContract = LotteryIncomeWallet(_address);
     }
 
     function setLotteryDraw(address _address) public onlyOwner {
