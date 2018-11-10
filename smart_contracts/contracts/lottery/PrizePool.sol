@@ -9,8 +9,8 @@ contract Kassa {
 
 contract PrizePool {
 
-    address public kassaContractAddress;
-    address public lotteryDrawContractAddress;
+    address public kassaContractAddress; // контракт кассы
+    address public lotteryDrawContractAddress; //контракт розыгрыша
 
     uint256 public reservedMoney = 0; // зарезервированная часть средств
 
@@ -89,7 +89,7 @@ contract PrizePool {
     }
 
     function setKassaContractAddressAddress(address _address) public onlyOwner {
-        require(_address == address(0)
+        require(kassaContractAddress == address(0)
         , "kassaContractAddress is already set"
         );
         kassaContractAddress = _address;
@@ -99,7 +99,7 @@ contract PrizePool {
     }
 
     function setLotteryDrawContractAddress(address _address) public onlyOwner {
-        require(_address == address(0)
+        require(lotteryDrawContractAddress == address(0)
         , "lotteryDrawContractAddress is already set"
         );
         lotteryDrawContractAddress = _address;
