@@ -51,8 +51,8 @@
           может стать инвестором проекта.</p>
       </div>
       <p class="home-screen__etherium-text">
-        <span>1 акция:</span> 000000000000000000 ETH</p>
-      <a class="home-screen__button" href="./ico/form-acquisition.html">Инвестировать</a> <!--./ico/form-acquisition.html-->
+        <span>1 акция:</span><span id="price_per_token">0.25 ETH</span></p>
+      <a class="home-screen__button" href="/ico/form-acquisition.html">Инвестировать</a>
     </div>
   </section>
 
@@ -81,7 +81,7 @@
           <div class="bonuses__card-item-icon-wrapper">
             <img class="img-contain" src="./dist/img/icon 1.svg" alt="card-icon-1">
           </div>
-          <p class="bonuses__card-value">100</p>
+          <p class="bonuses__card-value" id="total_token_count">100</p>
           <div class="bonuses__card-devider"></div>
           <p class="bonuses__card-text">общее количество акций</p>
         </div>
@@ -92,7 +92,7 @@
           <div class="bonuses__card-item-icon-wrapper">
             <img class="img-contain" src="./dist/img/icon 2.svg" alt="card-icon-2">
           </div>
-          <p class="bonuses__card-value">100</p>
+          <p class="bonuses__card-value" id="count_of_sold_tokens">0</p>
           <div class="bonuses__card-devider"></div>
           <p class="bonuses__card-text">количество проданных акций на текущий момент</p>
         </div>
@@ -106,7 +106,7 @@
           <div class="bonuses__card-item-icon-wrapper">
             <img class="img-contain" src="./dist/img/icon 3.svg" alt="card-icon-3">
           </div>
-          <p class="bonuses__card-value">100</p>
+          <p class="bonuses__card-value" id="total_investor_count">0</p>
           <div class="bonuses__card-devider"></div>
           <p class="bonuses__card-text">количество инвесторов</p>
         </div>
@@ -119,13 +119,13 @@
     <div class="investments__container section__container">
       <div class="investments__data-block">
         <p class="investments__data-title">Адрес смарт-контракта акции</p>
-        <p class="investments__data-value">0x1a2b3c4d0x1a2b3c4d0x1a2b3c4d0x1a2b3c43c4</p>
+        <p class="investments__data-value" id="token_address">0x1a2b3c4d0x1a2b3c4d0x1a2b3c4d0x1a2b3c43c4</p>
       </div>
       <div class="investments__data-block">
         <p class="investments__data-title">Адрес смарт-контракта ICO</p>
-        <p class="investments__data-value">0x1a2b3c4d0x1a2b3c4d0x1a2b3c4d0x1a2b3c43c4</p>
+        <p class="investments__data-value" id="crowdsale_address">0x1a2b3c4d0x1a2b3c4d0x1a2b3c4d0x1a2b3c43c4</p>
       </div>
-      <a class="home-screen__button home-screen__button--middle" href="./ico/form-acquisition.html">Инвестировать</a>
+      <a class="home-screen__button home-screen__button--middle" href="/ico/form-acquisition.html">Инвестировать</a>
     </div>
   </section>
 
@@ -136,7 +136,7 @@
     </div>
   </footer>
 
-  <script src="./dist/js/app.js"></script>
+  <script src="/dist/js/app.js"></script>
 
 </body>
 
