@@ -105,12 +105,12 @@ class IcoClass {
       nonce: nonce,
       from: decrypted.address,
       gas: 900000,
-      gasPrice: 1000000000,
+      //gasPrice: 1000000000,
       to: this.addresses.crowdSale,
       value: moneyWei,
       // data
     }
-    console.log('transactionObj,', transactionObj)
+    //console.log('transactionObj,', transactionObj)
 
     var transaction = await decrypted.signTransaction(transactionObj)
     console.log('transaction,', transaction)
@@ -118,13 +118,20 @@ class IcoClass {
     var precalc = await this.CrowdSale.methods.calcTokenAmount(moneyWei, false).call()
     console.log('precalc', precalc);
 
-    var result = await this.web3.eth.sendSignedTransaction(transaction.rawTransaction)
-
-    if (result.blockHash) {
-      await this.getRedirectionUrl(precalc)
-    } else {
+    this.web3.eth.sendSignedTransaction(transaction.rawTransaction)
+        .on('transactionHash', (hash) => {
+            console.log('transactionHash', hash)
+        })
+        .on('receipt', (receipt) =>{
+            console.log('receipt', receipt)
+            this.getRedirectionUrl(precalc)
+        })
       console.log('result,', result)
-    }
+    // if (result.blockHash) {
+    //   await this.getRedirectionUrl(precalc)
+    // } else {
+    //   console.log('result,', result)
+    // }
 
     return false
 
@@ -175,7 +182,7 @@ class IcoClass {
     return token_count
   }
 
-  async getRedirectionUrl(precalc){
+  getRedirectionUrl(precalc){
     let buyed =  this.calcTokens(precalc);
 
     sessionStorage.setItem('last_buyed_count', buyed )

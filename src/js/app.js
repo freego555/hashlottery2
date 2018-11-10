@@ -1,6 +1,5 @@
 import {getWeb3} from './service'
 import {getOwnership, balanceOf, transfer, approve, allowance} from './transactions'
-// import Web3 from 'web3'
 import addresses from '../../smart_contracts/conract_addresses'
 import IcoClass from './icoClass'
 
@@ -29,8 +28,11 @@ if (window.location.pathname !== '/cabinet/identification-page.html'
   if (localStorage.getItem('keyStoreFormatted') && localStorage.getItem('passwordInput')) {
     const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
     decrypted = web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
-  } else {
-    confirm('NOT AUTHORIZED #1')
+  } else if (
+      window.location.pathname === '/cabinet/identification-page.html'
+      && window.location.pathname === '/ico/form-acquisition.html'
+  ) {
+    confirm('NOT AUTHORIZED main page')
     window.location.pathname = '/'
   }
 }
@@ -58,7 +60,7 @@ if (window.location.pathname === '/cabinet/main-page.html') {
       alert('Ошибка получения данных процента владения')
     })
   } else {
-    confirm('NOT AUTHORIZED #2')
+    confirm('NOT AUTHORIZED page main-page')
     window.location.pathname = '/'
   }
 }
@@ -93,7 +95,7 @@ else if (window.location.pathname === '/cabinet/form-shipment.html') {
       }
     })
   } else {
-    confirm('NOT AUTHORIZED #3')
+    confirm('NOT AUTHORIZED form shipment')
     window.location.pathname = '/'
   }
 }
@@ -145,7 +147,7 @@ else if (window.location.pathname === '/cabinet/acces-shares.html') {
       }
     })
   } else {
-    confirm('NOT AUTHORIZED #4')
+    confirm('NOT AUTHORIZED access shares')
     window.location.pathname = '/'
   }
 }
@@ -177,9 +179,13 @@ else if (
 
 /** Identification Pages */
 
-var ico = new IcoClass(web3, addresses)
+
 
 $(document).ready(function () {
+    var ico = new IcoClass(web3, addresses)
+
+    console.log('ico', ico)
+
   ico.init()
 
   if (window.location.pathname === '/cabinet/identification-page.html' || window.location.pathname === '/ico/form-acquisition.html') {
@@ -202,6 +208,7 @@ $(document).ready(function () {
       if (myFile) {
 
         myFile.addEventListener('change', e => {
+          console.log('change', e)
           const files = myFile.files
           if (files.length <= 0) {
             return false
@@ -260,10 +267,10 @@ $(document).ready(function () {
             return false
           }
 
-          if (moneyInput.value === '') {
-            alert('eth amount is empty')
-            return false
-          }
+          // if (moneyInput.value === '') {
+          //   alert('eth amount is empty')
+          //   return false
+          // }
 
           $.when()
             .then(function () {
