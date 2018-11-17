@@ -6,6 +6,6 @@ WORKDIR /var/www/hashlottery/
 
 RUN npm install
 
-RUN npm build
+RUN npm run build
 
-CMD cp -rp /var/www/hashlottery/build /var/www/front-dev/
+CMD cp -rp /var/www/hashlottery/* /var/www/front-dev/ && cp /var/www/hashlottery/.htaccess /var/www/front-dev/

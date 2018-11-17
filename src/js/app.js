@@ -1,5 +1,7 @@
 import {getWeb3} from './service'
 import {getOwnership, balanceOf, transfer, approve, allowance} from './transactions'
+import addresses from '../../smart_contracts/conract_addresses'
+import IcoClass from './icoClass'
 
 /**
  *
@@ -18,13 +20,19 @@ let walletAccountSaved = localStorage.getItem('privateKey') ? JSON.parse(localSt
 
 /** Authorization */
 
-if (window.location.pathname !== '/cabinet/identification-page.html' && window.location.pathname !== '/ico/form-acquisition.html') {
+if (window.location.pathname !== '/cabinet/identification-page.html'
+  && window.location.pathname !== '/ico/form-acquisition.html'
+  && window.location.pathname !== '/'
+) {
 // decrypt account
   if (localStorage.getItem('keyStoreFormatted') && localStorage.getItem('passwordInput')) {
     const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
     decrypted = web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
-  } else {
-    confirm('NOT AUTHORIZED')
+  } else if (
+      window.location.pathname === '/cabinet/identification-page.html'
+      && window.location.pathname === '/ico/form-acquisition.html'
+  ) {
+    confirm('NOT AUTHORIZED main page')
     window.location.pathname = '/'
   }
 }
@@ -52,7 +60,7 @@ if (window.location.pathname === '/cabinet/main-page.html') {
       alert('Ошибка получения данных процента владения')
     })
   } else {
-    confirm('NOT AUTHORIZED')
+    confirm('NOT AUTHORIZED page main-page')
     window.location.pathname = '/'
   }
 }
@@ -87,7 +95,7 @@ else if (window.location.pathname === '/cabinet/form-shipment.html') {
       }
     })
   } else {
-    confirm('NOT AUTHORIZED')
+    confirm('NOT AUTHORIZED form shipment')
     window.location.pathname = '/'
   }
 }
@@ -139,15 +147,46 @@ else if (window.location.pathname === '/cabinet/acces-shares.html') {
       }
     })
   } else {
-    confirm('NOT AUTHORIZED')
+    confirm('NOT AUTHORIZED access shares')
     window.location.pathname = '/'
   }
 }
 
+else if (
+  window.location.pathname === '/ico/notification-acquisition1.html'
+  || window.location.pathname === '/ico/notification-acquisition2.html'
+  || window.location.pathname === '/ico/notification-acquisition3.html'
+  || window.location.pathname === '/ico/notification-acquisition4.html'
+  || window.location.pathname === '/ico/notification-acquisition5.html'
+  || window.location.pathname === '/ico/notification-acquisition6.html'
+  || window.location.pathname === '/ico/notification-acquisition7.html'
+  || window.location.pathname === '/ico/notification-acquisition8.html'
+
+) {
+
+  var last_buyed_count = document.getElementById('last_buyed_count')
+  if (last_buyed_count) {
+    try {
+      let amount = sessionStorage.getItem('last_buyed_count')
+      last_buyed_count.innerHTML = amount
+      $(loader).removeClass('active');
+    } catch (error) {
+      console.log('error#4', error.toString())
+    }
+  } // end of total_token_count
+
+}
 
 /** Identification Pages */
 
+
+
 $(document).ready(function () {
+    var ico = new IcoClass(web3, addresses)
+
+    console.log('ico', ico)
+
+  ico.init()
 
   if (window.location.pathname === '/cabinet/identification-page.html' || window.location.pathname === '/ico/form-acquisition.html') {
     if (
@@ -199,6 +238,22 @@ $(document).ready(function () {
       let passwordInput = document.getElementById('keystore_password')
       let moneyInput = document.getElementById('eth_amount')
 
+      if(moneyInput){
+        moneyInput.addEventListener('change', e => {
+
+          moneyInput.value = parseFloat(moneyInput.value);
+
+          if(moneyInput.value=='' || parseFloat(moneyInput.value)<=0){
+            console.log('money amount not set')
+            return
+          }
+
+          ico.preCalc( moneyInput.value);
+
+        });
+
+      }
+
       if (investButton) {
         investButton.addEventListener('click', function (e) {
           e.preventDefault()
@@ -211,9 +266,20 @@ $(document).ready(function () {
             alert('password is empty')
             return false
           }
+
+          // if (moneyInput.value === '') {
+          //   alert('eth amount is empty')
+          //   return false
+          // }
+
           $.when()
             .then(function () {
+              $(loader).addClass('active');
+              return true
+            })
+            .then(function () {
               let privateKey = web3.eth.accounts.decrypt(keyStoreFormatted, passwordInput.value)
+              decrypted = privateKey;
               // save to session storage
               console.log('privateKey', privateKey)
 
@@ -223,15 +289,15 @@ $(document).ready(function () {
               localStorage.setItem('signTransaction', privateKey.signTransaction)
               return true
             }).then(function () {
-            $(loader).removeClass('active')
 
             if (!!localStorage.getItem('privateKey') && !!moneyInput) {
 
               $.when()
                 .then(function () {
                   let ethAmount = moneyInput.value
-                  console.log('ФУНКЦИЮ ИНВЕСТИРОВАНИЯ ИНИЦИАЛИЗИРОВАТЬ ЗДЕСЬ!', ethAmount)
-                })
+                  ico.invest(ethAmount, decrypted)
+
+              })
 
               return true
             } else {

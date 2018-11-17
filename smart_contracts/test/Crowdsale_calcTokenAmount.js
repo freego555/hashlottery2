@@ -18,7 +18,7 @@ contract('Crowdsale > calcTokenAmount', async (accounts) => {
       maxAmountForSale = await crowdsale.amountTokensForSale()
       // let money = Math.floor(20 * price)
       // console.log('money', money);
-      // [tokens_buyed, tokens_bonus, change] = await crowdsale.calcTokenAmount(money, true)
+      // [tokens_buyed, tokens_bonus, change, ] = await crowdsale.calcTokenAmount(money, true)
     })
 
     describe('general', async () => {
@@ -55,7 +55,7 @@ contract('Crowdsale > calcTokenAmount', async (accounts) => {
 
       before(async () => {
         money = Math.floor(20 * price);
-        [tokens_buyed, tokens_bonus, change,] = await crowdsale.calcTokenAmount(money, true)
+        [tokens_buyed, tokens_bonus, change, ] = await crowdsale.calcTokenAmount(money, true)
       })
 
       it('tokens buyed', async () => {
@@ -76,7 +76,7 @@ contract('Crowdsale > calcTokenAmount', async (accounts) => {
 
       before(async () => {
         money = Math.floor(110 * price);
-        [tokens_buyed, tokens_bonus, change,] = await crowdsale.calcTokenAmount(money, true)
+        [tokens_buyed, tokens_bonus, change, ] = await crowdsale.calcTokenAmount(money, true)
       })
 
       it('tokens buyed', async () => {
@@ -102,7 +102,7 @@ contract('Crowdsale > calcTokenAmount', async (accounts) => {
       before(async () => {
 
         money = Math.floor(maxAmountForSale * price);
-        [tokens_buyed, tokens_bonus, change,] = await crowdsale.calcTokenAmount(money, true)
+        [tokens_buyed, tokens_bonus, change, ] = await crowdsale.calcTokenAmount(money, true)
 
         expected_bonus3 = Math.floor(maxAmountForSale / 100)
         expected_buyed = maxAmountForSale - expected_bonus3
@@ -154,7 +154,7 @@ contract('Crowdsale > calcTokenAmount', async (accounts) => {
 
       before(async () => {
         money = Math.floor(price / 2);
-        [tokens_buyed, tokens_bonus, change,] = await crowdsale.calcTokenAmount(money, false)
+        [tokens_buyed, tokens_bonus, change, ] = await crowdsale.calcTokenAmount(money, false)
         //todo: check that countOfFirstBuyers is 0
       })
 
@@ -178,7 +178,7 @@ contract('Crowdsale > calcTokenAmount', async (accounts) => {
 
       before(async () => {
         money = price - 10;
-        [tokens_buyed, tokens_bonus, change,] = await crowdsale.calcTokenAmount(money, false)
+        [tokens_buyed, tokens_bonus, change, ] = await crowdsale.calcTokenAmount(money, false)
       })
 
       it('tokens buyed', async () => {
@@ -200,7 +200,7 @@ contract('Crowdsale > calcTokenAmount', async (accounts) => {
 
       before(async () => {
         money = Math.floor(20 * price);
-        [tokens_buyed, tokens_bonus, change,] = await crowdsale.calcTokenAmount(money, false);
+        [tokens_buyed, tokens_bonus, change, ] = await crowdsale.calcTokenAmount(money, false);
         console.log('money:',money);
         console.log('tokens_buyed',tokens_buyed.toString(10));
         console.log('tokens_bonus', tokens_bonus.toString(10));
@@ -226,7 +226,7 @@ contract('Crowdsale > calcTokenAmount', async (accounts) => {
 
       before(async () => {
         money = Math.floor(110 * price);
-        [tokens_buyed, tokens_bonus, change,] = await crowdsale.calcTokenAmount(money, false)
+        [tokens_buyed, tokens_bonus, change, ] = await crowdsale.calcTokenAmount(money, false)
         console.log('money:',money);
         console.log('tokens_buyed',tokens_buyed.toString(10));
         console.log('tokens_bonus', tokens_bonus.toString(10));
@@ -256,7 +256,7 @@ contract('Crowdsale > calcTokenAmount', async (accounts) => {
       before(async () => {
 
         money = Math.floor(maxAmountForSale * price);
-        [tokens_buyed, tokens_bonus, change,] = await crowdsale.calcTokenAmount(money, false)
+        [tokens_buyed, tokens_bonus, change, ] = await crowdsale.calcTokenAmount(money, false)
 
         expected_bonus3 = Math.floor(maxAmountForSale / 100)
         expected_buyed = maxAmountForSale - expected_bonus3
