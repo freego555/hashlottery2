@@ -2,15 +2,15 @@ pragma solidity ^0.4.24;
 //import "./MigrationAgent.sol";
 
 contract LotteryIncomeWallet {
-    mapping(uint256 => bool)  isDrawFinished;
+    mapping(address => uint256) holderIndexes;
     address[] private stockHolders;
+    address drawContract;
+    address incomeWallet;
     mapping(address => uint256) public dividentsAvailable;
     mapping(address => mapping(uint256 => uint256)) dividendsFromDraw;
 
-
-
     constructor(){
-
+        owner = msg.sender;
     }
 
     modifier onlyOwner() {
@@ -23,15 +23,9 @@ contract LotteryIncomeWallet {
         _;
     }
 
-    modifier only() {
-        require(msg.sender == draw, "Only Draw contract can call this");
+    modifier onlyStockHolders() {
+        require(msg.sender == draw, "Only Stock Holders can call this");
         _;
     }
-
-    modifier isDrawOver() {
-        require(Crowdsale(crowdSaleContract).isIcoEnd() == status, "ICO isn't end");
-        _;
-    }
-
 
 }

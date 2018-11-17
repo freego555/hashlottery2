@@ -1,5 +1,8 @@
 pragma solidity ^0.4.24;
-import "./MigrationAgent.sol";
+
+contract MigrationAgent {
+    function migrateFrom( address sender, uint256 _value);
+}
 
 contract TokenERC20 {
     string public name; // Migrate ??
