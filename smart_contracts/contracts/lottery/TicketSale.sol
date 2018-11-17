@@ -90,8 +90,7 @@ contract TicketSale {
             "LotteryDraw contract is not init yet"
         );
 
-        (, uint8 drawStage) = lotteryDrawContract.getStageOfCurrentDraw();
-        require(drawStage != 11
+        require(!lotteryDrawContract.isSellingTicketPeriod()
         , "You can't set new ticket price during selling period"
         );
 
@@ -105,9 +104,7 @@ contract TicketSale {
 
     function buy() payable public isInitComplete {
 
-        (, uint8 drawStage) = lotteryDrawContract.getStageOfCurrentDraw();
-
-        require(drawStage == 11
+        require(lotteryDrawContract.isSellingTicketPeriod()
         , "You can't buy tickets because selling period is ended"
         );
         // период продажи билетов
@@ -145,4 +142,5 @@ contract TicketSale {
 
 
 }
+
 

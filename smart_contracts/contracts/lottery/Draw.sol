@@ -189,6 +189,8 @@ contract Draw {
         stopSelling = startSelling + 47 hours;
         stopAcceptingTickets = stopSelling + 1 hours;
 
+        // todo: вызов распределения чистой прибыли между акционерами
+        
         // set others timestamps to 0
         startRequests = 0;
     }
@@ -216,7 +218,7 @@ contract Draw {
     }
     
     // cron 3
-    function startWithdraws() public onlyCronOrKassa onlyWaitCron3 {
+    function startWithdraws(uint fromIndex, uint count) public onlyCronOrKassa onlyWaitCron3 {
         
         startVacation = now;
         stopVacation = startVacation + calcVacationPeriod();
@@ -248,6 +250,11 @@ contract Draw {
             return (drawStage == 21) || (drawStage == 22)
     }
     
+     // период перерыва
+    function isVacationPeriod() public view return (bool){
+            uint8 drawStage = lotteryDrawContract.getStageOfCurrentDraw()
+            return (drawStage == 40)
+    }
 }
 
 
