@@ -12,17 +12,12 @@ contract TokenERC20 {
     bool private isTokensSupplied = false;
 
     // ownership definition
-    uint8 private addressListIndex = 0;
-    struct OwnerStatus {
-        bool isOwnerCurrently;
-        bool isInOwnerAddressesList;
-    }
-    mapping(address => OwnerStatus) public isOwner;
-    address[][] public ownerAddressesLists;
+    mapping(address => uint256) public ownersIndex;
+    address[] public ownerAddressesLists;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
-    event TokensEmitted(uint256 tokensSupplyed, uint256 totalTokens);
+    event TokensEmitted(uint256 tokensSupplyed);
 
     // For migration ERC20
     event Migrate(address indexed _from, address indexed _to, uint256 _value);
@@ -100,7 +95,9 @@ contract TokenERC20 {
         totalSupply = 100000;
         balanceOf[contract_address] = totalSupply;
         isTokensSupplied = true;
-        emit TokensEmitted(totalSupply, totalSupply);
+        ownersIndex[contract_address] = 0;
+        ownerAddressesLists.push(contract_address);
+        emit TokensEmitted(totalSupply);
         return true;
     }
 
@@ -108,28 +105,39 @@ contract TokenERC20 {
         require(owner == msg.sender, "Not Authorized");
         totalSupply += tokens;
         balanceOf[receiver] += tokens;
-        emit TokensEmitted(tokens, totalSupply);
+        if(ownersIndex[receiver] == 0) {
+            ownerAddressesLists.push(receiver);
+            ownersIndex[receiver] = ownerAddressesLists.length - 1;
+        }
+        emit TokensEmitted(tokens);
         return true;
     }
 
     function _transfer(address _from, address _to, uint _value) internal isMigrationNotRun() {
+        require(isTokensSupplied == true, "Tokens are not supplied");
         require(balanceOf[_from] >= _value, "Not enough funds");
         require(_to != address(0), "Try send funds to 0-address");
         balanceOf[_from] -= _value;
         balanceOf[_to] += _value;
+
         if (balanceOf[_from] == 0) {
-            isOwner[_from].isOwnerCurrently = false;
-        }
-        if (balanceOf[_to] > 0) {
-            isOwner[_to].isOwnerCurrently = true;
-            if (isOwner[_to].isInOwnerAddressesList != false) {
-                isOwner[_to].isInOwnerAddressesList = true;
-                if (ownerAddressesList[addressListIndex].count > 99) {
-                    addressListIndex += 1;
-                }
-                ownerAddressesList[addressListIndex].push(_to);
+            uint256 lastElemIndex = ownerAddressesLists.length - 1;
+            address lastElem = ownerAddressesLists[lastElemIndex];
+            if (lastElem != _from) {
+                uint256 senderIndex = ownersIndex[_from];
+                ownerAddressesLists[senderIndex] = lastElem;
+                ownersIndex[lastElem] = senderIndex;
+                ownerAddressesLists.length = lastElemIndex;
+            } else {
+                ownerAddressesLists.length = lastElemIndex;
             }
         }
+
+        if (ownersIndex[_to] == 0) {
+            ownersIndex[_to] = ownerAddressesLists.length;
+            ownerAddressesLists.push(_to);
+        }
+
         emit Transfer(_from, _to, _value);
     }
 
@@ -157,11 +165,11 @@ contract TokenERC20 {
         return balanceOf[account] * 10000 / totalSupply;
     }
 
-    function getOwnerArraysCount() public view returns (uint256 ownerArraysCount) {
-        return addressListIndex;
+    function getOwnerAddressesList() public view returns (address[] ownerAddressesListPart) {
+        return ownerAddressesLists;
     }
 
-    function getOwnerAddressesListPart(uint8 index) public view returns (address[] ownerAddressesListPart) {
-        return ownerAddressesList[index];
+    function getOwnerAddressesListElement(uint256 userIndex) public view returns (address ownerAddress) {
+        return ownerAddressesLists[userIndex];
     }
 }
