@@ -4,7 +4,7 @@ import './Kassa.sol';
 
 contract Draw {
 
-    uint currentDrawId = 0; // текущий номер розыгрыша
+    uint public currentDrawId = 0; // текущий номер розыгрыша
 
     address public cronAddress; // контракт крона
     address public kassaAddress; // контракт кассы
@@ -58,40 +58,24 @@ contract Draw {
         );
         _;
     }
-    
-     modifier onlyCron() {
-        require(initComplete
-        , "init not complete"
-        );
-        require(msg.sender == cronAddress
-        , "Only owner of contract can call this"
-        );
-        _;
-    }
 
     modifier onlyWaitCron1() {
-        (, uint8 drawStage) = lotteryDrawContract.getStageOfCurrentDraw();
-
-        require(drawStage == 10
+        require(lotteryDrawContract.getStageOfCurrentDraw() == 10
         , "Only 'onlyWaitCron1' period is allowed for this action"
         );
         _;
     }
 
     modifier onlyWaitCron2() {
-        (, uint8 drawStage) = lotteryDrawContract.getStageOfCurrentDraw();
-
-        require(drawStage == 20
+        require( lotteryDrawContract.getStageOfCurrentDraw() == 20
         , "Only 'onlyWaitCron2' period is allowed for this action"
         );
         _;
     }
     
     modifier onlyWaitCron3() {
-        (, uint8 drawStage) = lotteryDrawContract.getStageOfCurrentDraw();
-
-        require(drawStage == 30
-        , "Only 'wait for withdraw' period is allowed for this action"
+        require(lotteryDrawContract.getStageOfCurrentDraw() == 30
+        , "Only 'onlyWaitCron3' period is allowed for this action"
         );
         _;
     }
@@ -137,7 +121,7 @@ contract Draw {
         returns vacationPeriod;
     }
 
-    function getStageOfCurrentDraw() view external returns (uint256 drawId, uint8 drawStage){
+    function getStageOfCurrentDraw() view external returns (uint8 drawStage){
         // todo: узнать по поводу now и возможно вынести его в переменную
         
         // первая лотерея
@@ -241,6 +225,29 @@ contract Draw {
         Kassa(kassaAddress).startWithdraws();
     }
     
+    // можно продавать билеты
+    function isSellingTicketPeriod() public view return (bool){
+           return lotteryDrawContract.getStageOfCurrentDraw() == 11;
+    }
+    
+    // можно принимать заполненные билеты
+    function isFillingTicketPeriod() public view return (bool){
+            uint8 drawStage = lotteryDrawContract.getStageOfCurrentDraw()
+            return (drawStage == 11) || (drawStage == 12)
+    }
 
+    // нельзя перемещать акции
+    function isBlockedTranferPeriod() public view return (bool){
+            uint8 drawStage = lotteryDrawContract.getStageOfCurrentDraw()
+            return (drawStage == 12) || (drawStage == 21)
+    }
+    
+    // можно принимать заявки на выигрышные билеты
+    function isAcceptRequestPeriod() public view return (bool){
+            uint8 drawStage = lotteryDrawContract.getStageOfCurrentDraw()
+            return (drawStage == 21) || (drawStage == 22)
+    }
+    
 }
+
 
