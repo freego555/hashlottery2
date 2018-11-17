@@ -24,14 +24,11 @@ export function getNonce(address, callback) {
       if (result.result.pending) {
         if (result.result.pending[address]) {
           txnsCount = txnsCount + Object.keys(result.result.pending[address]).length
-          console.log('txnsCount result', txnsCount)
           callback(txnsCount);
         } else {
-          console.log('txnsCount result', txnsCount)
           callback(txnsCount);
         }
       } else {
-        console.log('txnsCount result', txnsCount)
         callback(txnsCount);
       }
     })

@@ -1,5 +1,8 @@
 pragma solidity ^0.4.24;
-import "./MigrationAgent.sol";
+
+contract MigrationAgent {
+    function migrateFrom( address sender, uint256 _value);
+}
 
 contract TokenERC20 {
     string public name; // Migrate ??
@@ -11,9 +14,13 @@ contract TokenERC20 {
     address public owner;
     bool private isTokensSupplied = false;
 
+    // ownership definition
+    mapping(address => uint256) public ownersIndex;
+    address[] public ownerAddressesLists;
+
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
-    event TokensEmitted(uint256 tokensSupplyed, uint256 totalTokens);
+    event TokensEmitted(uint256 tokensSupplyed);
 
     // For migration ERC20
     event Migrate(address indexed _from, address indexed _to, uint256 _value);
@@ -85,14 +92,15 @@ contract TokenERC20 {
         owner = msg.sender;
     }
 
-
     function supplyTokens(address contract_address) public returns (bool success) {
         require(owner == msg.sender, "Not Authorized");
         require(isTokensSupplied == false, "Tokens already supplied");
         totalSupply = 100000;
         balanceOf[contract_address] = totalSupply;
         isTokensSupplied = true;
-        emit TokensEmitted(totalSupply, totalSupply);
+        ownersIndex[contract_address] = 0;
+        ownerAddressesLists.push(contract_address);
+        emit TokensEmitted(totalSupply);
         return true;
     }
 
@@ -100,15 +108,39 @@ contract TokenERC20 {
         require(owner == msg.sender, "Not Authorized");
         totalSupply += tokens;
         balanceOf[receiver] += tokens;
-        emit TokensEmitted(tokens, totalSupply);
+        if(ownersIndex[receiver] == 0) {
+            ownerAddressesLists.push(receiver);
+            ownersIndex[receiver] = ownerAddressesLists.length - 1;
+        }
+        emit TokensEmitted(tokens);
         return true;
     }
 
     function _transfer(address _from, address _to, uint _value) internal isMigrationNotRun() {
+        require(isTokensSupplied == true, "Tokens are not supplied");
         require(balanceOf[_from] >= _value, "Not enough funds");
         require(_to != address(0), "Try send funds to 0-address");
         balanceOf[_from] -= _value;
         balanceOf[_to] += _value;
+
+        if (balanceOf[_from] == 0) {
+            uint256 lastElemIndex = ownerAddressesLists.length - 1;
+            address lastElem = ownerAddressesLists[lastElemIndex];
+            if (lastElem != _from) {
+                uint256 senderIndex = ownersIndex[_from];
+                ownerAddressesLists[senderIndex] = lastElem;
+                ownersIndex[lastElem] = senderIndex;
+                ownerAddressesLists.length = lastElemIndex;
+            } else {
+                ownerAddressesLists.length = lastElemIndex;
+            }
+        }
+
+        if (ownersIndex[_to] == 0) {
+            ownersIndex[_to] = ownerAddressesLists.length;
+            ownerAddressesLists.push(_to);
+        }
+
         emit Transfer(_from, _to, _value);
     }
 
@@ -120,7 +152,7 @@ contract TokenERC20 {
     function transferFrom(address _from, address _to, uint256 _value) public
     returns (bool success) {
         require(_value <= allowance[_from][msg.sender], "User is not allowed to perform action");
-        allowance[_from][msg.sender] -= _value;
+        allowance[_from][msg.sender] = _value;
         _transfer(_from, _to, _value);
         return true;
     }
@@ -134,5 +166,13 @@ contract TokenERC20 {
 
     function getOwnership(address account) public view returns (uint256 percentageMultiplied100) {
         return balanceOf[account] * 10000 / totalSupply;
+    }
+
+    function getOwnerAddressesList() public view returns (address[] ownerAddressesListPart) {
+        return ownerAddressesLists;
+    }
+
+    function getOwnerAddressesListElement(uint256 userIndex) public view returns (address ownerAddress) {
+        return ownerAddressesLists[userIndex];
     }
 }
