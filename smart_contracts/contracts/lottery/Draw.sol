@@ -1,16 +1,20 @@
 pragma solidity ^0.4.19;
 
+import './Kassa.sol';
+
 contract Draw {
 
     uint currentDrawId = 0; // текущий номер розыгрыша
 
-    address public cronAddress; // контракт кассы
+    address public cronAddress; // контракт крона
+    address public kassaAddress; // контракт кассы
 
     address public owner; // владелец контракта
     bool public initComplete = false;
 
     //statuses
     // cron  1, // продажа и заполнение билетов
+    //         10 // ждем крон 1 для начала продаж
     //         11, //- продажа билетов 47 часов
     //         12, // дозаполнение билетов, продавать уже нельзя, акции перемещать нельзя
     // cron  2, // розыгрыш
@@ -29,6 +33,9 @@ contract Draw {
     uint public stopBlockingTokens; // конец блокировки токенов для инвесторов // startRequests+1h
     uint public stopRequests;  // конец приема заявок на выигрыш
 
+    uint public startVacation; // начало перевыва
+    uint public stopVacation;  // конец перевыва
+        
     mapping(uint => uint8[]) public winnersNumbers; // drawId => numbers array список выиграшных номеров
 
     constructor() public {
@@ -51,23 +58,40 @@ contract Draw {
         );
         _;
     }
-
-    modifier onlyVacationPeriod() {
-
-        (, uint8 drawStage) = lotteryDrawContract.getStageOfCurrentDraw();
-
-        require(drawStage == 40
-        , "Only vacation period is allowed for this action"
+    
+     modifier onlyCron() {
+        require(initComplete
+        , "init not complete"
+        );
+        require(msg.sender == cronAddress
+        , "Only owner of contract can call this"
         );
         _;
     }
 
-    modifier onlyWaitForDrawPeriod() {
+    modifier onlyWaitCron1() {
+        (, uint8 drawStage) = lotteryDrawContract.getStageOfCurrentDraw();
 
+        require(drawStage == 10
+        , "Only 'onlyWaitCron1' period is allowed for this action"
+        );
+        _;
+    }
+
+    modifier onlyWaitCron2() {
         (, uint8 drawStage) = lotteryDrawContract.getStageOfCurrentDraw();
 
         require(drawStage == 20
-        , "Only 'wait for draw' period is allowed for this action"
+        , "Only 'onlyWaitCron2' period is allowed for this action"
+        );
+        _;
+    }
+    
+    modifier onlyWaitCron3() {
+        (, uint8 drawStage) = lotteryDrawContract.getStageOfCurrentDraw();
+
+        require(drawStage == 30
+        , "Only 'wait for withdraw' period is allowed for this action"
         );
         _;
     }
@@ -77,15 +101,48 @@ contract Draw {
         , "cronAddress is already set"
         );
         cronAddress = _address;
-        initComplete = true;
+        
+        if(kassaAddress!== address(0)){
+            initComplete = true;
+        }
+    }
+
+    function setKassaAddress(address _address) public onlyOwner {
+        require(kassaAddress == address(0)
+        , "kassaAddress is already set"
+        );
+        kassaAddress = _address;
+        
+        if(cronAddress!== address(0)){
+            initComplete = true;
+        }
+    }
+    
+    function calcVacationPeriod() public view return(uint vacationPeriod){
+        // посчитаем период ожидания крона#1
+        uint period10 = 0;
+        if(stoptVacation != 0){
+             uint period10 = stoptVacation - startSelling;
+        }
+        // посчитаем период ожидания крона#2
+        uint period20 = startRequests - stopAcceptingTickets;
+        // посчитаем период ожидания крона#3
+        uint period30 = startVacation - stopRequests;
+         
+        uint fix = (period10 + period20 + period30) % 24 hours;
+        uint vacationPeriod = 24 hours
+        if(fix>0){
+            vacationPeriod-=fix;
+        }
+        returns vacationPeriod;
     }
 
     function getStageOfCurrentDraw() view external returns (uint256 drawId, uint8 drawStage){
-
-        // перерыв между розыгрышами
-        // todo: добавить условие что призы розданы по текущемму розыгрышу
-        if (startSelling == 0) {
-            return (currentDrawId, 3);
+        // todo: узнать по поводу now и возможно вынести его в переменную
+        
+        // первая лотерея
+        if (startSelling == 0 ){
+            return (currentDrawId, 10);
         }
 
         require(startSelling > 0
@@ -99,6 +156,7 @@ contract Draw {
             if (now < stopSelling) {
                 drawStage = 11;
             } else {
+                // акции перемещать нельзя
                 drawStage = 12;
             }
 
@@ -124,12 +182,24 @@ contract Draw {
         }
 
         // период ожидания крона#3 30
+        if (startVacation == 0) {
+            return (currentDrawId, 30);
+        }
+        
+        // todo: добавить условие что призы розданы по текущемму розыгрышу и только тогда начинается отпуск
+    
         // период перерыва 40
-        return (currentDrawId, 40);
+           if (now >= startVacation
+        && now <= stopVacation) {
+            return (currentDrawId, 40);
+        }
+      
+        // wait for new draw
+        return (currentDrawId, 10);
     }
 
     //cron 1
-    function startSelling() onlyCron onlyVacationPeriod {
+    function startSelling() public onlyCron onlyWaitCron1 {
         currentDrawId++;
         startSelling = now;
         stopSelling = startSelling + 47 hours;
@@ -137,11 +207,10 @@ contract Draw {
 
         // set others timestamps to 0
         startRequests = 0;
-
     }
 
     //cron 2
-    function startDraw(uint8[] numbers) onlyCron onlyWaitForDrawPeriod {
+    function startDraw(uint8[] numbers) public onlyCron onlyWaitCron2 {
 
         require(numbers.length == 3
         , 'Count of winning numbers must be 3'
@@ -156,7 +225,22 @@ contract Draw {
         stopBlockingTokens = startRequests + 1 hours;
 
         winnersNumbers[currentDrawId] = numbers;
+      
+       // set others timestamps to 0
+        startVacation = 0;
 
     }
+    
+    // cron 3
+    function startWithdraws() public onlyCronOrKassa onlyWaitCron3 {
+        
+        startVacation = now;
+        stopVacation = startVacation + calcVacationPeriod();
+        
+        // вызвать кассу на начало раздачи выиграша
+        Kassa(kassaAddress).startWithdraws();
+    }
+    
 
 }
+
