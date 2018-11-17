@@ -262,10 +262,10 @@ $(document).ready(function () {
             return false
           }
 
-          if (passwordInput.value === '') {
-            alert('password is empty')
-            return false
-          }
+          // if (passwordInput.value === '') {
+          //   alert('password is empty')
+          //   return false
+          // }
 
           // if (moneyInput.value === '') {
           //   alert('eth amount is empty')
