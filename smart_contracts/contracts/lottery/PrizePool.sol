@@ -1,8 +1,9 @@
 pragma solidity ^0.4.24;
 
-contract LotteryDraw {
-    function isAcceptanceOfApplicationsEnd() public returns (bool){}
-}
+import './../TokenERC721.sol';
+import './../Draw.sol';
+
+
 
 contract Kassa {
 }
@@ -32,7 +33,9 @@ contract PrizePool {
         require(initComplete
         , "init not complete"
         );
-        require(LotteryDraw(lotteryDrawContractAddress).isAcceptanceOfApplicationsEnd()
+
+        (, uint8 drawStage) = Draw(lotteryDrawContractAddress).getStageOfCurrentDraw();
+        require(Draw(drawStage == 21 ||  drawStage == 22
         , "Acceptance of applications period isn't end"
         );
         _;
@@ -88,7 +91,7 @@ contract PrizePool {
         address(winner).transfer(value);
     }
 
-    function setKassaContractAddressAddress(address _address) public onlyOwner {
+    function setKassaContractAddress(address _address) public onlyOwner {
         require(kassaContractAddress == address(0)
         , "kassaContractAddress is already set"
         );

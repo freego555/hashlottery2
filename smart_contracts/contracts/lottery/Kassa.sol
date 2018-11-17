@@ -1,27 +1,14 @@
 pragma solidity ^0.4.19;
 
-contract Draw {
-    
-    uint currentDrawId; // текущий номер розыгрыша
-    
-  //  function isAcceptanceOfApplicationsEnd() public returns (bool){}
-}
-contract PrizePool {
-  function determineWinners(uint) public returns(uint){}
-    
-  function sendToWinner(address, uint) public;
-}
-
-contract TokenERC721 {
-    
-}
+import './../Draw.sol';
+import './../PrizePool.sol';
 
 contract Kassa {
 
     address public owner; // владелец контракта
 
     address public prizePoolAddress;
-    address public drawAdress;
+    address public drawAddress;
     
     mapping(address => uint) public winnersMoney;  // winnerAddress => money amount
     mapping(uint => uint) public winnersCount; // drawId => countOfwinners
@@ -74,11 +61,18 @@ contract Kassa {
       //  } 
     }
     
-    function setDrawAdress(address _address) public onlyOwner {
-        require(drawAdress == address(0)
-      //  , "drawAdress is already set"
+    function setDrawAddress(address _address) public onlyOwner {
+        require(drawAddress == address(0)
+        , "LotteryDraw contract has already set"
         );
-        drawAdress = _address;
+        drawAddress = _address;
+
+        require(lotteryDrawAddress == address(0),
+            "LotteryDraw contract has already set"
+        );
+
+        drawContract = LotteryDraw(_address);
+
        // if (this.isInitComplete()) {
     //        initComplete = true;
       //  } 
@@ -91,6 +85,8 @@ contract Kassa {
         
       //  uint current_draw_id = Draw(drawAdress).currentDrawId;
         // ticket draw_id is the same as current draw_id
+
+        (, uint8 drawStage) = lotteryDrawContract.getStageOfCurrentDraw();
         
         // hash numbers + salt and compare to ticket combinationOfTicket hash
         //keccak256()
