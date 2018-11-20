@@ -1,12 +1,9 @@
 pragma solidity ^0.4.24;
 
 import './../TokenERC721.sol';
-import './../Draw.sol';
+import './Draw.sol';
+import './Kassa.sol';
 
-
-
-contract Kassa {
-}
 
 contract PrizePool {
 
@@ -34,8 +31,7 @@ contract PrizePool {
         , "init not complete"
         );
 
-        (, uint8 drawStage) = Draw(lotteryDrawContractAddress).getStageOfCurrentDraw();
-        require(Draw(drawStage == 21 ||  drawStage == 22
+        require(Draw(lotteryDrawContractAddress).isWaitingWithdrawsPeriod()
         , "Acceptance of applications period isn't end"
         );
         _;
