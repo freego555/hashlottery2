@@ -1,11 +1,13 @@
 pragma solidity ^0.4.24;
-//import "./MigrationAgent.sol";
+import "./TokenERC20.sol";
 
 contract LotteryIncomeWallet {
+    address public owner;
     mapping(address => uint256) holderIndexes;
     address[] private stockHolders;
     address drawContract;
     address incomeWallet;
+    address tokenERC20Address;
     mapping(address => uint256) public dividentsAvailable;
     mapping(address => mapping(uint256 => uint256)) dividendsFromDraw;
 
@@ -19,13 +21,21 @@ contract LotteryIncomeWallet {
     }
 
     modifier onlyDraw() {
-        require(msg.sender == draw, "Only Draw contract can call this");
+        require(msg.sender == drawContract, "Only Draw contract can call this");
         _;
     }
 
     modifier onlyStockHolders() {
-        require(msg.sender == draw, "Only Stock Holders can call this");
+        require(msg.sender == drawContract, "Only Stock Holders can call this");
         _;
+    }
+
+    function getOwnersList() private returns (address[]) {
+        stockHolders = TokenERC20(tokenERC20Address).getOwnerAddressesList();
+    }
+
+    function getOwnersListIndex(address _ownerAddress) public returns(uint256) {
+        return TokenERC20(tokenERC20Address).ownersIndex[_ownerAddress];
     }
 
 }
