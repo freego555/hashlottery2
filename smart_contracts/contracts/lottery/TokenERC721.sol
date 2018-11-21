@@ -1,11 +1,13 @@
 pragma solidity ^0.4.24;
 
 interface Draw {
-    function getStageOfCurrentDraw() view external returns(uint256 drawId, uint8 drawStage);
+    function isSellingTicketPeriod() external view returns (bool);
+    function isFillingTicketPeriod() external view returns (bool);
+    function currentDrawId() external view returns(uint256 _drawId);
 }
 
 interface MigrationAgent {
-    function migrateOneTokenFrom(uint256 _tokenId) external;
+    function migrateOneTokenFrom(address _from, uint256 _tokenId, uint256 _drawId, bytes32[3] _combinationOfTicket, uint8 _status) external;
     function migrateChunkOfTokensFrom(uint256 _indexOfFirstTokenFromTheEnd, uint16 _sizeOfChunk) external returns(uint256 _indexOfLastToken, uint16 _amountRemains, bool _isEnd);
 }
 
@@ -26,7 +28,8 @@ contract TokenERC721 {
     string public symbol;
     uint256 public totalSupply;
     uint256 public lastIdOfToken;
-    uint16 public allowedToMintInOneTransaction = 100;
+    uint256 public lastIdOfDraw; // For migration
+    uint16 public allowedToMintInOneTransaction = 50;
     mapping(uint256 => uint256) public totalTicketsInDraw; // [draw] = amount of tickets
     mapping(address => uint256) public balanceOf; // [owner] = amount of tokens
     mapping(uint256 => address) public ownerOf; // [tokenId] = owner of token
@@ -44,7 +47,6 @@ contract TokenERC721 {
     bool public isSetAddressOfContractDraw;
 
     Draw public contractDraw;
-    //MigrationAgent public contractMigrationAgent; // For migration
 
     event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);
     event Approval(address indexed _owner, address indexed _approved, uint256 _tokenId);
@@ -75,19 +77,25 @@ contract TokenERC721 {
         _;
     }
 
-    modifier isTokenExist(uint256 _tokenId) {
+    modifier onlyIfTokenExists(uint256 _tokenId) {
         require(tokenExists[_tokenId], "Token doesn't exist.");
         _;
     }
 
-    modifier isSenderNotEqualReciever(address _from, address _to) {
+    modifier onlyIfSenderNotEqualReciever(address _from, address _to) {
         require(_from != _to, "Sender cannot be reciever.");
         _;
     }
 
     // For migration
-    modifier isNotSetMigrationAgent() {
+    modifier onlyIfNotSetMigrationAgent() {
         require(addressOfMigrationAgent == address(0), "Migration agent already set.");
+        _;
+    }
+
+    // For migration
+    modifier onlyIfSetMigrationAgent() {
+        require(addressOfMigrationAgent != address(0), "Migration agent isn't set.");
         _;
     }
 
@@ -108,22 +116,20 @@ contract TokenERC721 {
         isSetAddressOfContractDraw = true;
     }
 
-    // For migration
-    function setAddressOfMigrationAgent(address _address) public
-            onlyAdmin
-            isNotSetMigrationAgent {
-        addressOfMigrationAgent = _address;
-        //contractMigrationAgent = MigrationAgent(_address);
+    function getDataOfTicket(uint256 _tokenId) view public returns(uint256 _drawId, bytes32[3] _combinationOfTicket, Status _status) {
+        DataOfTicket memory _dataOfTicket = dataOfTicket[_tokenId];
+        return (_dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, _dataOfTicket.status);
     }
 
-    function mint(address _owner, uint16 _amountOfTokens) public isNotSetMigrationAgent {
+    function mint(address _owner, uint16 _amountOfTokens) public
+            onlyIfNotSetMigrationAgent {
         require(msg.sender == addressOfContractTicketsSale, "Sender should be the contract TicketsSale.");
         require(_owner != address(0), "Owner cannot be 0.");
-        require(_amountOfTokens <= allowedToMintInOneTransaction, "Owner cannot mint more than 100 tickets in one transaction.");
+        require(_amountOfTokens <= allowedToMintInOneTransaction, "Owner cannot mint more than 50 tickets in one transaction.");
         require(isSetAddressOfContractDraw, "Address of contract Draw should be set.");
 
-        (uint256 drawId, uint8 drawStage) = contractDraw.getStageOfCurrentDraw();
-        require(drawStage == 1, "Stage of current draw should be 'Sale of tickets'");
+        uint256 drawId = contractDraw.currentDrawId();
+        require(contractDraw.isSellingTicketPeriod(), "Stage of current draw should be 'Sale of tickets'");
 
         uint256 indexOfNextToken = balanceOf[_owner]; // index to put to tokenOfOwnerByIndex, indexOfTokenForOwner
         uint256 idOfNextToken = lastIdOfToken + 1; // id to use as current tokenId
@@ -155,11 +161,8 @@ contract TokenERC721 {
     function approve(address _to, uint256 _tokenId) public
             onlyOwnerOfToken(msg.sender, _tokenId)
             onlyNotFilledTicket(_tokenId)
-            isTokenExist(_tokenId)
-            isSenderNotEqualReciever(msg.sender, _to) {
-        //require(msg.sender != _to, "Sender cannot be reciever.");
-        //require(tokenExists[_tokenId], "Token doesn't exist.");
-
+            onlyIfTokenExists(_tokenId)
+            onlyIfSenderNotEqualReciever(msg.sender, _to) {
         allowance[msg.sender][_tokenId] = _to;
 
         emit Approval(msg.sender, _to, _tokenId);
@@ -179,10 +182,10 @@ contract TokenERC721 {
         require(_numbers[0] != _numbers[1] && _numbers[0] != _numbers[2] && _numbers[1] != _numbers[2], "Numbers cannot repeat.");
         require(allowance[msg.sender][_tokenId] == address(0), "Sender cannot fill promised token.");
 
-        (uint256 drawIdCurrent, uint8 drawStage) = contractDraw.getStageOfCurrentDraw();
+        uint256 drawIdCurrent = contractDraw.currentDrawId();
         uint256 drawIdOfTicket = dataOfTicket[_tokenId].drawId;
         require(drawIdCurrent == drawIdOfTicket, "Filling of ticket is available only for current draw.");
-        require(drawStage == 1 || drawStage == 2, "Stage of current draw should be 'Sale of tickets' or 'Filling tickets without sale'");
+        require(contractDraw.isFillingTicketPeriod(), "Stage of current draw should be 'Sale of tickets' or 'Filling tickets without sale'");
 
         dataOfTicket[_tokenId].combinationOfTicket = _numbers;
         dataOfTicket[_tokenId].status = Status.Filled;
@@ -192,36 +195,44 @@ contract TokenERC721 {
     }
 
     // For migration
+    function startOutcomingMigration(address _addressOfMigrationAgent) public
+            onlyAdmin
+            onlyIfNotSetMigrationAgent {
+        addressOfMigrationAgent = _addressOfMigrationAgent;
+        lastIdOfDraw = contractDraw.currentDrawId();
+    }
+
+    // For migration
     function migrateOneToken(uint256 _tokenId) public
-            isSetMigrationAgent
-            onlyOwnerOfToken(msg.sender)
-            isTokenExist(_tokenId) {
+            onlyIfSetMigrationAgent
+            onlyOwnerOfToken(msg.sender, _tokenId)
+            onlyIfTokenExists(_tokenId) {
+        DataOfTicket memory _dataOfTicket = dataOfTicket[_tokenId];
+        require(_dataOfTicket.drawId == lastIdOfDraw, "You can migrate tickets only from last draw.");
+
         changeOwnerDataOfToken(msg.sender, address(0), _tokenId); // delete owner data of token without sending to anybody
         ownerOf[_tokenId] = address(0);
-        tokenExist[_tokenId] = false;
+        tokenExists[_tokenId] = false;
         totalSupply--;
+        totalTicketsInDraw[_dataOfTicket.drawId]--;
 
-        MigrationAgent(addressOfMigrationAgent).migrateOneTokenFrom(msg.sender, _tokenId);
+        MigrationAgent(addressOfMigrationAgent).migrateOneTokenFrom(msg.sender, _tokenId, _dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, uint8(_dataOfTicket.status));
 
         emit MigrateOneToken(_tokenId);
     }
 
-    // For migration
+    /*// For migration
     function migrateChunkOfTokens(uint256 _indexOfFirstToken, uint16 _sizeOfChunk) public
-            isSetMigrationAgent
-            onlyOwnerOfToken(msg.sender)
-            isTokenExist(_tokenId) {
-
-    }
+            onlyIfSetMigrationAgent
+            onlyOwnerOfToken(msg.sender) {
+    }*/
 
     //=========+++ Additional functions +++==========//
     function _transfer(address _from, address _to, uint256 _tokenId) internal
             onlyOwnerOfToken(_from, _tokenId)
             onlyNotFilledTicket(_tokenId)
-            isTokenExist(_tokenId)
-            isSenderNotEqualReciever(_from, _to) {
-        //require(tokenExists[_tokenId], "Token by id would be exist." );
-        //require(_from != _to, "Sender cannot be reciever of token");
+            onlyIfTokenExists(_tokenId)
+            onlyIfSenderNotEqualReciever(_from, _to) {
         require(_to != address(0), "Reciever cannot be 0");
 
         changeOwnerDataOfToken(_from, _to, _tokenId);
@@ -239,16 +250,18 @@ contract TokenERC721 {
             tokenOfOwnerByIndex[_from][indexOfCurrentTokenOfOwner] = lastTokenOfOwner;
             indexOfTokenForOwner[lastTokenOfOwner] = indexOfCurrentTokenOfOwner; // Set new index for last token
         }
+        if (_to == address(0)) {
+            indexOfTokenForOwner[_tokenId] = 0; // Delete index of token
+        }
         tokenOfOwnerByIndex[_from][indexOfLastTokenOfOwner] = 0;
         balanceOf[_from] -= 1;
 
         // Clear allowance only if it's not zero
-        address zeroAddress = address(0);
-        if (allowance[_from][_tokenId] != zeroAddress) {
-            allowance[_from][_tokenId] = zeroAddress;
+        if (allowance[_from][_tokenId] != address(0)) {
+            allowance[_from][_tokenId] = address(0);
         }
 
-        if (_to != zeroAddress) {
+        if (_to != address(0)) {
             // Set new index of token
             uint256 indexOfNextTokenForReciever = balanceOf[_to];
             indexOfTokenForOwner[_tokenId] = indexOfNextTokenForReciever;
