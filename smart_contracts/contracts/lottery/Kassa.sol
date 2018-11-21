@@ -219,9 +219,5 @@ contract Kassa {
         return;
     }
 
-    function() payable public {
-
-    }
-
 }
 

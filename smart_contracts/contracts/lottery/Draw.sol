@@ -204,6 +204,17 @@ contract Draw {
         , 'Count of winning numbers must be 3'
         );
 
+        for (uint8 index = 0; index < numbers.length; index++) {
+            require(numbers[index] >=1 && numbers[index] <=99
+            , 'The number is not in 1..99 range'
+            );
+            if(index > 0){
+                require(numbers[index-1] >= numbers[index]
+                , 'The numbers must be ordered as ASC'
+                );
+            }
+        }
+
         require(winnersNumbers[currentDrawId].length == 0
         , 'Numbers for current draw already set, please contact the admin'
         );
