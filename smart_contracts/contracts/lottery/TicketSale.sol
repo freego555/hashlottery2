@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import './../TokenERC721.sol';
+import './TokenERC721.sol';
 import './Draw.sol';
 
 
@@ -80,7 +80,7 @@ contract TicketSale {
             "LotteryDraw contract has already set"
         );
         lotteryDrawAddress = _address;
-        lotteryDrawContract = LotteryDraw(_address);
+        lotteryDrawContract = Draw(_address);
     }
 
     function setPrice(uint256 newPrice) public onlyOwner {
@@ -121,7 +121,7 @@ contract TicketSale {
         , "You can't buy because wei_amount less than price of one ticket"
         );
 
-        uint256 actually_wei = token_count * price;
+        uint256 actually_wei = ticket_count * price;
         uint256 wei_change = buyer_wei - actually_wei;
 
         ticketContract.mint(msg.sender, ticket_count);

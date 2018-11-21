@@ -9,6 +9,9 @@ contract LotteryIncomeWallet {
     mapping(address => uint256) public dividentsAvailable;
     mapping(address => mapping(uint256 => uint256)) dividendsFromDraw;
 
+    address public owner; // владелец контракта
+    address public draw; // контракт розыгрыша
+
     constructor(){
         owner = msg.sender;
     }

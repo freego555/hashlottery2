@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import './../TokenERC721.sol';
+import './TokenERC721.sol';
 import './Draw.sol';
 import './Kassa.sol';
 

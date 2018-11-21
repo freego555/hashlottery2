@@ -1,8 +1,8 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.4.24;
 
 import './Draw.sol';
 import './PrizePool.sol';
-import './../TokenERC721.sol';
+import './TokenERC721.sol';
 
 
 contract Kassa {

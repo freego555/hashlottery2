@@ -1,15 +1,7 @@
 pragma solidity ^0.4.24;
 
-interface Draw {
-    function isSellingTicketPeriod() external view returns (bool);
-    function isFillingTicketPeriod() external view returns (bool);
-    function currentDrawId() external view returns(uint256 _drawId);
-}
-
-interface MigrationAgent {
-    function migrateOneTokenFrom(address _from, uint256 _tokenId, uint256 _drawId, bytes32[3] _combinationOfTicket, uint8 _status) external;
-    function migrateChunkOfTokensFrom(uint256 _indexOfFirstTokenFromTheEnd, uint16 _sizeOfChunk) external returns(uint256 _indexOfLastToken, uint16 _amountRemains, bool _isEnd);
-}
+import './Draw.sol';
+import './MigrationAgentTokenERC721.sol';
 
 contract TokenERC721 {
     enum Status {
@@ -50,7 +42,7 @@ contract TokenERC721 {
 
     event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);
     event Approval(address indexed _owner, address indexed _approved, uint256 _tokenId);
-    event Mint(address indexed _owner, uint16 _amountOfTokens);
+    event Mint(address indexed _owner, uint256 _amountOfTokens);
     event FillingTicket(uint256 _tokenId);
     event MigrateOneToken(uint256 _tokenId); // For migration
     event MigrateChunkOfTokens(uint256 _indexOfLastToken, uint16 _amountRemains, bool _isEnd); // For migration
@@ -121,7 +113,7 @@ contract TokenERC721 {
         return (_dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, _dataOfTicket.status);
     }
 
-    function mint(address _owner, uint16 _amountOfTokens) public
+    function mint(address _owner, uint256 _amountOfTokens) public
             onlyIfNotSetMigrationAgent {
         require(msg.sender == addressOfContractTicketsSale, "Sender should be the contract TicketsSale.");
         require(_owner != address(0), "Owner cannot be 0.");
@@ -216,7 +208,7 @@ contract TokenERC721 {
         totalSupply--;
         totalTicketsInDraw[_dataOfTicket.drawId]--;
 
-        MigrationAgent(addressOfMigrationAgent).migrateOneTokenFrom(msg.sender, _tokenId, _dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, uint8(_dataOfTicket.status));
+        MigrationAgentTokenERC721(addressOfMigrationAgent).migrateOneTokenFrom(msg.sender, _tokenId, _dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, uint8(_dataOfTicket.status));
 
         emit MigrateOneToken(_tokenId);
     }
@@ -273,4 +265,12 @@ contract TokenERC721 {
         }
     }
     //=========--- Additional functions ---==========//
+
+    function getTicketCombination(uint256 ticketId) public view returns (bytes32[3]){
+        return dataOfTicket[ticketId].combinationOfTicket;
+    }
+
+    function getTicketDrawId(uint256 ticketId) public view returns (uint256){
+        return dataOfTicket[ticketId].drawId;
+    }
 }

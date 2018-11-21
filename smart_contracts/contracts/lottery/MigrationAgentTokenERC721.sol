@@ -1,16 +1,7 @@
 pragma solidity ^0.4.24;
 
-interface TokenERC721 {
-    function totalSupply() external returns(uint256);
-    function lastIdOfToken() external returns(uint256);
-}
-
-interface NewTokenERC721 {
-    function createToken(address _from, uint256 _tokenId, uint256 _drawId, bytes32[3] _combinationOfTicket, uint8 _status) external;
-    function initiateMigration(uint256 _lastIdOfToken) external;
-    function totalMigrated() external returns(uint256);
-    function finalizeMigration() external;
-}
+import './TokenERC721.sol';
+import './NewTokenERC721.sol';
 
 contract MigrationAgentTokenERC721 {
     address public addressOfNewToken;
