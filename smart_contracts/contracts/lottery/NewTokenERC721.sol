@@ -79,7 +79,7 @@ contract NewTokenERC721 {
     }
 
     // For migration
-    function createToken(address _to, uint256 _tokenId, uint256 _drawId, bytes32[3] _combinationOfTicket, Status _status) public
+    function createToken(address _to, uint256 _tokenId, uint256 _drawId, bytes32[3] _combinationOfTicket, uint8 _status) public
             onlyMigrationAgent
             onlyIfMigrationStarted
             onlyIfMigrationInitiated {
@@ -96,7 +96,8 @@ contract NewTokenERC721 {
 
         dataOfTicket[_tokenId].drawId = _drawId;
         dataOfTicket[_tokenId].combinationOfTicket = _combinationOfTicket;
-        dataOfTicket[_tokenId].status = _status;
+
+        dataOfTicket[_tokenId].status = Status(_status);
 
         emit Transfer(addressOfMigrationAgent, _to, _tokenId);
     }
