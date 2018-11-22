@@ -1,15 +1,20 @@
 pragma solidity ^0.4.24;
-//import "./TokenERC20.sol";
-
-contract TokenERC20 {
-    mapping(address => uint256) public ownersIndex;
-    function getOwnerAddressesList() public returns (address[]) {}
-    function getOwnership(address account) public view returns (uint256 percentageMultiplied100) {}
-}
+import "./TokenERC20.sol";
+//import "./Draw.sol";
 
 contract Draw {
-    uint256 public currentDrawId;
+    address public owner;
+    uint256 public currentDrawId = 0;
+
+    constructor() public {
+        owner = msg.sender;
+    }
+
+    function initDistributing(address wallet_address) public {
+        LotteryIncomeWallet(wallet_address).initDistributing(currentDrawId++);
+    }
 }
+
 
 contract LotteryIncomeWallet {
     address public owner;
@@ -18,13 +23,11 @@ contract LotteryIncomeWallet {
     address drawContractAddress = address(0);
     address tokenERC20Address = address(0);
     mapping(address => uint256) public dividentsAvailable; //[owner'sAddress][total_dividends_available]
-    mapping(address => mapping(uint256 => uint256)) dividendsFromDraw; //[owner'sAddress][lottery_id][dividends]
-    mapping(uint256 => uint256) drawDividends; //[lottery_id][total_dividends_from_this_lottery]
-    uint256 public curr_lottery_id;
+    mapping(address => mapping(uint256 => uint256)) public dividendsFromDraw; //[owner'sAddress][lottery_id][dividends]
+    mapping(uint256 => uint256) public drawIncome; //[lottery_id][total_income_from_this_lottery]
+    uint256 public total_persentage; //debugging
 
-    TokenERC20 tokenERC20Contract;
-
-    constructor(){
+    constructor() public {
         owner = msg.sender;
     }
 
@@ -61,26 +64,33 @@ contract LotteryIncomeWallet {
         drawContractAddress = _drawAddress;
     }
 
-    function getOwnersList() public {
-        stockHolders = tokenERC20Contract.getOwnerAddressesList();
+    // функция вызывается из initDistributing только при триггере ее кроном или контрактом розыгрыша
+    function getOwnersList() internal {
+        stockHolders = TokenERC20(tokenERC20Address).getOwnerAddressesList();
     }
 
     function getOwnersListIndex(address _ownerAddress) public view returns(uint256) {
-        return tokenERC20Contract.ownersIndex(_ownerAddress);
+        return TokenERC20(tokenERC20Address).ownersIndex(_ownerAddress);
     }
 
+    // данная функция распределяет прибыль от лотереи
     function initDistributing(uint256 lotery_id) public onlyDraw {
+        getOwnersList();
+        total_persentage = 0;
         uint8 fromIndex = 0;
         uint8 countIndex = 100;
-        uint8 toIndex = fromIndex + countIndex;
+        uint256 toIndex = stockHolders.length; //fromIndex + countIndex;
         for (uint8 index = fromIndex; index < toIndex; index++) {
             uint256 owned = TokenERC20(tokenERC20Address).getOwnership(stockHolders[index]);
-            uint256 dividendsToGet = owned * drawDividends[curr_lottery_id];
+            total_persentage += owned;
+            dividendsFromDraw[stockHolders[index]][lotery_id] = owned * drawIncome[lotery_id] / 1000000;
         }
+
     }
 
     function trackPayments() private {
-        curr_lottery_id = Draw(drawContractAddress).currentDrawId();
+        drawIncome[Draw(drawContractAddress).currentDrawId()] += msg.value;
+
     }
 
     function() payable public {
