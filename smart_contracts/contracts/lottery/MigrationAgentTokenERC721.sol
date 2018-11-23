@@ -78,7 +78,7 @@ contract MigrationAgentTokenERC721 {
         TokenERC721 contractTokenERC721 = TokenERC721(addressOfOldToken);
 
         isMigrationInitiated = true;
-        _lastIdOfDraw = Draw(addressOfDraw).currentDrawId();
+        uint256 _lastIdOfDraw = Draw(addressOfDraw).currentDrawId();
         lastIdOfDraw = _lastIdOfDraw;
         migrationSupply = contractTokenERC721.totalTicketsInDraw(_lastIdOfDraw);
 
@@ -96,12 +96,9 @@ contract MigrationAgentTokenERC721 {
         safetyInvariantCheck(0);
     }
 
-    /*function migrateChunkOfTokensFrom() public {
-    }*/
-
     function safetyInvariantCheck(uint16 _value) view private
             onlyIfSetAddressOfNewToken {
-        _lastIdOfDraw = lastIdOfDraw;
+        uint256 _lastIdOfDraw = lastIdOfDraw;
         require(TokenERC721(addressOfOldToken).totalTicketsInDraw(_lastIdOfDraw) + NewTokenERC721(addressOfNewToken).totalTicketsInDraw(_lastIdOfDraw) == migrationSupply - _value, "Total tickets in last draw isn't check.");
     }
 

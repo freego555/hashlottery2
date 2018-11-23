@@ -8,7 +8,6 @@ interface Draw {
 
 interface MigrationAgent {
     function migrateOneTokenFrom(address _from, uint256 _tokenId, uint256 _drawId, bytes32[3] _combinationOfTicket, uint8 _status) external;
-    function migrateChunkOfTokensFrom(uint256 _indexOfFirstTokenFromTheEnd, uint16 _sizeOfChunk) external returns(uint256 _indexOfLastToken, uint16 _amountRemains, bool _isEnd);
 }
 
 contract TokenERC721 {
@@ -52,7 +51,7 @@ contract TokenERC721 {
     event Mint(address indexed _owner, uint16 _amountOfTokens);
     event FillingTicket(uint256 _tokenId);
     event MigrateOneToken(uint256 _tokenId); // For migration
-    event MigrateChunkOfTokens(uint256 _indexOfLastToken, uint16 _amountRemains, bool _isEnd); // For migration
+    event MigrateChunkOfTokens(uint256 _indexOfLastMigratedToken); // For migration
     //event TestCombination(bytes32[3] _numbers);
 
     constructor() public {
@@ -205,23 +204,33 @@ contract TokenERC721 {
             onlyIfSetMigrationAgent
             onlyOwnerOfToken(msg.sender, _tokenId)
             onlyIfTokenExists(_tokenId) {
+        DataOfTicket memory _dataOfTicket = dataOfTicket[_tokenId];
+
         changeOwnerDataOfToken(msg.sender, address(0), _tokenId); // delete owner data of token without sending to anybody
         ownerOf[_tokenId] = address(0);
         tokenExists[_tokenId] = false;
         totalSupply--;
         totalTicketsInDraw[_dataOfTicket.drawId]--;
 
-        DataOfTicket memory _dataOfTicket = dataOfTicket[_tokenId];
         MigrationAgent(addressOfMigrationAgent).migrateOneTokenFrom(msg.sender, _tokenId, _dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, uint8(_dataOfTicket.status));
 
         emit MigrateOneToken(_tokenId);
     }
 
-    /*// For migration
-    function migrateChunkOfTokens(uint256 _indexOfFirstToken, uint16 _sizeOfChunk) public
-            onlyIfSetMigrationAgent
-            onlyOwnerOfToken(msg.sender) {
-    }*/
+    // For migration
+    function migrateChunkOfTokens(uint256 _indexOfFirstTokenFromTheEnd, uint16 _sizeOfChunk) public
+            onlyIfSetMigrationAgent {
+        uint256 balanceOfSender = balanceOf[msg.sender];
+
+        require(balanceOfSender >= _sizeOfChunk, "Sender cannot migrate more tokens than he has.");
+
+        uint256 indexOfLastMigratedToken = balanceOfSender - _sizeOfChunk;
+        for(uint256 i = _indexOfFirstTokenFromTheEnd; i >= indexOfLastMigratedToken; i--) {
+            migrateOneToken(tokenOfOwnerByIndex[msg.sender][i]);
+        }
+
+        emit MigrateChunkOfTokens(indexOfLastMigratedToken);
+    }
 
     //=========+++ Additional functions +++==========//
     function _transfer(address _from, address _to, uint256 _tokenId) internal

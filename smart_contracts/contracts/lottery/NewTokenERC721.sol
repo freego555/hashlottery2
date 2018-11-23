@@ -1,10 +1,10 @@
 pragma solidity ^0.4.24;
 
-//import "./TokenERC721.sol";
+import "./TokenERC721.sol";
 
-contract NewTokenERC721 {
-//contract NewTokenERC721 is TokenERC721 {
-    /******* EXTEND **************/
+//contract NewTokenERC721 {
+contract NewTokenERC721 is TokenERC721 {
+    /******* EXTEND *************
     enum Status {
         NotFilled,
         Filled,
