@@ -32,6 +32,10 @@ contract TokenERC20_v2 is TokenERC20 {
     }
 
     /******** FOR MIGRATION ********/
+    constructor() {
+        migrationStatus = true;
+    }
+
     /*modifier onlyOwner() {
         require(msg.sender == owner, "Only owner of contract can call this");
         _;
