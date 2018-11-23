@@ -21,7 +21,6 @@ contract NewTokenERC721 {
     string public symbol;
     uint256 public totalSupply;
     uint256 public lastIdOfToken;
-    uint256 public lastIdOfDraw; // For migration
     uint16 public allowedToMintInOneTransaction = 100;
     mapping(uint256 => uint256) public totalTicketsInDraw; // [draw] = amount of tickets
     mapping(address => uint256) public balanceOf; // [owner] = amount of tokens
@@ -43,7 +42,6 @@ contract NewTokenERC721 {
     }
     /******* EXTEND **************/
 
-    uint256 public totalMigrated; // For migration
     bool public isMigrationStarted = true; // For migration
     bool public isMigrationInitiated; // For migration
 
@@ -91,7 +89,6 @@ contract NewTokenERC721 {
         tokenOfOwnerByIndex[_to][indexOfNextToken] = _tokenId;
         balanceOf[_to]++;
         totalSupply++;
-        totalMigrated++;
         totalTicketsInDraw[_drawId]++;
 
         dataOfTicket[_tokenId].drawId = _drawId;
