@@ -27,7 +27,8 @@ contract TokenERC721 {
     string public symbol;
     uint256 public totalSupply;
     uint256 public lastIdOfToken;
-    uint16 public allowedToMintInOneTransaction = 50;
+    uint8 public allowedToMintInOneTransaction = 20;
+    uint8 public allowedToMigrateInOneTransaction = 10;
     mapping(uint256 => uint256) public totalTicketsInDraw; // [draw] = amount of tickets
     mapping(address => uint256) public balanceOf; // [owner] = amount of tokens
     mapping(uint256 => address) public ownerOf; // [tokenId] = owner of token
@@ -119,11 +120,11 @@ contract TokenERC721 {
         return (_dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, _dataOfTicket.status);
     }
 
-    function mint(address _owner, uint16 _amountOfTokens) public
+    function mint(address _owner, uint8 _amountOfTokens) public
             onlyIfNotSetMigrationAgent {
         require(msg.sender == addressOfContractTicketsSale, "Sender should be the contract TicketsSale.");
         require(_owner != address(0), "Owner cannot be 0.");
-        require(_amountOfTokens <= allowedToMintInOneTransaction, "Owner cannot mint more than 50 tickets in one transaction.");
+        require(_amountOfTokens <= allowedToMintInOneTransaction, "Owner cannot mint more than 20 tickets in one transaction.");
         require(isSetAddressOfContractDraw, "Address of contract Draw should be set.");
 
         uint256 drawId = contractDraw.currentDrawId();
@@ -218,15 +219,20 @@ contract TokenERC721 {
     }
 
     // For migration
-    function migrateChunkOfTokens(uint256 _indexOfFirstTokenFromTheEnd, uint16 _sizeOfChunk) public
+    function migrateChunkOfTokens(uint256 _indexOfFirstTokenFromTheEnd, uint8 _sizeOfChunk) public
             onlyIfSetMigrationAgent {
         uint256 balanceOfSender = balanceOf[msg.sender];
 
+        require(allowedToMigrateInOneTransaction >= _sizeOfChunk, "Sender cannot migrate more tokens than 10 in one transaction.");
         require(balanceOfSender >= _sizeOfChunk, "Sender cannot migrate more tokens than he has.");
+        require(_indexOfFirstTokenFromTheEnd == balanceOfSender-1, "Index of first token from the end should be the last index of token of owner.");
 
         uint256 indexOfLastMigratedToken = balanceOfSender - _sizeOfChunk;
         for(uint256 i = _indexOfFirstTokenFromTheEnd; i >= indexOfLastMigratedToken; i--) {
             migrateOneToken(tokenOfOwnerByIndex[msg.sender][i]);
+            if (i == 0) {
+                break;
+            }
         }
 
         emit MigrateChunkOfTokens(indexOfLastMigratedToken);
