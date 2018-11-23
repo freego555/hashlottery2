@@ -28,7 +28,6 @@ contract TokenERC721 {
     string public symbol;
     uint256 public totalSupply;
     uint256 public lastIdOfToken;
-    uint256 public lastIdOfDraw; // For migration
     uint16 public allowedToMintInOneTransaction = 50;
     mapping(uint256 => uint256) public totalTicketsInDraw; // [draw] = amount of tickets
     mapping(address => uint256) public balanceOf; // [owner] = amount of tokens
@@ -199,7 +198,6 @@ contract TokenERC721 {
             onlyAdmin
             onlyIfNotSetMigrationAgent {
         addressOfMigrationAgent = _addressOfMigrationAgent;
-        lastIdOfDraw = contractDraw.currentDrawId();
     }
 
     // For migration
@@ -207,15 +205,13 @@ contract TokenERC721 {
             onlyIfSetMigrationAgent
             onlyOwnerOfToken(msg.sender, _tokenId)
             onlyIfTokenExists(_tokenId) {
-        DataOfTicket memory _dataOfTicket = dataOfTicket[_tokenId];
-        require(_dataOfTicket.drawId == lastIdOfDraw, "You can migrate tickets only from last draw.");
-
         changeOwnerDataOfToken(msg.sender, address(0), _tokenId); // delete owner data of token without sending to anybody
         ownerOf[_tokenId] = address(0);
         tokenExists[_tokenId] = false;
         totalSupply--;
         totalTicketsInDraw[_dataOfTicket.drawId]--;
 
+        DataOfTicket memory _dataOfTicket = dataOfTicket[_tokenId];
         MigrationAgent(addressOfMigrationAgent).migrateOneTokenFrom(msg.sender, _tokenId, _dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, uint8(_dataOfTicket.status));
 
         emit MigrateOneToken(_tokenId);

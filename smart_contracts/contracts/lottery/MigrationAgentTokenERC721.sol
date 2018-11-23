@@ -12,17 +12,24 @@ interface NewTokenERC721 {
     function finalizeMigration() external;
 }
 
+interface Draw {
+    function currentDrawId() external view returns(uint256 _drawId);
+}
+
 contract MigrationAgentTokenERC721 {
     address public addressOfNewToken;
     address public addressOfOldToken;
+    address public addressOfDraw;
     address public admin;
 
     uint256 public migrationSupply;
+    uint256 public lastIdOfDraw;
     bool public isMigrationInitiated;
 
-    constructor(address _addressOfOldToken) public {
+    constructor(address _addressOfOldToken, address _addressOfDraw) public {
         admin = msg.sender;
         addressOfOldToken = _addressOfOldToken;
+        addressOfDraw = _addressOfDraw;
     }
 
     modifier onlyAdmin() {
@@ -45,6 +52,11 @@ contract MigrationAgentTokenERC721 {
         _;
     }
 
+    modifier onlyIfSetAddressOfDraw() {
+        require(addressOfDraw != address(0), "Address of contract Draw should be set.");
+        _;
+    }
+
     modifier onlyOldToken() {
         require(addressOfOldToken == msg.sender, "Sender should be old token.");
         _;
@@ -59,13 +71,15 @@ contract MigrationAgentTokenERC721 {
     function initiateMigration() public
             onlyAdmin
             onlyIfSetAddressOfOldToken
-            onlyIfSetAddressOfNewToken {
+            onlyIfSetAddressOfNewToken
+            onlyIfSetAddressOfDraw {
         require(!isMigrationInitiated, "Migration already initiated.");
 
         TokenERC721 contractTokenERC721 = TokenERC721(addressOfOldToken);
 
         isMigrationInitiated = true;
         migrationSupply = contractTokenERC721.totalSupply();
+        lastIdOfDraw = Draw(addressOfDraw).currentDrawId();
 
         NewTokenERC721(addressOfNewToken).initiateMigration(contractTokenERC721.lastIdOfToken());
     }
@@ -74,6 +88,8 @@ contract MigrationAgentTokenERC721 {
             onlyOldToken
             onlyIfMigrationInitiated
             onlyIfSetAddressOfNewToken {
+        require(_drawId == lastIdOfDraw, "You can migrate tickets only from last draw.");
+
         safetyInvariantCheck(1);
         NewTokenERC721(addressOfNewToken).createToken(_from, _tokenId, _drawId, _combinationOfTicket, _status);
         safetyInvariantCheck(0);
@@ -96,6 +112,7 @@ contract MigrationAgentTokenERC721 {
 
         isMigrationInitiated = false;
         migrationSupply = 0;
+        addressOfDraw = address(0);
         addressOfOldToken = address(0);
 
         address _addressOfNewToken = addressOfNewToken;
