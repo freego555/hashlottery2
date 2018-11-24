@@ -14,7 +14,8 @@ contract TokenERC721 {
     enum Status {
         NotFilled,
         Filled,
-        Winning
+        Winning,
+        Payed
     }
 
     struct DataOfTicket {
