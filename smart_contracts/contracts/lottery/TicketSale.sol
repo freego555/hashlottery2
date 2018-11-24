@@ -1,32 +1,8 @@
 pragma solidity ^0.4.24;
 
-contract TokenERC721 {
+import './TokenERC721.sol';
+import './Draw.sol';
 
-}
-
-contract PrizePool {
-
-}
-
-contract LotteryIncomeWallet {
-
-}
-
-contract Draw {
-
-
-   //statuses
-// cron  1, // продажа и заполнение билетов
-//         11, //- продажа билетов 47 часов
-//         12, // дозаполнение билетов, продавать уже нельзя, акции перемещать нельзя
-// cron  2, // розыгрыш
-//         21, // начали прием заявок, акции перемещать нельзя
-//         22, // продолжение приема заявок
-// cron 3 - перерыв
-//
-
-    function getStageOfCurrentDraw() view external returns(uint256 drawId, uint8 drawStage);
-}
 
 contract TicketSale {
 
@@ -54,9 +30,6 @@ contract TicketSale {
     }
 
     modifier isInitComplete() {
-        if (initComplete) {
-            _;
-        }
 
         require(tokenERC721Address != address(0)
         , "TokenERC721 contract must be set"
@@ -73,8 +46,12 @@ contract TicketSale {
         require(lotteryDrawAddress != address(0),
             "LotteryDraw contract must be set"
         );
-        initComplete = true;
+
         _;
+    }
+
+    function setInitIfComplete() public isInitComplete{
+        initComplete = true;
     }
 
     function setTicket(address _address) public onlyOwner {
@@ -104,14 +81,17 @@ contract TicketSale {
             "LotteryDraw contract has already set"
         );
         lotteryDrawAddress = _address;
-        lotteryDrawContract = LotteryDraw(_address);
+        lotteryDrawContract = Draw(_address);
     }
 
     function setPrice(uint256 newPrice) public onlyOwner {
         require(newPrice > 0, "New price must be > 0 ");
 
-        (, uint8 drawStage) = lotteryDrawContract.getStageOfCurrentDraw();
-        require(drawStage != 11
+        require(lotteryDrawAddress != address(0),
+            "LotteryDraw contract is not init yet"
+        );
+
+        require(!lotteryDrawContract.isSellingTicketPeriod()
         , "You can't set new ticket price during selling period"
         );
 
@@ -125,9 +105,7 @@ contract TicketSale {
 
     function buy() payable public isInitComplete {
 
-        (, uint8 drawStage) = lotteryDrawContract.getStageOfCurrentDraw();
-
-        require(drawStage == 11
+        require(lotteryDrawContract.isSellingTicketPeriod()
         , "You can't buy tickets because selling period is ended"
         );
         // период продажи билетов
@@ -144,7 +122,7 @@ contract TicketSale {
         , "You can't buy because wei_amount less than price of one ticket"
         );
 
-        uint256 actually_wei = token_count * price;
+        uint256 actually_wei = ticket_count * price;
         uint256 wei_change = buyer_wei - actually_wei;
 
         ticketContract.mint(msg.sender, ticket_count);
