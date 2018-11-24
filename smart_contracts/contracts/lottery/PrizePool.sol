@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import './../TokenERC721.sol';
+import './TokenERC721.sol';
 import './Draw.sol';
 import './Kassa.sol';
 
@@ -15,6 +15,8 @@ contract PrizePool {
     address public owner; // владелец контракта
     bool public initComplete = false;
 
+    uint public prizePool; // размер призового фонда на текущий момент
+    
     constructor() public {
         owner = msg.sender;
     }
@@ -67,11 +69,11 @@ contract PrizePool {
     }
 
     function determineWinners(uint winnersCount) public isKassaContract isAcceptanceOfApplicationsEnd returns (uint){
+        prizePool = this.getPrizePoolBalance();
         if (winnersCount == 0) {
             return 0;
         }
-
-        uint prizePool = this.getPrizePoolBalance();
+        
         reservedMoney += prizePool;
         return prizePool / winnersCount;
     }

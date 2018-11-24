@@ -1,8 +1,8 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.4.24;
 
 import './Draw.sol';
 import './PrizePool.sol';
-import './../TokenERC721.sol';
+import './TokenERC721.sol';
 
 
 contract Kassa {
@@ -23,7 +23,9 @@ contract Kassa {
     mapping(uint => bool) public fullyDistributedPrize; // draw Id => completed prize distribution
     mapping(uint => uint) public prizeDistributionProgress; // draw Id => count of winners with gives share
 
-    bool initComplete = false; // закончена инициализация контракта
+    mapping(uint => uint) public poolSizes; // drawId => poolsize  - размер выигрыша на текущем розыгрыше
+   
+    bool public initComplete = false; // закончена инициализация контракта
 
     event RequestApproved(uint ticketNumber); // заявка одобрена
     event DistributionOfWithdraws(uint indexed currentDrawId, uint fromIndex, uint count, bool needMoreShoot); // распределена часть розыгрыша
@@ -81,7 +83,7 @@ contract Kassa {
         checkAndSetInitComplete();
     }
 
-    function checkAndSetInitComplete(){
+    function checkAndSetInitComplete() public{
         if (drawAddress != address(0)
         && token712Address != address(0)
         && prizePoolAddress != address(0)
@@ -101,7 +103,10 @@ contract Kassa {
         , 'You are not the owner of this ticket'
         );
 
-        (uint ticketDrawId, bytes32[3] combinationOfTicket,) = TokenERC721(token712Address).dataOfTicket(ticketNumber);
+
+       uint  ticketDrawId = TokenERC721(token712Address).getTicketDrawId(ticketNumber);
+       bytes32[3] memory combinationOfTicket = TokenERC721(token712Address).getTicketCombination(ticketNumber);
+
         require(ticketDrawId == Draw(drawAddress).currentDrawId()
         , 'This ticket is not from current Draw'
         );
@@ -121,6 +126,9 @@ contract Kassa {
         winnersListExists[ticketDrawId][msg.sender] = true;
         winnersListIndex[ticketDrawId][msg.sender] = winnersCount[ticketDrawId];
         winnersCount[ticketDrawId]++;
+        
+        // todo 
+    //    TokenERC721(token712Address).setTicketStatusWinning(ticketNumber);
 
         emit RequestApproved(ticketNumber);
     }
@@ -135,6 +143,7 @@ contract Kassa {
         uint countOfWinners = winnersCount[currentDrawId];
         if (moneyForEachWinner[currentDrawId] == 0) {
             // узнать размер выигрыша одного победителя
+            poolSizes[currentDrawId] = PrizePool(prizePoolAddress).prizePool();
             moneyForEachWinner[currentDrawId] = PrizePool(prizePoolAddress).determineWinners(countOfWinners);
         }
         if (countOfWinners == 0) {
@@ -218,6 +227,9 @@ contract Kassa {
         emit TransferredPrize(msg.sender, value);
         return;
     }
+    
+    function hashVal(string val) public pure returns (bytes32) {
+        return keccak256(val);
+    }
 
 }
-

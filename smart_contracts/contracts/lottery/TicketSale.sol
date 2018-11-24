@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import './../TokenERC721.sol';
+import './TokenERC721.sol';
 import './Draw.sol';
 
 
@@ -30,9 +30,6 @@ contract TicketSale {
     }
 
     modifier isInitComplete() {
-        if (initComplete) {
-            _;
-        }
 
         require(tokenERC721Address != address(0)
         , "TokenERC721 contract must be set"
@@ -49,8 +46,12 @@ contract TicketSale {
         require(lotteryDrawAddress != address(0),
             "LotteryDraw contract must be set"
         );
-        initComplete = true;
+
         _;
+    }
+
+    function setInitIfComplete() public isInitComplete{
+        initComplete = true;
     }
 
     function setTicket(address _address) public onlyOwner {
@@ -80,7 +81,7 @@ contract TicketSale {
             "LotteryDraw contract has already set"
         );
         lotteryDrawAddress = _address;
-        lotteryDrawContract = LotteryDraw(_address);
+        lotteryDrawContract = Draw(_address);
     }
 
     function setPrice(uint256 newPrice) public onlyOwner {
@@ -121,7 +122,7 @@ contract TicketSale {
         , "You can't buy because wei_amount less than price of one ticket"
         );
 
-        uint256 actually_wei = token_count * price;
+        uint256 actually_wei = ticket_count * price;
         uint256 wei_change = buyer_wei - actually_wei;
 
         ticketContract.mint(msg.sender, ticket_count);

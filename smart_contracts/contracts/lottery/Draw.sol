@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.4.24;
 
 import './Kassa.sol';
 
@@ -37,6 +37,7 @@ contract Draw {
     uint public stopVacation;  // конец перевыва
 
     mapping(uint => uint8[]) public winnersNumbers; // drawId => numbers array список выиграшных номеров
+    mapping(uint => uint) public drawDates; // drawId => timestamp  - дата розыгрыша
 
     event DrawNumbers(uint currentDrawId, uint8[] numbers); // передача сгенерированных чисел
 
@@ -82,6 +83,12 @@ contract Draw {
         _;
     }
 
+    modifier onlyCronOrKassa(){
+        require(msg.sender == cronAddress || msg.sender == kassaAddress
+        , "Only cron or kassa contract can call this"
+        );
+        _;
+    }
     function setCronAddress(address _address) public onlyOwner {
         require(cronAddress == address(0)
         , "cronAddress is already set"
@@ -107,8 +114,8 @@ contract Draw {
     function calcVacationPeriod() public view returns (uint vacationPeriod){
         // посчитаем период ожидания крона#1
         uint period10 = 0;
-        if (stoptVacation != 0) {
-            period10 = stoptVacation - startSelling;
+        if (stopVacation != 0) {
+            period10 = stopVacation - startSelling;
         }
         // посчитаем период ожидания крона#2
         uint period20 = startRequests - stopAcceptingTickets;
@@ -123,17 +130,13 @@ contract Draw {
         return vacationPeriod;
     }
 
-    function getStageOfCurrentDraw() view external returns (uint8 drawStage){
+    function getStageOfCurrentDraw() public view returns (uint8 drawStage){
         // todo: узнать по поводу now и возможно вынести его в переменную
 
         // первая лотерея
         if (startSelling == 0) {
-            return (currentDrawId, 10);
+            return 10;
         }
-
-        require(startSelling > 0
-        , 'startSelling period is not init'
-        );
 
         // период продаж и заявок 11-12
         if (now >= startSelling
@@ -146,12 +149,12 @@ contract Draw {
                 drawStage = 12;
             }
 
-            return (currentDrawId, drawStage);
+            return  drawStage;
         }
 
         // период ожидания крона#2 20
         if (startRequests == 0) {
-            return (currentDrawId, 20);
+            return  20;
         }
 
         // период обработки заявок 21-22
@@ -164,12 +167,12 @@ contract Draw {
                 // продолжение приема заявок
                 drawStage = 22;
             }
-            return (currentDrawId, drawStage);
+            return  drawStage;
         }
 
         // период ожидания крона#3 30
         if (startVacation == 0) {
-            return (currentDrawId, 30);
+            return  30;
         }
 
         // todo: добавить условие что призы розданы по текущемму розыгрышу и только тогда начинается отпуск
@@ -177,11 +180,11 @@ contract Draw {
         // период перерыва 40
         if (now >= startVacation
         && now <= stopVacation) {
-            return (currentDrawId, 40);
+            return 40;
         }
 
         // wait for new draw
-        return (currentDrawId, 10);
+        return 10;
     }
 
     //cron 1
@@ -224,6 +227,7 @@ contract Draw {
         stopBlockingTokens = startRequests + 1 hours;
 
         winnersNumbers[currentDrawId] = numbers;
+        drawDates[currentDrawId] = now;
 
         // set others timestamps to 0
         startVacation = 0;
@@ -274,10 +278,14 @@ contract Draw {
 
     function isWaitingWithdrawsPeriod() public view returns (bool){
 
-        bool firstLaunch = (getStageOfCurrentDraw() == 30);
+        uint currentStage = getStageOfCurrentDraw();
+        bool firstLaunch = currentStage == 30;
         bool isVacation = isVacationPeriod();
         bool cronContinue = !Kassa(kassaAddress).fullyDistributedPrize(currentDrawId);
         return firstLaunch || (isVacation && cronContinue);
 
     }
+
+  
+    
 }
