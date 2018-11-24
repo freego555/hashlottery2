@@ -2,46 +2,7 @@ pragma solidity ^0.4.24;
 
 import "./TokenERC721.sol";
 
-//contract NewTokenERC721 {
 contract NewTokenERC721 is TokenERC721 {
-    /******* EXTEND *************
-    enum Status {
-        NotFilled,
-        Filled,
-        Winning
-    }
-
-    struct DataOfTicket {
-        uint256 drawId;
-        bytes32[3] combinationOfTicket;
-        Status status;
-    }
-
-    string public name;
-    string public symbol;
-    uint256 public totalSupply;
-    uint256 public lastIdOfToken;
-    uint16 public allowedToMintInOneTransaction = 100;
-    mapping(uint256 => uint256) public totalTicketsInDraw; // [draw] = amount of tickets
-    mapping(address => uint256) public balanceOf; // [owner] = amount of tokens
-    mapping(uint256 => address) public ownerOf; // [tokenId] = owner of token
-    mapping(address => mapping(uint256 => uint256)) public tokenOfOwnerByIndex; //[owner][index] = tokenId
-    mapping(uint256 => uint256) public indexOfTokenForOwner; // [tokenId] = position in user's wallet
-    mapping(address => mapping(uint256 => address)) public allowance; // [owner][tokenId] = reciever
-    mapping(uint256 => bool) public tokenExists; // [tokenId] = token is exist
-    mapping(uint256 => DataOfTicket) public dataOfTicket; // [tokenId] = data of ticket
-
-    address public admin;
-    address public addressOfMigrationAgent; // For migration
-
-    event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);
-
-    function getDataOfTicket(uint256 _tokenId) view public returns(uint256 _drawId, bytes32[3] _combinationOfTicket, Status _status) {
-        DataOfTicket memory _dataOfTicket = dataOfTicket[_tokenId];
-        return (_dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, _dataOfTicket.status);
-    }
-    /******* EXTEND **************/
-
     bool public isMigrationStarted = true; // For migration
     bool public isMigrationInitiated; // For migration
 

@@ -52,7 +52,7 @@ contract TokenERC721 {
     event Mint(address indexed _owner, uint16 _amountOfTokens);
     event FillingTicket(uint256 _tokenId);
     event MigrateOneToken(uint256 _tokenId); // For migration
-    event MigrateChunkOfTokens(uint256 _indexOfLastMigratedToken); // For migration
+    event MigrateChunkOfTokens(uint256 _indexOfFirstTokenFromTheEnd, uint8 _sizeOfChunk, bool _needContinue); // For migration
     //event TestCombination(bytes32[3] _numbers);
 
     constructor() public {
@@ -222,20 +222,30 @@ contract TokenERC721 {
     function migrateChunkOfTokens(uint256 _indexOfFirstTokenFromTheEnd, uint8 _sizeOfChunk) public
             onlyIfSetMigrationAgent {
         uint256 balanceOfSender = balanceOf[msg.sender];
+        bool needContinue = true;
+        uint256 tokenId;
 
         require(allowedToMigrateInOneTransaction >= _sizeOfChunk, "Sender cannot migrate more tokens than 10 in one transaction.");
-        require(balanceOfSender >= _sizeOfChunk, "Sender cannot migrate more tokens than he has.");
+        //require(balanceOfSender >= _sizeOfChunk, "Sender cannot migrate more tokens than he has.");
         require(_indexOfFirstTokenFromTheEnd == balanceOfSender-1, "Index of first token from the end should be the last index of token of owner.");
+
+        uint256 currentDrawId = contractDraw.currentDrawId();
 
         uint256 indexOfLastMigratedToken = balanceOfSender - _sizeOfChunk;
         for(uint256 i = _indexOfFirstTokenFromTheEnd; i >= indexOfLastMigratedToken; i--) {
-            migrateOneToken(tokenOfOwnerByIndex[msg.sender][i]);
+            tokenId = tokenOfOwnerByIndex[msg.sender][i];
+            if (dataOfTicket[tokenId].drawId != currentDrawId) {
+                needContinue = false;
+                break;
+            }
+            migrateOneToken(tokenId);
             if (i == 0) {
+                needContinue = false;
                 break;
             }
         }
 
-        emit MigrateChunkOfTokens(indexOfLastMigratedToken);
+        emit MigrateChunkOfTokens(_indexOfFirstTokenFromTheEnd, _sizeOfChunk, needContinue);
     }
 
     //=========+++ Additional functions +++==========//
@@ -244,7 +254,11 @@ contract TokenERC721 {
             onlyNotFilledTicket(_tokenId)
             onlyIfTokenExists(_tokenId)
             onlyIfSenderNotEqualReciever(_from, _to) {
+        require(isSetAddressOfContractDraw, "Address of contract Draw should be set.");
+        uint256 currentDrawId = contractDraw.currentDrawId();
+
         require(_to != address(0), "Reciever cannot be 0");
+        require(dataOfTicket[_tokenId].drawId == currentDrawId, "Sender can transfer tickets only from current draw.");
 
         changeOwnerDataOfToken(_from, _to, _tokenId);
 
