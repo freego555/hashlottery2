@@ -1,6 +1,15 @@
 pragma solidity ^0.4.24;
-import "./TokenERC20.sol";
-import "./newTokenERC20.sol";
+
+interface TokenERC20 {
+    function totalSupply() external returns (uint256);
+    function setMigrationStatus() external;
+}
+
+interface newTokenERC20 {
+    function totalSupply() external returns (uint256);
+    function createTokens(address _from, uint256 _value) external;
+    function finalizeMigration() external;
+}
 
 contract MigrationAgent {
     address owner;
