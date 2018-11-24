@@ -121,7 +121,7 @@ contract Kassa {
 		    );
 		}
 
-		require(numbers[0]<=numbers[1] && numbers[1]<=numbers[2]
+		require(numbers[0]<numbers[1] && numbers[1]<numbers[2]
         , 'Numbers must be sorted ASC'
         );
 
