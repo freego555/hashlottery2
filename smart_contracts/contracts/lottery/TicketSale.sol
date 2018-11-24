@@ -30,9 +30,6 @@ contract TicketSale {
     }
 
     modifier isInitComplete() {
-        if (initComplete) {
-            _;
-        }
 
         require(tokenERC721Address != address(0)
         , "TokenERC721 contract must be set"
@@ -49,8 +46,12 @@ contract TicketSale {
         require(lotteryDrawAddress != address(0),
             "LotteryDraw contract must be set"
         );
-        initComplete = true;
+
         _;
+    }
+
+    function setInitIfComplete() public isInitComplete{
+        initComplete = true;
     }
 
     function setTicket(address _address) public onlyOwner {

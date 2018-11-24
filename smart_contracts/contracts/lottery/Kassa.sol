@@ -23,7 +23,7 @@ contract Kassa {
     mapping(uint => bool) public fullyDistributedPrize; // draw Id => completed prize distribution
     mapping(uint => uint) public prizeDistributionProgress; // draw Id => count of winners with gives share
 
-    bool initComplete = false; // закончена инициализация контракта
+    bool public initComplete = false; // закончена инициализация контракта
 
     event RequestApproved(uint ticketNumber); // заявка одобрена
     event DistributionOfWithdraws(uint indexed currentDrawId, uint fromIndex, uint count, bool needMoreShoot); // распределена часть розыгрыша
@@ -81,7 +81,7 @@ contract Kassa {
         checkAndSetInitComplete();
     }
 
-    function checkAndSetInitComplete(){
+    function checkAndSetInitComplete() public{
         if (drawAddress != address(0)
         && token712Address != address(0)
         && prizePoolAddress != address(0)
@@ -101,7 +101,10 @@ contract Kassa {
         , 'You are not the owner of this ticket'
         );
 
-        (uint ticketDrawId, bytes32[3] combinationOfTicket,) = TokenERC721(token712Address).dataOfTicket(ticketNumber);
+
+       uint  ticketDrawId = TokenERC721(token712Address).getTicketDrawId(ticketNumber);
+       bytes32[3] memory combinationOfTicket = TokenERC721(token712Address).getTicketCombination(ticketNumber);
+
         require(ticketDrawId == Draw(drawAddress).currentDrawId()
         , 'This ticket is not from current Draw'
         );

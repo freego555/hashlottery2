@@ -137,10 +137,6 @@ contract Draw {
             return 10;
         }
 
-        require(startSelling > 0
-        , 'startSelling period is not init'
-        );
-
         // период продаж и заявок 11-12
         if (now >= startSelling
         && now <= stopAcceptingTickets) {
