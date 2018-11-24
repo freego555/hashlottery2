@@ -15,6 +15,8 @@ truffle test ./test/Crowdsale_calcTokenAmount.js
 
 truffle test ./test/Crowdsale_basis_not-init.js
 
+truffle test ./test/lottery_basic.js
+
 Тестирование функции. Что нужно проверить?
 1) доступы к функции (модификаторы и прочее);
 2) входящие параметры функции (каждый require отдельно);

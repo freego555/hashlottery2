@@ -63,7 +63,7 @@ class Lottery {
     try {
       this[routes[path]]()
     } catch (e) {
-      // alert(e.message);
+      console.log('error: route not found')
     }
   }
 
@@ -104,7 +104,7 @@ class Lottery {
       }
 
     } catch (e) {
-      console.log(e.message)
+      console.log('error: ' + e.message)
     }
   }
 
@@ -154,9 +154,9 @@ class Lottery {
       document.getElementById('buy_ticket').addEventListener('click', async function (e) {
         e.preventDefault()
 
-        if(!isSelling){
+        if (!isSelling) {
           alert('Сейчас не период продаж')
-          return;
+          return
         }
 
         if (moneyEth <= 0) {
@@ -187,6 +187,7 @@ class Lottery {
           })
           .on('receipt', (receipt) => {
             console.log('receipt', receipt)
+            sessionStorage.setItem('ticket_count', moneyEth / priceEth)
             window.location.href = '/lottery/success-buy-ticket.html'
           })
 
@@ -196,34 +197,134 @@ class Lottery {
       })
 
     } catch (e) {
-      console.log(e.message)
+      console.log('error: ' + e.message)
     }
   }
 
 //------------------------------------------------------------------------------------------------------------------//
   async successBuyTicket () {
-// #tickets_count
+
+    try {
+      // выводим сколько было куплено билетов
+      let count = sessionStorage.getItem('ticket_count')
+      document.getElementById('tickets_count').innerHTML = count
+    } catch (e) {
+      console.log('error: ' + e.message)
+    }
   }
 
 //------------------------------------------------------------------------------------------------------------------//
   async confirmationApplication () {
-    // # ticket_number
+    try {
+      // выводим номер билета
+      let ticketNumber = sessionStorage.getItem('ticket_number')
+      document.getElementById('ticket_number').innerHTML = ticketNumber
+    } catch (e) {
+      console.log('error: ' + e.message)
+    }
+
   }
 
 //------------------------------------------------------------------------------------------------------------------//
   async fillTicket () {
-// .numbers - all(3) numbers for ticket - sort them by ASC
-    // #salt - todo: make them only numbers
-    // min 10 символов
 
-    //#confirm click
-    //if success
-    // redirect to /lottery/success-screen.html
+    let isFilling = await this.Draw.methods.isFillingTicketPeriod().call()
+    if (!isFilling) {
+      alert('Сейчас не период заполнения билетов')
+    }
+
+    let num1 = document.getElementById('num1')
+    let num2 = document.getElementById('num2')
+    let num3 = document.getElementById('num3')
+    let salt = document.getElementById('salt')
+
+    // ввод чисел и соли
+    num1.addEventListener('change', e => {
+      num1.value = parseInt(num1.value)
+    })
+    num2.addEventListener('change', e => {
+      num2.value = parseInt(num2.value)
+    })
+    num3.addEventListener('change', e => {
+      num3.value = parseInt(num3.value)
+    })
+    //todo: salt min 10 символов
+    salt.addEventListener('change', e => {
+      salt.value = parseInt(salt.value)
+    })
+
+    document.getElementById('confirm').addEventListener('click', async function (e) {
+      e.preventDefault()
+
+      // if (!isSelling) {
+      //   alert('Сейчас не период продаж')
+      //   return
+      // }
+      let n1 = parseInt(num1.value)
+      let n2 = parseInt(num2.value)
+      let n3 = parseInt(num3.value)
+
+      if (!(1 <= n1 && n1 <= 99
+          && 1 <= n2 && n2 <= 99
+          && 1 <= n3 && n3 <= 99)) {
+
+        alert('Числа должны быть в промежутке 1..99')
+      }
+
+      if (salt.value.length < 10) {
+        alert('Длина секретного ключа должна не менее 10 символов')
+        return
+      }
+
+      // сортировка по ASC
+      let salty = parseInt(salt.value)
+      let numbers = [n1, n2, n3]
+      numbers.sort(function (a, b) {return a - b})
+      let hashed = new Array()
+      for (let i = 0; i <= 2; i++) {
+        hashed[i] = await this.Draw.methods.hashVal(numbers[i] + salty).call()
+      }
+
+      // send
+      await this.Draw.methods.isSellingTicketPeriod().call()
+      let token_id = 1
+
+      const data = this.TokenERC721.methods.fillCombinationOfTicket(token_id, numbers).encodeABI()
+
+      const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
+      let decrypted = await this.web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
+
+      let nonce = await this.web3.eth.getTransactionCount(decrypted.address)
+
+      const transactionObj = {
+        nonce: nonce,
+        from: decrypted.address,
+        gas: 900000,
+        to: this.addresses.tokenERC721,
+        data: data
+      }
+
+      var transaction = await decrypted.signTransaction(transactionObj)
+      console.log('transaction,', transaction)
+
+      this.web3.eth.sendSignedTransaction(transaction.rawTransaction)
+        .on('transactionHash', (hash) => {
+          console.log('transactionHash', hash)
+        })
+        .on('receipt', (receipt) => {
+          console.log('receipt', receipt)
+          // window.location.href = '/lottery/success-screen.html'
+        })
+
+      return false
+
+    })
+
   }
 
 //------------------------------------------------------------------------------------------------------------------//
   async successScreen () {
-//Success filling ticket
+//Success filling ticket // nothing to do
   }
 
 //------------------------------------------------------------------------------------------------------------------//
