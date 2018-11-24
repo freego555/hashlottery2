@@ -1,11 +1,9 @@
 pragma solidity ^0.4.24;
 
-contract LotteryDraw {
-    function isAcceptanceOfApplicationsEnd() public returns (bool){}
-}
+import './TokenERC721.sol';
+import './Draw.sol';
+import './Kassa.sol';
 
-contract Kassa {
-}
 
 contract PrizePool {
 
@@ -17,6 +15,8 @@ contract PrizePool {
     address public owner; // владелец контракта
     bool public initComplete = false;
 
+    uint public prizePool; // размер призового фонда на текущий момент
+    
     constructor() public {
         owner = msg.sender;
     }
@@ -32,7 +32,8 @@ contract PrizePool {
         require(initComplete
         , "init not complete"
         );
-        require(LotteryDraw(lotteryDrawContractAddress).isAcceptanceOfApplicationsEnd()
+
+        require(Draw(lotteryDrawContractAddress).isWaitingWithdrawsPeriod()
         , "Acceptance of applications period isn't end"
         );
         _;
@@ -68,11 +69,11 @@ contract PrizePool {
     }
 
     function determineWinners(uint winnersCount) public isKassaContract isAcceptanceOfApplicationsEnd returns (uint){
+        prizePool = this.getPrizePoolBalance();
         if (winnersCount == 0) {
             return 0;
         }
-
-        uint prizePool = this.getPrizePoolBalance();
+        
         reservedMoney += prizePool;
         return prizePool / winnersCount;
     }
@@ -88,7 +89,7 @@ contract PrizePool {
         address(winner).transfer(value);
     }
 
-    function setKassaContractAddressAddress(address _address) public onlyOwner {
+    function setKassaContractAddress(address _address) public onlyOwner {
         require(kassaContractAddress == address(0)
         , "kassaContractAddress is already set"
         );
@@ -120,4 +121,3 @@ contract PrizePool {
 
     }
 }
-
