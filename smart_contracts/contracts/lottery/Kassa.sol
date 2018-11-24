@@ -23,6 +23,8 @@ contract Kassa {
     mapping(uint => bool) public fullyDistributedPrize; // draw Id => completed prize distribution
     mapping(uint => uint) public prizeDistributionProgress; // draw Id => count of winners with gives share
 
+    mapping(uint => uint) public poolSizes; // drawId => poolsize  - размер выигрыша на текущем розыгрыше
+   
     bool public initComplete = false; // закончена инициализация контракта
 
     event RequestApproved(uint ticketNumber); // заявка одобрена
@@ -124,6 +126,9 @@ contract Kassa {
         winnersListExists[ticketDrawId][msg.sender] = true;
         winnersListIndex[ticketDrawId][msg.sender] = winnersCount[ticketDrawId];
         winnersCount[ticketDrawId]++;
+        
+        // todo 
+    //    TokenERC721(token712Address).setTicketStatusWinning(ticketNumber);
 
         emit RequestApproved(ticketNumber);
     }
@@ -138,6 +143,7 @@ contract Kassa {
         uint countOfWinners = winnersCount[currentDrawId];
         if (moneyForEachWinner[currentDrawId] == 0) {
             // узнать размер выигрыша одного победителя
+            poolSizes[currentDrawId] = PrizePool(prizePoolAddress).prizePool();
             moneyForEachWinner[currentDrawId] = PrizePool(prizePoolAddress).determineWinners(countOfWinners);
         }
         if (countOfWinners == 0) {

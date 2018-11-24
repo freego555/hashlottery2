@@ -37,6 +37,7 @@ contract Draw {
     uint public stopVacation;  // конец перевыва
 
     mapping(uint => uint8[]) public winnersNumbers; // drawId => numbers array список выиграшных номеров
+    mapping(uint => uint) public drawDates; // drawId => timestamp  - дата розыгрыша
 
     event DrawNumbers(uint currentDrawId, uint8[] numbers); // передача сгенерированных чисел
 
@@ -226,6 +227,7 @@ contract Draw {
         stopBlockingTokens = startRequests + 1 hours;
 
         winnersNumbers[currentDrawId] = numbers;
+        drawDates[currentDrawId] = now;
 
         // set others timestamps to 0
         startVacation = 0;
@@ -287,4 +289,5 @@ contract Draw {
     function hashVal(string val) public pure returns (bytes32) {
         return keccak256(val);
     }
+    
 }
