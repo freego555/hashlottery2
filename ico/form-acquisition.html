@@ -14,8 +14,8 @@
 
   <!--<link rel="manifest" href="../manifest.json">-->
 
-  <!--<link rel="stylesheet" href="../css/font-awesome.css">-->
-   <link rel="stylesheet" href="../dist/css/app.css">
+  <link rel="stylesheet" href="../css/font-awesome.css">
+   <link rel="stylesheet" href="/dist/css/app.css">
 </head>
 
 <body>
@@ -23,7 +23,7 @@
     <div class="acquisition__wrap">
       <div class="acquisition__head">
         <a class="acquisition__logo" href="/">
-          <img class="acquisition__logo-img" src="../img/logo pink.svg" alt="company-logo">
+          <img class="acquisition__logo-img" src="/dist/img/logo pink.svg" alt="company-logo">
         </a>
       </div>
       <form class="acquisition--form">
@@ -36,7 +36,7 @@
         <div class="uploadRow">
           <div class="file-upload">
             <label>
-              <input type="file" name="file"  id="uploaded-file">
+              <input type="file" name="file" id="uploaded-file">
               <span>Выбрать</span>
             </label>
           </div>
@@ -60,12 +60,12 @@
           </div>
           <p class="errorText">Текст ошибки</p>
         </div>
-        <p class="acquisition__footer-text">Вы получите <span>100</span> акций</p>
+        <p class="acquisition__footer-text" id="token_pre_count" style="display:none">Вы получите <span>100</span> акций</p>
         <div class="acquisition__buttons">
-          <a id="authorize" href="notification-acquisition1.html" class="button">
+          <a id="authorize" href="/ico/notification-acquisition1.html" class="button">
             Инвестировать
           </a>
-          <a href="#" class="button cancel">
+          <a href="/" class="button cancel">
             Отмена
           </a>
         </div>
@@ -73,9 +73,9 @@
     </div>
   </section>
   <div class="loader active">
-    <img src="../src/img/loader.png" alt="" class="loader__img">
+    <img src="/dist/img/loader.png" alt="" class="loader__img">
   </div>
-  <script src="../dist/js/app.js"></script>
+  <script src="/dist/js/app.js"></script>
 </body>
 
 </html>

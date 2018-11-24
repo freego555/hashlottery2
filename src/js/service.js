@@ -1,4 +1,5 @@
 import Web3 from 'web3'
+import contractAddresses from '../../smart_contracts/conract_addresses'
 
 let web3;
 
@@ -6,7 +7,7 @@ export function getWeb3() {
     if(web3) {
         return web3;
     } else {
-        web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        web3 = new Web3(new Web3.providers.HttpProvider(contractAddresses.host));
         return web3;
     }
 }
@@ -23,14 +24,11 @@ export function getNonce(address, callback) {
       if (result.result.pending) {
         if (result.result.pending[address]) {
           txnsCount = txnsCount + Object.keys(result.result.pending[address]).length
-          console.log('txnsCount result', txnsCount)
           callback(txnsCount);
         } else {
-          console.log('txnsCount result', txnsCount)
           callback(txnsCount);
         }
       } else {
-        console.log('txnsCount result', txnsCount)
         callback(txnsCount);
       }
     })
