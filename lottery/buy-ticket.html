@@ -33,9 +33,9 @@
       </p>
       <div class="wrapLottery__timer">
         <p class="wrapLottery__timer-title">
-          До окончания продажи
+          До окончания продажи / Дата-время окончания продаж
         </p>
-        <div id="clock"></div>
+        <div id="clock" style="color: #e60041"></div>
       </div>
       <p class="wrapLottery__textBold">Стоимость билета:
         <span class="price" id="price_of_ticket">?</span> ЕТН</p>
@@ -44,7 +44,7 @@
           Я хочу оплатить с этого кошелька
         </p>
         <div class="inputRow__wrapInput">
-          <input disabled type="text" class="inputRow__itemInput" id="current_user_account">
+          <input type="text" class="inputRow__itemInput" id="current_user_account">
         </div>
         <p class="errorText">Текст ошибки</p>
       </div>
@@ -53,7 +53,7 @@
           Я хочу купить билеты на сумму:
         </p>
         <div class="inputRow__wrapInput">
-          <input type="text" class="inputRow__itemInput">
+          <input type="text" class="inputRow__itemInput" id="money_amount">
         </div>
         <p class="errorText">Текст ошибки</p>
       </div>
@@ -70,35 +70,35 @@
       </div>
     </div>
   </div>
-  <script src='/dist/js/parts/jquery-3.2.1.min.js'></script>
-  <script src='/dist/js/parts/jquery.countdown.min.js'></script>
+  <!--<script src='/dist/js/parts/jquery-3.2.1.min.js'></script>-->
+  <!--<script src='/dist/js/parts/jquery.countdown.min.js'></script>-->
   <script src="/dist/js/app.js"></script>
-  <script>
-    $(document).ready(function() {
-      $('#clock').countdown('2020/10/10', function(event) {
-      var $this = $(this).html(event.strftime(''
-        + `<div class="itemTime">
-            <span class="textTime">%H</span>
-            <span class="subText">часов</span>
-            <span class="semicolon">
-              <span class="semicolonItem"></span>
-              <span class="semicolonItem"></span>
-            </span>
-          </div>`
-        + `<div class="itemTime">
-            <span class="textTime">%M</span>
-            <span class="subText">минут</span>
-            <span class="semicolon">
-              <span class="semicolonItem"></span>
-              <span class="semicolonItem"></span>
-            </span>
-          </div>`
-        + `<div class="itemTime">
-            <span class="textTime">%S</span>
-            <span class="subText">секунд</span>
-          </div>`));
-    });
-    });
-  </script>
+  <!--<script>-->
+    <!--$(document).ready(function() {-->
+      <!--$('#clock').countdown('2020/10/10', function(event) {-->
+      <!--var $this = $(this).html(event.strftime(''-->
+        <!--+ `<div class="itemTime">-->
+            <!--<span class="textTime">%H</span>-->
+            <!--<span class="subText">часов</span>-->
+            <!--<span class="semicolon">-->
+              <!--<span class="semicolonItem"></span>-->
+              <!--<span class="semicolonItem"></span>-->
+            <!--</span>-->
+          <!--</div>`-->
+        <!--+ `<div class="itemTime">-->
+            <!--<span class="textTime">%M</span>-->
+            <!--<span class="subText">минут</span>-->
+            <!--<span class="semicolon">-->
+              <!--<span class="semicolonItem"></span>-->
+              <!--<span class="semicolonItem"></span>-->
+            <!--</span>-->
+          <!--</div>`-->
+        <!--+ `<div class="itemTime">-->
+            <!--<span class="textTime">%S</span>-->
+            <!--<span class="subText">секунд</span>-->
+          <!--</div>`));-->
+    <!--});-->
+    <!--});-->
+  <!--</script>-->
 </body>
 </html>

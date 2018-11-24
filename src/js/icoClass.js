@@ -11,6 +11,8 @@ Date.prototype.yyyymmdd = function() {
   ].join('-');
 };
 
+
+
 class IcoClass {
 
   constructor (thisWeb3, addresses) {
