@@ -36,20 +36,6 @@ contract TokenERC20_v2 is TokenERC20 {
         migrationStatus = true;
     }
 
-    /*modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner of contract can call this");
-        _;
-    }
-
-    function setMigrationAgent(address _agent) external isNotSetMigrationAgent() onlyOwner() {
-        migrationAgent = _agent;
-    }
-
-    modifier isNotSetMigrationAgent(){
-        require(migrationAgent == address(0), "Migration Agent was set earlly");
-        _;
-    }*/
-
     modifier isMigrationRun(){
         require(migrationStatus == true, "Sorry, but we not detect migration to new token.");
         _;
