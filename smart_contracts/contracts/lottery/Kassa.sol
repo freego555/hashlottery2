@@ -114,6 +114,16 @@ contract Kassa {
         require(numbers.length == 3
         , 'Count of winning numbers must be 3'
         );
+			
+		for(uint i=0; i<=numbers.length-1; i++){
+			require(1 <= numbers[1] && numbers[1]<=99
+		    , 'Numbers must be in 1..99 range'
+		    );
+		}
+
+		require(numbers[0]<=numbers[1] && numbers[1]<=numbers[2]
+        , 'Numbers must be sorted ASC'
+        );
 
         for (uint8 index = 0; index < numbers.length; index++) {
             require(combinationOfTicket[index] == keccak256(numbers[index], salt)
