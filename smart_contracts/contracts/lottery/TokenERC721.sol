@@ -3,6 +3,8 @@ pragma solidity ^0.4.24;
 interface Draw {
     function isSellingTicketPeriod() external view returns (bool);
     function isFillingTicketPeriod() external view returns (bool);
+    function isAcceptRequestPeriod() external view returns (bool){
+    function isWaitingWithdrawsPeriod() external view returns (bool){
     function currentDrawId() external view returns(uint256 _drawId);
 }
 
@@ -43,6 +45,7 @@ contract TokenERC721 {
     address public addressOfContractTicketsSale;
     address public addressOfContractDraw;
     address public addressOfMigrationAgent; // For migration
+    address public addressOfContractKassa;
     bool public isSetAddressOfContractTicketsSale;
     bool public isSetAddressOfContractDraw;
 
@@ -87,6 +90,21 @@ contract TokenERC721 {
         _;
     }
 
+    modifier onlyKassa() {
+        require(msg.sender == addressOfContractKassa, "Only contract Kassa can call this.");
+        _;
+    }
+
+    modifier onlyFilledTicket() {
+        require(dataOfTicket[_tokenId].status == Status.Filled, "Ticket should have status Filled.");
+        _;
+    }
+
+    modifier onlyWinningTicket() {
+        require(dataOfTicket[_tokenId].status == Status.Winning, "Ticket should have status Winning.");
+        _;
+    }
+
     // For migration
     modifier onlyIfNotSetMigrationAgent() {
         require(addressOfMigrationAgent == address(0), "Migration agent already set.");
@@ -114,6 +132,25 @@ contract TokenERC721 {
         addressOfContractDraw = _address;
         contractDraw = Draw(_address);
         isSetAddressOfContractDraw = true;
+    }
+
+    function setAddressOfContractKassa(address _address) public
+            onlyAdmin {
+        require(addressOfContractKassa == address(0), "Address of contract Kassa already set.");
+        addressOfContractKassa = _address;
+    }
+
+    function setTicketStatusWinning(uint256 _tokenId) public
+            onlyKassa
+            onlyFilledTicket {
+        //require();
+        dataOfTicket[_tokenId].status = Status.Winning;
+    }
+
+    function setTicketStatusPayed(uint256 _tokenId) public
+            onlyKassa
+            onlyWinningTicket {
+        dataOfTicket[_tokenId].status = Status.Payed;
     }
 
     function getDataOfTicket(uint256 _tokenId) view public returns(uint256 _drawId, bytes32[3] _combinationOfTicket, Status _status) {
