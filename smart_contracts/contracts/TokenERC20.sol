@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
 contract MigrationAgent {
-    function migrateFrom( address sender, uint256 _value);
+    function migrateFrom( address sender, uint256 _value) public;
 }
 
 contract TokenERC20 {
@@ -119,11 +119,12 @@ contract TokenERC20 {
     function _transfer(address _from, address _to, uint _value) internal isMigrationNotRun() {
         require(isTokensSupplied == true, "Tokens are not supplied");
         require(balanceOf[_from] >= _value, "Not enough funds");
+        require(_from != _to, "Transfering on same account is not allowed!");
         require(_to != address(0), "Try send funds to 0-address");
         balanceOf[_from] -= _value;
         balanceOf[_to] += _value;
 
-        if (balanceOf[_from] == 0) {
+        if (balanceOf[_from] == 0 && ownerAddressesLists[0] != _from) {
             uint256 lastElemIndex = ownerAddressesLists.length - 1;
             address lastElem = ownerAddressesLists[lastElemIndex];
             if (lastElem != _from) {
@@ -164,8 +165,9 @@ contract TokenERC20 {
         return true;
     }
 
+    // возвращает процент с четырьмя знаками после точки если разделить полученный результат на 10000
     function getOwnership(address account) public view returns (uint256 percentageMultiplied100) {
-        return balanceOf[account] * 10000 / totalSupply;
+        return balanceOf[account] * 1000000 / totalSupply;
     }
 
     function getOwnerAddressesList() public view returns (address[] ownerAddressesListPart) {
