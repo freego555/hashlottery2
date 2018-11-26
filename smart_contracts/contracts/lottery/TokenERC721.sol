@@ -160,12 +160,9 @@ contract TokenERC721 {
     }
 
     function setTicketStatusPayed(uint256 _tokenId) public
-            onlyIfSetAddressOfContractDraw
             onlyIfSetAddressOfContractKassa
             onlyKassa
             onlyWinningTicket(_tokenId) {
-        uint256 ticketDrawId = dataOfTicket[_tokenId].drawId;
-        require(ticketDrawId != contractDraw.currentDrawId() || contractDraw.isVacationPeriod() && !contractDraw.isWaitingWithdrawsPeriod(), "Stage of current draw should be 'Waiting withdraws'");
         dataOfTicket[_tokenId].status = Status.Payed;
     }
 
