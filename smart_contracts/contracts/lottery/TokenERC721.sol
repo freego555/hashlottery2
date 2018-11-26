@@ -280,7 +280,7 @@ contract TokenERC721 {
         uint256 tokenId;
 
         require(allowedToMigrateInOneTransaction >= _sizeOfChunk, "Sender cannot migrate more tokens than 10 in one transaction.");
-        //require(balanceOfSender >= _sizeOfChunk, "Sender cannot migrate more tokens than he has.");
+        require(balanceOfSender >= _sizeOfChunk, "Sender cannot migrate more tokens than he has.");
         require(_indexOfFirstTokenFromTheEnd == balanceOfSender-1, "Index of first token from the end should be the last index of token of owner.");
 
         uint256 currentDrawId = contractDraw.currentDrawId();
