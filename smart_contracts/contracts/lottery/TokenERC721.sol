@@ -105,10 +105,6 @@ contract TokenERC721 {
         require(dataOfTicket[_tokenId].status == Status.Winning, "Ticket should have status Winning.");
         _;
     }
-    modifier onlyIfSetAddressOfContractKassa() {
-        require(addressOfContractKassa != address(0), "Address of contract Kassa should be set.");
-        _;
-    }
 
     modifier onlyIfSetAddressOfContractDraw() {
         require(isSetAddressOfContractDraw, "Address of contract Draw should be set.");
@@ -152,7 +148,6 @@ contract TokenERC721 {
 
     function setTicketStatusWinning(uint256 _tokenId) public
             onlyIfSetAddressOfContractDraw
-            onlyIfSetAddressOfContractKassa
             onlyKassa
             onlyFilledTicket(_tokenId) {
         require(contractDraw.isAcceptRequestPeriod(), "Stage of current draw should be 'Accepting request on winning'");
@@ -160,7 +155,6 @@ contract TokenERC721 {
     }
 
     function setTicketStatusPayed(uint256 _tokenId) public
-            onlyIfSetAddressOfContractKassa
             onlyKassa
             onlyWinningTicket(_tokenId) {
         dataOfTicket[_tokenId].status = Status.Payed;
