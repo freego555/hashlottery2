@@ -3,6 +3,9 @@ pragma solidity ^0.4.24;
 interface Draw {
     function isSellingTicketPeriod() external view returns (bool);
     function isFillingTicketPeriod() external view returns (bool);
+    function isAcceptRequestPeriod() external view returns (bool);
+    function isVacationPeriod() external view returns (bool);
+    function isWaitingWithdrawsPeriod() external view returns (bool);
     function currentDrawId() external view returns(uint256 _drawId);
 }
 
@@ -14,7 +17,8 @@ contract TokenERC721 {
     enum Status {
         NotFilled,
         Filled,
-        Winning
+        Winning,
+        Payed
     }
 
     struct DataOfTicket {
@@ -42,6 +46,7 @@ contract TokenERC721 {
     address public addressOfContractTicketsSale;
     address public addressOfContractDraw;
     address public addressOfMigrationAgent; // For migration
+    address public addressOfContractKassa;
     bool public isSetAddressOfContractTicketsSale;
     bool public isSetAddressOfContractDraw;
 
@@ -86,6 +91,26 @@ contract TokenERC721 {
         _;
     }
 
+    modifier onlyKassa() {
+        require(msg.sender == addressOfContractKassa, "Only contract Kassa can call this.");
+        _;
+    }
+
+    modifier onlyFilledTicket(uint256 _tokenId) {
+        require(dataOfTicket[_tokenId].status == Status.Filled, "Ticket should have status Filled.");
+        _;
+    }
+
+    modifier onlyWinningTicket(uint256 _tokenId) {
+        require(dataOfTicket[_tokenId].status == Status.Winning, "Ticket should have status Winning.");
+        _;
+    }
+
+    modifier onlyIfSetAddressOfContractDraw() {
+        require(isSetAddressOfContractDraw, "Address of contract Draw should be set.");
+        _;
+    }
+
     // For migration
     modifier onlyIfNotSetMigrationAgent() {
         require(addressOfMigrationAgent == address(0), "Migration agent already set.");
@@ -115,17 +140,37 @@ contract TokenERC721 {
         isSetAddressOfContractDraw = true;
     }
 
+    function setAddressOfContractKassa(address _address) public
+            onlyAdmin {
+        require(addressOfContractKassa == address(0), "Address of contract Kassa already set.");
+        addressOfContractKassa = _address;
+    }
+
+    function setTicketStatusWinning(uint256 _tokenId) public
+            onlyIfSetAddressOfContractDraw
+            onlyKassa
+            onlyFilledTicket(_tokenId) {
+        require(contractDraw.isAcceptRequestPeriod(), "Stage of current draw should be 'Accepting request on winning'");
+        dataOfTicket[_tokenId].status = Status.Winning;
+    }
+
+    function setTicketStatusPayed(uint256 _tokenId) public
+            onlyKassa
+            onlyWinningTicket(_tokenId) {
+        dataOfTicket[_tokenId].status = Status.Payed;
+    }
+
     function getDataOfTicket(uint256 _tokenId) view public returns(uint256 _drawId, bytes32[3] _combinationOfTicket, Status _status) {
         DataOfTicket memory _dataOfTicket = dataOfTicket[_tokenId];
         return (_dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, _dataOfTicket.status);
     }
 
     function mint(address _owner, uint8 _amountOfTokens) public
-            onlyIfNotSetMigrationAgent {
+            onlyIfNotSetMigrationAgent
+            onlyIfSetAddressOfContractDraw {
         require(msg.sender == addressOfContractTicketsSale, "Sender should be the contract TicketsSale.");
         require(_owner != address(0), "Owner cannot be 0.");
         require(_amountOfTokens <= allowedToMintInOneTransaction, "Owner cannot mint more than 20 tickets in one transaction.");
-        require(isSetAddressOfContractDraw, "Address of contract Draw should be set.");
 
         uint256 drawId = contractDraw.currentDrawId();
         require(contractDraw.isSellingTicketPeriod(), "Stage of current draw should be 'Sale of tickets'");
@@ -253,8 +298,8 @@ contract TokenERC721 {
             onlyOwnerOfToken(_from, _tokenId)
             onlyNotFilledTicket(_tokenId)
             onlyIfTokenExists(_tokenId)
-            onlyIfSenderNotEqualReciever(_from, _to) {
-        require(isSetAddressOfContractDraw, "Address of contract Draw should be set.");
+            onlyIfSenderNotEqualReciever(_from, _to)
+            onlyIfSetAddressOfContractDraw {
         uint256 currentDrawId = contractDraw.currentDrawId();
 
         require(_to != address(0), "Reciever cannot be 0");
