@@ -211,12 +211,11 @@ contract Draw {
             require(numbers[index] >=1 && numbers[index] <=99
             , 'The number is not in 1..99 range'
             );
-            if(index > 0){
-                require(numbers[index-1] >= numbers[index]
-                , 'The numbers must be ordered as ASC'
-                );
-            }
         }
+
+		require(numbers[0] < numbers[1] && numbers[1] < numbers[2]
+        , 'Numbers must be sorted ASC'
+        );
 
         require(winnersNumbers[currentDrawId].length == 0
         , 'Numbers for current draw already set, please contact the admin'

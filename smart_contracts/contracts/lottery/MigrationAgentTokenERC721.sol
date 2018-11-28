@@ -60,9 +60,10 @@ contract MigrationAgentTokenERC721 {
             onlyIfSetAddressOfOldToken
             onlyIfSetAddressOfNewToken
             onlyIfSetAddressOfDraw {
-        require(!isMigrationInitiated, "Migration already initiated.");
-
         TokenERC721 contractTokenERC721 = TokenERC721(addressOfOldToken);
+
+        require(!isMigrationInitiated, "Migration already initiated.");
+        require(contractTokenERC721.addressOfMigrationAgent() == address(this), "Address of migration agent should be set in contract of old token.");
 
         isMigrationInitiated = true;
         uint256 _lastIdOfDraw = Draw(addressOfDraw).currentDrawId();
@@ -74,8 +75,7 @@ contract MigrationAgentTokenERC721 {
 
     function migrateOneTokenFrom(address _from, uint256 _tokenId, uint256 _drawId, bytes32[3] memory _combinationOfTicket, uint8 _status) public
             onlyOldToken
-            onlyIfMigrationInitiated
-            onlyIfSetAddressOfNewToken {
+            onlyIfMigrationInitiated {
         require(_drawId == lastIdOfDraw, "You can migrate tickets only from last draw.");
 
         safetyInvariantCheck(1);
@@ -91,9 +91,7 @@ contract MigrationAgentTokenERC721 {
 
     function finalizeMigration() public
             onlyAdmin
-            onlyIfMigrationInitiated
-            onlyIfSetAddressOfOldToken
-            onlyIfSetAddressOfNewToken {
+            onlyIfMigrationInitiated {
         safetyInvariantCheck(0);
 
         isMigrationInitiated = false;
