@@ -1,5 +1,6 @@
 pragma solidity ^0.4.24;
 
+/*<<<<<<< HEAD*/
 interface TokenERC721 {
     function totalTicketsInDraw(uint256 _drawId) external returns(uint256);
     function lastIdOfToken() external returns(uint256);
@@ -16,6 +17,10 @@ interface NewTokenERC721 {
 interface Draw {
     function currentDrawId() external view returns(uint256 _drawId);
 }
+/*=======
+import './TokenERC721.sol';
+import './NewTokenERC721.sol';
+>>>>>>> temp-mary*/
 
 contract MigrationAgentTokenERC721 {
     address public addressOfNewToken;

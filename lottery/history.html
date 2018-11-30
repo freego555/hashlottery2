@@ -8,20 +8,22 @@
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="theme-color" content="#ffffff">
   <meta name="msapplication-config" content="../browserconfig.xml" />
-  <meta(name="Highway Academy" content="Hash lottery" )/>
+  <meta name="Highway Academy" content="Hash lottery" />
   <link href="https://fonts.googleapis.com/css?family=Montserrat+Alternates:400,500,600,700" rel="stylesheet">
 
   <title>History</title>
 
   <link rel="manifest" href="../manifest.json">
 
-  <link rel="stylesheet" href="../css/font-awesome.css">
-  <link rel="stylesheet" href="../dist/css/app.css">
+  <link rel="stylesheet" href="/dist/css/font-awesome.css">
+  <link rel="stylesheet" href="/dist/css/app.css">
 </head>
 <body>
   <div class="headerBar">
     <div class="wrapper">
-      <img src="../img/cabinetLogo.png" alt="" class="headerBar__logo">
+      <a href="/lottery/mainPage.html">
+        <img src="/dist/img/cabinetLogo.png" alt="" class="headerBar__logo">
+      </a>
     </div>
   </div>
   <div class="history">
@@ -57,86 +59,55 @@
             </p>
           </div>
         </div>
+      <template id="draw">
         <div class="history__row">
           <div class="history__table-id">
-            <p class="history__table-text">
-              21
+            <p class="history__table-text drawId" >
+              ?
             </p>
           </div>
           <div class="history__table-date">
-            <p class="history__table-text">
-              25.07.2018
+            <p class="history__table-text dateOfDraw">
+             ?
             </p>
           </div>
           <div class="history__table-number">
-            <p class="history__table-text">
-              1 24 26
+            <p class="history__table-text winningNumbers">
+              ?
             </p>
           </div>
           <div class="history__table-sum">
-            <p class="history__table-text">
-              33456
+            <p class="history__table-text prizePoolSize">
+              ?
             </p>
           </div>
           <div class="history__table-successUser">
-            <p class="history__table-text">
-              0x1a2b3c…0x1a2b3c…0x1a2b3c…0x1a2b3c…0x1a2b3c…0x1a2b3c…
+            <p class="history__table-text winningAddresses">
+              0x00
             </p>
           </div>
         </div>
-        <div class="history__row">
-          <div class="history__table-id">
-            <p class="history__table-text">
-              21
-            </p>
-          </div>
-          <div class="history__table-date">
-            <p class="history__table-text">
-              25.07.2018
-            </p>
-          </div>
-          <div class="history__table-number">
-            <p class="history__table-text">
-              1 24 26
-            </p>
-          </div>
-          <div class="history__table-sum">
-            <p class="history__table-text">
-              33456
-            </p>
-          </div>
-          <div class="history__table-successUser">
-            <p class="history__table-text">
-              0x1a2b3c…0x1a2b3c…0x1a2b3c…0x1a2b3c…0x1a2b3c…0x1a2b3c…
-            </p>
-          </div>
-        </div>
+      </template>
+
       </div>
       <div class="history__footer">
-        <a href="identificationPage.html" class="btn">Вернуться на главную</a>
-        <div class="pagination">
-          <button class="pagination__btnNav prev">
-            <i class="fa fa-angle-left"></i>
-          </button>
-          <button class="pagination__btn">1</button>
-          <button class="pagination__btn gray">2</button>
-          <button class="pagination__btn red">3</button>
-          <button class="pagination__btn">4</button>
-          <button class="pagination__btn">5</button>
-          <button class="pagination__btnNav next">
-            <i class="fa fa-angle-right"></i>
-          </button>
-        </div>
+        <a href="/lottery/mainPage.html" class="btn">Вернуться на главную</a>
+        <!--<div class="pagination">-->
+          <!--<button class="pagination__btnNav prev">-->
+            <!--<i class="fa fa-angle-left"></i>-->
+          <!--</button>-->
+          <!--<button class="pagination__btn">1</button>-->
+          <!--<button class="pagination__btn gray">2</button>-->
+          <!--<button class="pagination__btn red">3</button>-->
+          <!--<button class="pagination__btn">4</button>-->
+          <!--<button class="pagination__btn">5</button>-->
+          <!--<button class="pagination__btnNav next">-->
+            <!--<i class="fa fa-angle-right"></i>-->
+          <!--</button>-->
+        <!--</div>-->
       </div>
     </div>
   </div>
-  <script src="/js/bundle.js"></script>
-  <script>
-    function getFileName () {
-      var file = document.getElementById('uploaded-file').value;
-      file = file.replace (/\\/g, '/').split('/').pop();
-      document.getElementById('file-name').innerHTML = 'Имя файла: ' + file; 
-    }
-  </script>
+  <script src="/dist/js/app.js"></script>
 </body>
 </html>
