@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-/*<<<<<<< HEAD*/
+/*<<<<<<< HEAD
 interface Draw {
     function isSellingTicketPeriod() external view returns (bool);
     function isFillingTicketPeriod() external view returns (bool);
@@ -8,14 +8,14 @@ interface Draw {
     function isVacationPeriod() external view returns (bool);
     function isWaitingWithdrawsPeriod() external view returns (bool);
     function currentDrawId() external view returns(uint256 _drawId);
-}
+}*/
 
 interface MigrationAgent {
     function migrateOneTokenFrom(address _from, uint256 _tokenId, uint256 _drawId, bytes32[3] _combinationOfTicket, uint8 _status) external;
 }
-/*=======
+/*=======*/
 import './Draw.sol';
-import './MigrationAgentTokenERC721.sol';
+/*import './MigrationAgentTokenERC721.sol';
 >>>>>>> temp-mary*/
 
 contract TokenERC721 {
@@ -170,7 +170,7 @@ contract TokenERC721 {
         return (_dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, _dataOfTicket.status);
     }
 
-    function mint(address _owner, uint8 _amountOfTokens) public
+    function mint(address _owner, uint256 _amountOfTokens) public
             onlyIfNotSetMigrationAgent
             onlyIfSetAddressOfContractDraw {
         require(msg.sender == addressOfContractTicketsSale, "Sender should be the contract TicketsSale.");
@@ -263,7 +263,7 @@ contract TokenERC721 {
         totalSupply--;
         totalTicketsInDraw[_dataOfTicket.drawId]--;
 
-        MigrationAgentTokenERC721(addressOfMigrationAgent).migrateOneTokenFrom(msg.sender, _tokenId, _dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, uint8(_dataOfTicket.status));
+        MigrationAgent(addressOfMigrationAgent).migrateOneTokenFrom(msg.sender, _tokenId, _dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, uint8(_dataOfTicket.status));
 
         emit MigrateOneToken(_tokenId);
     }

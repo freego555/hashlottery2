@@ -313,6 +313,7 @@ class Lottery {
         })
         .on('receipt', (receipt) => {
           console.log('receipt', receipt)
+          //todo: set numbersOfTicketInDraw to local storage
           // window.location.href = '/lottery/success-screen.html'
         })
 
@@ -365,7 +366,7 @@ class Lottery {
 
     // #current_user_account
     // #ticket_number
-    // p#winning_numbers ?, ?, ? () - from storage
+    // #winning_numbers ?, ?, ? () - from storage
     // #salt input
     // #prize_pool_size
     // #count_of_approved_requests
@@ -373,6 +374,92 @@ class Lottery {
     // #confirm click
     // if success redirect to lottery/confirmation-application.html
 
+    // Set current_user_account
+    let current_user_account = document.getElementById('current_user_account')
+    current_user_account.innerHTML = this.wallet.address
+
+    // Set ticket_number
+    let ticket_number = document.getElementById('ticket_number')
+    let choosedTicket = 1 //sessionStorage.getItem('choosedTicket') //todo: get ticket number from session storage
+    ticket_number.innerHTML = choosedTicket;
+
+    // Set winning_numbers
+    let winning_numbers = document.getElementById('winning_numbers')
+    let winningNumbers = new Array()//sessionStorage.getItem('winning_numbers') //todo: get winning numbers from session storage
+    winningNumbers[0] = 11 //todo: delete example
+    winningNumbers[1] = 22
+    winningNumbers[2] = 33
+    winning_numbers.innerHTML = `${winningNumbers[0]}, ${winningNumbers[1]}, ${winningNumbers[2]}`
+
+    let salt = document.getElementById('salt')
+    salt.addEventListener('change', function (e) {
+        salt.value = parseInt(salt.value)
+    })
+
+    // Set prize_pool_size
+    let prizePool = await this.PrizePool.methods.prizePool().call();
+    let prize_pool_size = document.getElementById('prize_pool_size')
+    prize_pool_size.innerHTML = prizePool
+
+    // Set count_of_approved_requests
+    let drawId = 1 //sessionStorage.getItem('drawId') //todo: get drawId from session storage
+    let winnersCount = await this.Kassa.methods.winnersCount(drawId).call();
+    let count_of_approved_requests = document.getElementById('count_of_approved_requests')
+    count_of_approved_requests.innerHTML = winnersCount
+
+    let numbersOfTicketInDraw = new Array()//JSON.parse(localStorage.getItem('numbersOfTicketInDraw')); //todo: get numbersOfTicketInDraw from local storage
+    //numbersOfTicketInDraw = [[[[11,22,33]]]];
+    numbersOfTicketInDraw[drawId] = [];
+    numbersOfTicketInDraw[drawId][choosedTicket] = [];
+    numbersOfTicketInDraw[drawId][choosedTicket][0] = 11; //todo: delete example
+    numbersOfTicketInDraw[drawId][choosedTicket][1] = 22;
+    numbersOfTicketInDraw[drawId][choosedTicket][2] = 33;
+    console.log(numbersOfTicketInDraw);
+    console.log(numbersOfTicketInDraw[drawId][choosedTicket]);
+
+    let contractKassa = this.Kassa;
+    let web3 = this.web3;
+    let addresses = this.addresses;
+
+    // Send request
+    document.getElementById('confirm').addEventListener('click', async function (e) {
+        e.preventDefault();
+
+        const data = contractKassa.methods.addNewRequest(choosedTicket, numbersOfTicketInDraw[drawId][choosedTicket], salt.value).encodeABI()
+
+        const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
+        let decrypted = await web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
+
+        let nonce = await web3.eth.getTransactionCount(decrypted.address)
+
+        const transactionObj = {
+            nonce: nonce,
+            from: decrypted.address,
+            gas: 900000,
+            to: addresses.kassa,
+            value: 0,
+            data
+        }
+
+        var transaction = await decrypted.signTransaction(transactionObj)
+        console.log('transaction,', transaction)
+
+        web3.eth.sendSignedTransaction(transaction.rawTransaction)
+            .on('transactionHash', (hash) => {
+                console.log('transactionHash', hash)
+            })
+            .on('receipt', (receipt) => {
+                console.log('receipt', receipt)
+                // window.location.href = '/lottery/success-screen.html'
+            })
+    })
+
+    // Cancel request
+    document.getElementById('reset').addEventListener('click', async function (e) {
+        if(confirm('Вернуться к списку билетов?')) {
+            window.location.pathname = '/lottery/list-tickets.html';
+        }
+    })
   }
 
 //------------------------------------------------------------------------------------------------------------------//
@@ -386,6 +473,7 @@ class Lottery {
     // ожидайте розыгрыша лотереи
     // вы указали 2, 14, 45
     // <a href="#" class="redLink">Заполнить билет</a>
+    //todo: set ticket number, draw Id, winning numbers to session storage for makeRequest()
   }
 
 //------------------------------------------------------------------------------------------------------------------//
