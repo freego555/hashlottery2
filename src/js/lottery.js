@@ -380,7 +380,7 @@ class Lottery {
 
     // Set ticket_number
     let ticket_number = document.getElementById('ticket_number')
-    let choosedTicket = 1 //sessionStorage.getItem('choosedTicket') //todo: get ticket number from session storage
+    let choosedTicket = 1 //sessionStorage.getItem('ticket_number') //todo: get ticket number from session storage
     ticket_number.innerHTML = choosedTicket;
 
     // Set winning_numbers
@@ -450,7 +450,7 @@ class Lottery {
             })
             .on('receipt', (receipt) => {
                 console.log('receipt', receipt)
-                // window.location.href = '/lottery/success-screen.html'
+                window.location.pathname = '/lottery/confirmation-application.html'
             })
     })
 
