@@ -25,6 +25,7 @@ contract Draw {
     //         30, // ждем cron для подведения итогов и подсета победителей
     //         40 // перерыв
     //
+    uint public stageOfCurrentDraw; // ТЕСТ Для ручного изменения этапа розыгрыша во время презентации
     uint public startSelling; // таймштамп начала продаж
     uint public stopSelling; // таймштамп конца продаж
     uint public stopAcceptingTickets; // таймштамп конца продаж
@@ -131,6 +132,8 @@ contract Draw {
     }
 
     function getStageOfCurrentDraw() public view returns (uint8 drawStage){
+        return stageOfCurrentDraw; // ТЕСТ Для ручного изменения этапа розыгрыша во время презентации
+
         // todo: узнать по поводу now и возможно вынести его в переменную
 
         // первая лотерея
@@ -287,5 +290,38 @@ contract Draw {
 
     function hashVal(string val) public pure returns (bytes32) {
         return keccak256(val);
+    }
+
+    // ТЕСТ Для ручного изменения этапа розыгрыша во время презентации
+    function setStageWaitingStartOfSale() public onlyOwner {
+        stageOfCurrentDraw = 10; // ждем cron1 для начала продаж
+    }
+
+    function setStageTicketsSale() public onlyOwner {
+        stageOfCurrentDraw = 11; // продажа билетов 47 часов
+    }
+
+    function setStageFillingTicketsWithoutTransferOfTokens() public onlyOwner {
+        stageOfCurrentDraw = 12; // дозаполнение билетов, продавать уже нельзя, акции перемещать нельзя
+    }
+
+    function setStageWaitingDraw() public onlyOwner {
+        stageOfCurrentDraw = 20; // ждем cron2 для розыгрыша
+    }
+
+    function setStageAcceptingRequestsWithoutTransferOfTokens() public onlyOwner {
+        stageOfCurrentDraw = 21; // начали прием заявок, акции перемещать нельзя
+    }
+
+    function setStageContinueAcceptingRequests() public onlyOwner {
+        stageOfCurrentDraw = 22; // продолжение приема заявок
+    }
+
+    function setStageWaitingDistributingOfPrizePool() public onlyOwner {
+        stageOfCurrentDraw = 30; // ждем cron3 для подведения итогов и подсета победителей
+    }
+
+    function setStageVacation() public onlyOwner {
+        stageOfCurrentDraw = 40; // перерыв
     }
 }
