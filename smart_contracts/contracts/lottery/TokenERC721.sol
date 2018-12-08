@@ -155,7 +155,7 @@ contract TokenERC721 {
         return (_dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, _dataOfTicket.status);
     }
 
-    function mint(address _owner, uint8 _amountOfTokens) public
+    function mint(address _owner, uint _amountOfTokens) public
             onlyIfNotSetMigrationAgent
             onlyIfSetAddressOfContractDraw {
         require(msg.sender == addressOfContractTicketsSale, "Sender should be the contract TicketsSale.");

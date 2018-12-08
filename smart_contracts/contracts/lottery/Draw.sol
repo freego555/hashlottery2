@@ -131,7 +131,6 @@ contract Draw {
     }
 
     function getStageOfCurrentDraw() public view returns (uint8 drawStage){
-        // todo: узнать по поводу now и возможно вынести его в переменную
 
         // первая лотерея
         if (startSelling == 0) {
@@ -174,8 +173,6 @@ contract Draw {
         if (startVacation == 0) {
             return  30;
         }
-
-        // todo: добавить условие что призы розданы по текущемму розыгрышу и только тогда начинается отпуск
 
         // период перерыва 40
         if (now >= startVacation
@@ -283,10 +280,6 @@ contract Draw {
         bool cronContinue = !Kassa(kassaAddress).fullyDistributedPrize(currentDrawId);
         return firstLaunch || (isVacation && cronContinue);
 
-    }
-
-    function hashVal(string val) public pure returns (bytes32) {
-        return keccak256(val);
     }
     
 }
