@@ -74,7 +74,8 @@ module.exports = async function (deployer, accounts) {
 
                                     // todo: set price
                                     // var price = web3.toWei(0.001)
-                                    return sale.setPrice(10000).then(function (i) {
+                                    var price = 500000000000000000 // 0.5 ETH
+                                    return sale.setPrice(price).then(function (i) {
                                       console.log('sale setPrice')
 
                                       //ticket
@@ -84,17 +85,27 @@ module.exports = async function (deployer, accounts) {
                                         return ticket.setAddressOfContractDraw(draw.address).then(function (i) {
                                           console.log('ticket setAddressOfContractDraw')
 
-                                          console.log('DONE -- DEPLOY lottery -- DONE')
-                                          console.log('please add this to smart_contracts/conract_addresses.js file')
+                                            return ticket.setAddressOfContractKassa(kassa.address).then(function (i) {
+                                                console.log('ticket setAddressOfContractKassa')
 
-                                          console.log( "draw: '" + draw.address +"',");
-                                          console.log( "kassa: '" + kassa.address +"',");
-                                          console.log( "prizePool: '" + pool.address +"',");
-                                          console.log( "ticketSale: '" + sale.address +"',");
-                                          console.log( "incomeWallet: '" + income.address +"',");
-                                          console.log( "tokenERC721: '" + ticket.address +"',");
+                                                //income
+                                                return income.setDraw(draw.address).then(function (i) {
+                                                    console.log('income setDraw')
 
+                                                    /*return income.setToken(draw.address).then(function (i) {
+                                                    console.log('income setDraw')*/
 
+                                                    console.log('DONE -- DEPLOY lottery -- DONE')
+                                                    console.log('please add this to smart_contracts/conract_addresses.js file')
+
+                                                    console.log( "draw: '" + draw.address +"',");
+                                                    console.log( "kassa: '" + kassa.address +"',");
+                                                    console.log( "prizePool: '" + pool.address +"',");
+                                                    console.log( "ticketSale: '" + sale.address +"',");
+                                                    console.log( "incomeWallet: '" + income.address +"',");
+                                                    console.log( "tokenERC721: '" + ticket.address +"',");
+                                                })
+                                            })
                                         })
                                       })
                                     })

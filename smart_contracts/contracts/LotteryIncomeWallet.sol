@@ -2,8 +2,9 @@ pragma solidity ^0.4.24;
 import "./TokenERC20.sol";
 //import "./Draw.sol";
 
-contract Draw {
-    address public owner;
+interface Draw {
+    function currentDrawId() external view returns(uint256 _drawId);
+    /*address public owner;
     uint256 public currentDrawId = 0;
 
     constructor() public {
@@ -12,7 +13,7 @@ contract Draw {
 
     function initDistributing(address wallet_address) public {
         LotteryIncomeWallet(wallet_address).initDistributing(currentDrawId++);
-    }
+    }*/
 }
 
 
@@ -20,8 +21,8 @@ contract LotteryIncomeWallet {
     address public owner;
     mapping(address => uint256) holderIndexes;
     address[] public stockHolders;
-    address drawContractAddress = address(0);
-    address tokenERC20Address = address(0);
+    address public drawContractAddress = address(0);
+    address public tokenERC20Address = address(0);
     mapping(address => uint256) public dividentsAvailable; //[owner'sAddress][total_dividends_available]
     mapping(address => mapping(uint256 => uint256)) public dividendsFromDraw; //[owner'sAddress][lottery_id][dividends]
     mapping(uint256 => uint256) public drawIncome; //[lottery_id][total_income_from_this_lottery]
@@ -89,12 +90,15 @@ contract LotteryIncomeWallet {
     }
 
     function trackPayments() private {
+        /*Draw contractDraw = Draw(drawContractAddress);
+        uint256 tempField = contractDraw.currentDrawId();
+        drawIncome[0] = 1;*/
         drawIncome[Draw(drawContractAddress).currentDrawId()] += msg.value;
 
     }
 
     function() payable public {
-        trackPayments();
+        //trackPayments();
     }
 
 }

@@ -25,7 +25,7 @@ contract Draw {
     //         30, // ждем cron для подведения итогов и подсета победителей
     //         40 // перерыв
     //
-    uint public stageOfCurrentDraw; // ТЕСТ Для ручного изменения этапа розыгрыша во время презентации
+    uint8 public stageOfCurrentDraw = 10; // ТЕСТ Для ручного изменения этапа розыгрыша во время презентации
     uint public startSelling; // таймштамп начала продаж
     uint public stopSelling; // таймштамп конца продаж
     uint public stopAcceptingTickets; // таймштамп конца продаж
@@ -129,6 +129,10 @@ contract Draw {
             vacationPeriod -= fix;
         }
         return vacationPeriod;
+    }
+
+    function getWinnersNumbers(uint256 _drawId) public view returns(uint8[]) {
+        return winnersNumbers[_drawId];
     }
 
     function getStageOfCurrentDraw() public view returns (uint8 drawStage){
@@ -288,8 +292,8 @@ contract Draw {
 
     }
 
-    function hashVal(string val) public pure returns (bytes32) {
-        return keccak256(val);
+    function hashVal(uint8 number, uint256 salt) public pure returns (bytes32) {
+        return keccak256(number, salt);
     }
 
     // ТЕСТ Для ручного изменения этапа розыгрыша во время презентации

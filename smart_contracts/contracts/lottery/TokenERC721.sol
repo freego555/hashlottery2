@@ -356,4 +356,8 @@ contract TokenERC721 {
     function getTicketDrawId(uint256 ticketId) public view returns (uint256){
         return dataOfTicket[ticketId].drawId;
     }
+
+    function getTicketStatus(uint256 ticketId) public view returns (Status){
+        return dataOfTicket[ticketId].status;
+    }
 }

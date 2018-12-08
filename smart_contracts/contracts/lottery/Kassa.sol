@@ -136,9 +136,8 @@ contract Kassa {
         winnersListExists[ticketDrawId][msg.sender] = true;
         winnersListIndex[ticketDrawId][msg.sender] = winnersCount[ticketDrawId];
         winnersCount[ticketDrawId]++;
-        
-        // todo 
-    //    TokenERC721(token712Address).setTicketStatusWinning(ticketNumber);
+
+        TokenERC721(token712Address).setTicketStatusWinning(ticketNumber);
 
         emit RequestApproved(ticketNumber);
     }
@@ -153,8 +152,8 @@ contract Kassa {
         uint countOfWinners = winnersCount[currentDrawId];
         if (moneyForEachWinner[currentDrawId] == 0) {
             // узнать размер выигрыша одного победителя
-            poolSizes[currentDrawId] = PrizePool(prizePoolAddress).prizePool();
             moneyForEachWinner[currentDrawId] = PrizePool(prizePoolAddress).determineWinners(countOfWinners);
+            poolSizes[currentDrawId] = PrizePool(prizePoolAddress).prizePool();
         }
         if (countOfWinners == 0) {
             // нет победителей
@@ -171,7 +170,7 @@ contract Kassa {
         if (lastIndex > countOfWinners - 1) {
             lastIndex = countOfWinners - 1;
         }
-        for (uint index = fromIndex; index < lastIndex; index++) {
+        for (uint index = fromIndex; index <= lastIndex; index++) {
             winnerAddress = winnersList[currentDrawId][index];
             if (!isGivenShare[currentDrawId][winnerAddress]) {
                 winnersMoney[winnerAddress] += moneyForEachWinner[currentDrawId];
