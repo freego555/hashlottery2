@@ -276,6 +276,7 @@ class Lottery {
       salt.value = parseInt(salt.value)
     })
 
+    var thisClass = this;
     document.getElementById('confirm').addEventListener('click', async function (e) {
       e.preventDefault()
 
@@ -305,32 +306,32 @@ class Lottery {
       numbers.sort(function (a, b) {return a - b})
       let hashed = new Array()
       for (let i = 0; i <= 2; i++) {
-        hashed[i] = await this.Draw.methods.hashVal(numbers[i] + salty).call()
+        hashed[i] = await thisClass.Draw.methods.hashVal(numbers[i] + salty).call()
       }
 
       // send
-      await this.Draw.methods.isSellingTicketPeriod().call()
+      await thisClass.Draw.methods.isSellingTicketPeriod().call()
       let token_id = 1
 
-      const data = this.TokenERC721.methods.fillCombinationOfTicket(token_id, numbers).encodeABI()
+      const data = thisClass.TokenERC721.methods.fillCombinationOfTicket(token_id, numbers).encodeABI()
 
       const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
-      let decrypted = await this.web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
+      let decrypted = await thisClass.web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
 
-      let nonce = await this.web3.eth.getTransactionCount(decrypted.address)
+      let nonce = await thisClass.web3.eth.getTransactionCount(decrypted.address)
 
       const transactionObj = {
         nonce: nonce,
         from: decrypted.address,
         gas: 900000,
-        to: this.addresses.tokenERC721,
+        to: thisClass.addresses.tokenERC721,
         data: data
       }
 
       var transaction = await decrypted.signTransaction(transactionObj)
       console.log('transaction,', transaction)
 
-      this.web3.eth.sendSignedTransaction(transaction.rawTransaction)
+      thisClass.web3.eth.sendSignedTransaction(transaction.rawTransaction)
         .on('transactionHash', (hash) => {
           console.log('transactionHash', hash)
         })
@@ -520,8 +521,18 @@ class Lottery {
 
 //------------------------------------------------------------------------------------------------------------------//
   async listTickets () {
-    // #current_user_account
+
+    if (this.wallet) {
+      document.getElementById('current_user_account').innerHTML = this.wallet.address
+    } else {
+      alert('please log in')
+    }
+
     // #draw_id -  get current drawId and make select input options
+    let draw_id = await this.Draw.methods.currentDrawId().call()
+    console.log('draw_id', draw_id)
+    document.getElementById('draw_id').innerHTML = draw_id
+
 
     // template#ticket
     // .ticket_number
