@@ -3,6 +3,7 @@ var Crowdsale = artifacts.require("./Crowdsale.sol");
 var MultiSigWallet = artifacts.require("./MultiSigWallet.sol");
 
 module.exports = function (deployer) {
+    //return;
     try {
 
         var token, crowd, sig;
@@ -34,6 +35,13 @@ module.exports = function (deployer) {
                                     return crowd.init().then(function () {
                                         console.log("Crowdsale init success");
                                         console.log("DONE -- DEPLOY -- DONE");
+
+                                      console.log('please add this to smart_contracts/conract_addresses.js file')
+
+                                      console.log( "tokenERC20: '" + token.address +"',");
+                                      console.log( "crowdSale: '" + crowd.address +"',");
+                                      console.log( "multiSig: '" + sig.address +"',");
+
                                     });
                                 });
                             });

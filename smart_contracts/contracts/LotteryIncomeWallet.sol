@@ -2,13 +2,12 @@ pragma solidity ^0.4.24;
 import "./TokenERC20.sol";
 import "./Draw.sol";
 
-
 contract LotteryIncomeWallet {
     address public owner;
     address[] public stockHolders;
     uint256 public stockHoldersCount;
-    address drawContractAddress = address(0);
-    address tokenERC20Address = address(0);
+    address public drawContractAddress = address(0);
+    address public tokenERC20Address = address(0);
     mapping(address => uint256) public dividentsAvailable; //[owner'sAddress][total_dividends_available]
     mapping(address => mapping(uint256 => uint256)) public dividendsFromDraw; //[owner'sAddress][lottery_id][dividends]
     mapping(uint256 => uint256) public drawIncome; //[lottery_id][total_income_from_this_lottery]
@@ -82,7 +81,6 @@ contract LotteryIncomeWallet {
 
     function trackPayments() private {
         drawIncome[Draw(drawContractAddress).currentDrawId()] += msg.value;
-
     }
 
     function () payable public {

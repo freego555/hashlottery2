@@ -8,29 +8,31 @@
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="theme-color" content="#ffffff">
   <meta name="msapplication-config" content="../browserconfig.xml" />
-  <meta(name="Highway Academy" content="Hash lottery" )/>
+  <meta name="Highway Academy" content="Hash lottery" />
   <link href="https://fonts.googleapis.com/css?family=Montserrat+Alternates:400,500,600,700" rel="stylesheet">
 
   <title>Confirmation Application</title>
 
   <link rel="manifest" href="../manifest.json">
 
-  <link rel="stylesheet" href="../css/font-awesome.css">
-  <link rel="stylesheet" href="../dist/css/app.css">
+  <link rel="stylesheet" href="/dist/css/font-awesome.css">
+  <link rel="stylesheet" href="/dist/css/app.css">
 </head>
 <body>
   <div class="headerBar">
     <div class="wrapper">
-      <img src="../img/cabinetLogo.png" alt="" class="headerBar__logo">
+      <a href="/lottery/mainPage.html">
+        <img src="/dist/img/cabinetLogo.png" alt="" class="headerBar__logo">
+      </a>
     </div>
   </div>
   <div class="errorPage">
     <p class="errorPage__title">Вы успешно оформили заявку на <br>
-      получение выигрыша по билету № 10</p>
+      получение выигрыша по билету № <span id="ticket_number">?</span></p>
     <div class="errorPage__wrapper customWidth">
-      <a href="./list-tickets.html" class="button">Вернуться к списку билетов</a>
+      <a href="/lottery/list-tickets.html" class="button">Вернуться к списку билетов</a>
     </div>
   </div>
-  <script src="../dist/js/app.js"></script>
+  <script src="/dist/js/app.js"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 pragma solidity ^0.4.24;
 
 import './Kassa.sol';
+import './../LotteryIncomeWallet.sol';
 
 contract Draw {
 
@@ -8,6 +9,7 @@ contract Draw {
 
     address public cronAddress; // контракт крона
     address public kassaAddress; // контракт кассы
+    address public walletAddress; // контракт wallet income
 
     address public owner; // владелец контракта
     bool public initComplete = false;
@@ -25,6 +27,7 @@ contract Draw {
     //         30, // ждем cron для подведения итогов и подсета победителей
     //         40 // перерыв
     //
+    uint8 public stageOfCurrentDraw = 10; // ТЕСТ Для ручного изменения этапа розыгрыша во время презентации
     uint public startSelling; // таймштамп начала продаж
     uint public stopSelling; // таймштамп конца продаж
     uint public stopAcceptingTickets; // таймштамп конца продаж
@@ -57,7 +60,7 @@ contract Draw {
         , "init not complete"
         );
         require(msg.sender == cronAddress
-        , "Only owner of contract can call this"
+        , "Only cron can call this"
         );
         _;
     }
@@ -95,7 +98,7 @@ contract Draw {
         );
         cronAddress = _address;
 
-        if (kassaAddress != address(0)) {
+        if (kassaAddress != address(0) && walletAddress != address(0)) {
             initComplete = true;
         }
     }
@@ -106,7 +109,18 @@ contract Draw {
         );
         kassaAddress = _address;
 
-        if (cronAddress != address(0)) {
+        if (cronAddress != address(0) && walletAddress != address(0)) {
+            initComplete = true;
+        }
+    }
+
+    function setWalletAddress(address _address) public onlyOwner {
+        require(walletAddress == address(0)
+        , "walletAddress is already set"
+        );
+        walletAddress = _address;
+
+        if (cronAddress != address(0) && kassaAddress != address(0)) {
             initComplete = true;
         }
     }
@@ -130,7 +144,13 @@ contract Draw {
         return vacationPeriod;
     }
 
+    function getWinnersNumbers(uint256 _drawId) public view returns(uint8[]) {
+        return winnersNumbers[_drawId];
+    }
+
     function getStageOfCurrentDraw() public view returns (uint8 drawStage){
+        return stageOfCurrentDraw; // ТЕСТ Для ручного изменения этапа розыгрыша во время презентации
+
         // todo: узнать по поводу now и возможно вынести его в переменную
 
         // первая лотерея
@@ -175,8 +195,6 @@ contract Draw {
             return  30;
         }
 
-        // todo: добавить условие что призы розданы по текущемму розыгрышу и только тогда начинается отпуск
-
         // период перерыва 40
         if (now >= startVacation
         && now <= stopVacation) {
@@ -188,7 +206,7 @@ contract Draw {
     }
 
     //cron 1
-    function startSelling() public onlyCron onlyWaitCron1 {
+    function startSellingPeriod() public onlyCron onlyWaitCron1 {
         currentDrawId++;
         startSelling = now;
         stopSelling = startSelling + 47 hours;
@@ -245,6 +263,9 @@ contract Draw {
         }
         // вызвать кассу на начало раздачи выиграша
         Kassa(kassaAddress).startWithdraws(fromIndex, count);
+
+        // распределение прибыли
+        LotteryIncomeWallet(kassaAddress).initDistributing(currentDrawId, count);
     }
 
     // можно продавать билеты
@@ -285,6 +306,49 @@ contract Draw {
 
     }
 
-  
-    
+    function hashVal(uint8 number, uint256 salt) public pure returns (bytes32) {
+        return keccak256(number, salt);
+    }
+
+    // ТЕСТ Для ручного изменения этапа розыгрыша во время презентации
+    function setStageWaitingStartOfSale() public onlyOwner {
+        stageOfCurrentDraw = 10; // ждем cron1 для начала продаж
+    }
+
+    function setStageTicketsSale() public onlyOwner {
+        stageOfCurrentDraw = 11; // продажа билетов 47 часов
+
+        currentDrawId++;
+        startSelling = now;
+        stopSelling = startSelling + 47 hours;
+        stopAcceptingTickets = stopSelling + 1 hours;
+
+        // set others timestamps to 0
+        startRequests = 0;
+
+    }
+
+    function setStageFillingTicketsWithoutTransferOfTokens() public onlyOwner {
+        stageOfCurrentDraw = 12; // дозаполнение билетов, продавать уже нельзя, акции перемещать нельзя
+    }
+
+    function setStageWaitingDraw() public onlyOwner {
+        stageOfCurrentDraw = 20; // ждем cron2 для розыгрыша
+    }
+
+    function setStageAcceptingRequestsWithoutTransferOfTokens() public onlyOwner {
+        stageOfCurrentDraw = 21; // начали прием заявок, акции перемещать нельзя
+    }
+
+    function setStageContinueAcceptingRequests() public onlyOwner {
+        stageOfCurrentDraw = 22; // продолжение приема заявок
+    }
+
+    function setStageWaitingDistributingOfPrizePool() public onlyOwner {
+        stageOfCurrentDraw = 30; // ждем cron3 для подведения итогов и подсета победителей
+    }
+
+    function setStageVacation() public onlyOwner {
+        stageOfCurrentDraw = 40; // перерыв
+    }
 }

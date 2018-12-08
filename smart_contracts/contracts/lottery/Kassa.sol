@@ -30,6 +30,7 @@ contract Kassa {
     event RequestApproved(uint ticketNumber); // заявка одобрена
     event DistributionOfWithdraws(uint indexed currentDrawId, uint fromIndex, uint count, bool needMoreShoot); // распределена часть розыгрыша
     event TransferredPrize(address indexed winner, uint moneyValue); // перевод выигрыша
+    event TicketPaid(uint ticketNumber); // перевод выигрыша для конкретного билета
 
     constructor() public {
         owner = msg.sender;
@@ -83,7 +84,7 @@ contract Kassa {
         checkAndSetInitComplete();
     }
 
-    function checkAndSetInitComplete() public{
+    function checkAndSetInitComplete() public {
         if (drawAddress != address(0)
         && token712Address != address(0)
         && prizePoolAddress != address(0)
@@ -94,7 +95,7 @@ contract Kassa {
 
     function addNewRequest(uint ticketNumber, uint8[] numbers, uint256 salt) public inited {
         require(Draw(drawAddress).isAcceptRequestPeriod()
-        , "You add winning request duting this period"
+        , "You add winning request during this period"
         );
         require(TokenERC721(token712Address).tokenExists(ticketNumber)
         , 'This ticket does not exists'
@@ -104,8 +105,8 @@ contract Kassa {
         );
 
 
-       uint  ticketDrawId = TokenERC721(token712Address).getTicketDrawId(ticketNumber);
-       bytes32[3] memory combinationOfTicket = TokenERC721(token712Address).getTicketCombination(ticketNumber);
+        uint ticketDrawId = TokenERC721(token712Address).getTicketDrawId(ticketNumber);
+        bytes32[3] memory combinationOfTicket = TokenERC721(token712Address).getTicketCombination(ticketNumber);
 
         require(ticketDrawId == Draw(drawAddress).currentDrawId()
         , 'This ticket is not from current Draw'
@@ -114,19 +115,19 @@ contract Kassa {
         require(numbers.length == 3
         , 'Count of winning numbers must be 3'
         );
-			
-		for(uint i=0; i<=numbers.length-1; i++){
-			require(1 <= numbers[1] && numbers[1]<=99
-		    , 'Numbers must be in 1..99 range'
-		    );
-		}
 
-		require(numbers[0]<numbers[1] && numbers[1]<numbers[2]
+        for (uint i = 0; i <= numbers.length - 1; i++) {
+            require(1 <= numbers[1] && numbers[1] <= 99
+            , 'Numbers must be in 1..99 range'
+            );
+        }
+
+        require(numbers[0] < numbers[1] && numbers[1] < numbers[2]
         , 'Numbers must be sorted ASC'
         );
 
         for (uint8 index = 0; index < numbers.length; index++) {
-            require(combinationOfTicket[index] == keccak256(numbers[index], salt)
+            require(combinationOfTicket[index] == hashVal(numbers[index], salt)
             , 'Your numbers does not matches saved hash'
             );
         }
@@ -136,9 +137,8 @@ contract Kassa {
         winnersListExists[ticketDrawId][msg.sender] = true;
         winnersListIndex[ticketDrawId][msg.sender] = winnersCount[ticketDrawId];
         winnersCount[ticketDrawId]++;
-        
-        // todo 
-    //    TokenERC721(token712Address).setTicketStatusWinning(ticketNumber);
+
+        TokenERC721(token712Address).setTicketStatusWinning(ticketNumber);
 
         emit RequestApproved(ticketNumber);
     }
@@ -153,8 +153,8 @@ contract Kassa {
         uint countOfWinners = winnersCount[currentDrawId];
         if (moneyForEachWinner[currentDrawId] == 0) {
             // узнать размер выигрыша одного победителя
-            poolSizes[currentDrawId] = PrizePool(prizePoolAddress).prizePool();
             moneyForEachWinner[currentDrawId] = PrizePool(prizePoolAddress).determineWinners(countOfWinners);
+            poolSizes[currentDrawId] = PrizePool(prizePoolAddress).prizePool();
         }
         if (countOfWinners == 0) {
             // нет победителей
@@ -171,7 +171,7 @@ contract Kassa {
         if (lastIndex > countOfWinners - 1) {
             lastIndex = countOfWinners - 1;
         }
-        for (uint index = fromIndex; index < lastIndex; index++) {
+        for (uint index = fromIndex; index <= lastIndex; index++) {
             winnerAddress = winnersList[currentDrawId][index];
             if (!isGivenShare[currentDrawId][winnerAddress]) {
                 winnersMoney[winnerAddress] += moneyForEachWinner[currentDrawId];
@@ -195,7 +195,7 @@ contract Kassa {
     }
 
     // запрос на получение выиграша
-    function withdrawPrize(uint value) public inited {
+    function withdrawPrize(uint value) private inited {
         require(value > 0
         , "Value must be > 0"
         );
@@ -237,9 +237,27 @@ contract Kassa {
         emit TransferredPrize(msg.sender, value);
         return;
     }
-    
-    function hashVal(string val) public pure returns (bytes32) {
-        return keccak256(val);
+
+    function hashVal(uint number, uint salt) public pure returns (bytes32) {
+        return keccak256(number, salt);
+    }
+
+    function withdrawTicketPrice(uint256 ticketNumber) inited public {
+
+        require(TokenERC721(token712Address).tokenExists(ticketNumber)
+        , 'This ticket does not exists'
+        );
+        require(TokenERC721(token712Address).ownerOf(ticketNumber) == msg.sender
+        , 'You are not the owner of this ticket'
+        );
+
+        TokenERC721(token712Address).setTicketStatusPayed(ticketNumber);
+
+        uint ticketDrawId = TokenERC721(token712Address).getTicketDrawId(ticketNumber);
+        uint value = moneyForEachWinner[ticketDrawId];
+        withdrawPrize(value);
+
+        emit TicketPaid(ticketNumber);
     }
 
 }

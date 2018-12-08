@@ -1,6 +1,18 @@
 import TokenERC20JSON from '../../smart_contracts/build/contracts/TokenERC20'
 import CrowdSaleJSON from '../../smart_contracts/build/contracts/Crowdsale'
 
+Date.prototype.yyyymmdd = function() {
+  var mm = this.getMonth() + 1; // getMonth() is zero-based
+  var dd = this.getDate();
+
+  return [this.getFullYear(),
+    (mm>9 ? '' : '0') + mm,
+    (dd>9 ? '' : '0') + dd
+  ].join('-');
+};
+
+
+
 class IcoClass {
 
   constructor (thisWeb3, addresses) {
@@ -20,6 +32,7 @@ class IcoClass {
     this.total_token_count = document.getElementById('total_token_count')
     this.count_of_sold_tokens = document.getElementById('count_of_sold_tokens')
     this.total_investor_count = document.getElementById('total_investor_count')
+    this.ico_deadline = document.getElementById('ico_deadline')
   }
 
   async init () {
@@ -65,7 +78,7 @@ class IcoClass {
 
     if (this.total_token_count) {
       try {
-        let amountTokensForSale = await this.CrowdSale.methods.amountTokensForSale().call()
+        let amountTokensForSale = await this.TokenERC20.methods.totalSupply().call()
       //  let totalSupply = await this.TokenERC20.methods.totalSupply().call()
 
          this.total_token_count.innerHTML = amountTokensForSale;
@@ -94,6 +107,15 @@ class IcoClass {
       }
     }
 
+    if (this.ico_deadline) {
+      try {
+        let deadlineTimestamp = await this.CrowdSale.methods.deadline().call()
+        let deadline = new Date(parseInt(deadlineTimestamp)*1000 );
+        this.ico_deadline.innerHTML = deadline.yyyymmdd();
+      } catch (error) {
+        console.log('error#5', error.toString())
+      }
+    }
   }
 
   async invest (moneyEth, decrypted) {

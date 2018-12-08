@@ -8,31 +8,33 @@
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="theme-color" content="#ffffff">
   <meta name="msapplication-config" content="../browserconfig.xml" />
-  <meta(name="Highway Academy" content="Hash lottery" )/>
+  <meta name="Highway Academy" content="Hash lottery" )/>
   <link href="https://fonts.googleapis.com/css?family=Montserrat+Alternates:400,500,600,700" rel="stylesheet">
 
-  <title>Error</title>
+  <title>Success buy ticket</title>
 
   <link rel="manifest" href="../manifest.json">
 
-  <link rel="stylesheet" href="../css/font-awesome.css">
-  <link rel="stylesheet" href="../dist/css/app.css">
+  <link rel="stylesheet" href="/dist/css/font-awesome.css">
+  <link rel="stylesheet" href="/dist/css/app.css">
 </head>
 <body>
   <div class="headerBar">
     <div class="wrapper">
-      <img src="../img/cabinetLogo.png" alt="" class="headerBar__logo">
+      <a href="/lottery/mainPage.html">
+        <img src="/dist/img/cabinetLogo.png" alt="" class="headerBar__logo">
+      </a>
     </div>
   </div>
   <div class="errorPage">
     <div class="errorPage__wrapper">
       <p class="errorPage__title margin">Поздравляем! <br />
         Вы приобрели</p>
-      <p class="errorPage__priceText">100</p>
+      <p class="errorPage__priceText" id="tickets_count">?</p>
       <p class="errorPage__title margin">Билетов</p>
-      <a href="/" class="button marginTop">Вернуться на главную</a>
+      <a href="/lottery/mainPage.html" class="button marginTop">Вернуться на главную</a>
     </div>
   </div>
-  <script src="../dist/js/app.js"></script>
+  <script src="/dist/js/app.js"></script>
 </body>
 </html>

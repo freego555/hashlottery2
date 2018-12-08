@@ -2,6 +2,7 @@ import {getWeb3} from './service'
 import {getOwnership, balanceOf, transfer, approve, allowance} from './transactions'
 import addresses from '../../smart_contracts/conract_addresses'
 import IcoClass from './icoClass'
+import Lottery from './lottery'
 
 /**
  *
@@ -182,9 +183,12 @@ else if (
 
 
 $(document).ready(function () {
+  console.log('ready');
     var ico = new IcoClass(web3, addresses)
 
-    console.log('ico', ico)
+    var lottery = new Lottery(web3, addresses, walletAccountSaved)
+    lottery.router(window.location.pathname);
+
 
   ico.init()
 
