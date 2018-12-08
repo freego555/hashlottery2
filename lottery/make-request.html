@@ -38,7 +38,13 @@
       <p class="inputRow__label">
         № билета 
       </p>
-      <p class="wrapLottery__textBold" id="ticket_number">?</p>
+      <div class="inputRow">
+        <div class="inputRow__wrapInput">
+          <input type="text" class="inputRow__itemInput numbersOnly" id="ticket_number">
+        </div>
+        <p class="errorText">Текст ошибки</p>
+      </div>
+      <!--<p class="wrapLottery__textBold" id="ticket_number">?</p>-->
       <p class="inputRow__label">
         Выигрышные цифры
       </p>
@@ -64,7 +70,7 @@
         <a id="confirm" href="#" class="button">
           Подать заявку
         </a>
-        <a href="#" class="button cancel">
+        <a id="reset" href="#" class="button cancel">
           Отмена
         </a>
       </div>

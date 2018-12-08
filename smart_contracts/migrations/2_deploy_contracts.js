@@ -3,7 +3,7 @@ var Crowdsale = artifacts.require("./Crowdsale.sol");
 var MultiSigWallet = artifacts.require("./MultiSigWallet.sol");
 
 module.exports = function (deployer) {
-    return;
+    //return;
     try {
 
         var token, crowd, sig;

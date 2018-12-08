@@ -155,7 +155,7 @@ contract TokenERC721 {
         return (_dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, _dataOfTicket.status);
     }
 
-    function mint(address _owner, uint _amountOfTokens) public
+    function mint(address _owner, uint256 _amountOfTokens) public
             onlyIfNotSetMigrationAgent
             onlyIfSetAddressOfContractDraw {
         require(msg.sender == addressOfContractTicketsSale, "Sender should be the contract TicketsSale.");
@@ -248,7 +248,7 @@ contract TokenERC721 {
         totalSupply--;
         totalTicketsInDraw[_dataOfTicket.drawId]--;
 
-        MigrationAgentTokenERC721(addressOfMigrationAgent).migrateOneTokenFrom(msg.sender, _tokenId, _dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, uint8(_dataOfTicket.status));
+        MigrationAgent(addressOfMigrationAgent).migrateOneTokenFrom(msg.sender, _tokenId, _dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, uint8(_dataOfTicket.status));
 
         emit MigrateOneToken(_tokenId);
     }
@@ -340,5 +340,9 @@ contract TokenERC721 {
 
     function getTicketDrawId(uint256 ticketId) public view returns (uint256){
         return dataOfTicket[ticketId].drawId;
+    }
+
+    function getTicketStatus(uint256 ticketId) public view returns (Status){
+        return dataOfTicket[ticketId].status;
     }
 }
