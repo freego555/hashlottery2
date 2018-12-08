@@ -74,6 +74,7 @@ class Lottery {
       document.getElementById('draw_address').innerHTML = this.addresses.draw
 
       let stageCode = await this.Draw.methods.getStageOfCurrentDraw().call()
+      console.log('stageCode', stageCode);
       let statuses = new Array()
       statuses[10] = 'ждем cron#1 для начала продаж'
       statuses[11] = 'продажа билетов 47 часов'
@@ -98,8 +99,21 @@ class Lottery {
       if (stageCode == 10) {
         document.getElementById('next_draw_start_date').innerHTML = '?'
       } else {
-        let nextDrawTimestamp = await this.Draw.methods.stopVacation().call()
-        let next = new Date(parseInt(nextDrawTimestamp) * 1000)
+        //
+        // let currentDrawId = await this.Draw.methods.currentDrawId().call()
+        // console.log('currentDrawId', currentDrawId)
+        //
+        // let startSelling = await this.Draw.methods.startSelling().call()
+        // console.log('startSelling', startSelling)
+        //
+        // let stopSelling = await this.Draw.methods.stopSelling().call()
+        // console.log('stopSelling', stopSelling)
+
+        let stopAcceptingTickets = await this.Draw.methods.stopAcceptingTickets().call()
+        // console.log('stopAcceptingTickets', stopAcceptingTickets)
+
+        let next = new Date(parseInt(stopAcceptingTickets) * 1000)
+        // console.log('next', next)
         document.getElementById('next_draw_start_date').innerHTML = next.yyyymmdd()
       }
 
@@ -150,10 +164,11 @@ class Lottery {
       })
 
       //купить
-
+      var thisClass = this;
       document.getElementById('buy_ticket').addEventListener('click', async function (e) {
         e.preventDefault()
 
+        console.log('buy_ticket')
         if (!isSelling) {
           alert('Сейчас не период продаж')
           return
@@ -165,23 +180,31 @@ class Lottery {
         }
 
         const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
-        let decrypted = await this.web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
+        console.log('keyStoreFormatted', keyStoreFormatted)
 
-        let nonce = await this.web3.eth.getTransactionCount(decrypted.address),
-          moneyWei = await  this.web3.utils.toWei(moneyEth)
+        let decrypted = await thisClass.web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
+        console.log('decrypted', decrypted)
+
+        let nonce = await thisClass.web3.eth.getTransactionCount(decrypted.address);
+        console.log('nonce', nonce)
+
+        console.log('moneyEth', moneyInput.value)
+        let  moneyWei = await  thisClass.web3.utils.toWei(moneyInput.value)
+        console.log('moneyWei', moneyWei)
 
         const transactionObj = {
           nonce: nonce,
           from: decrypted.address,
           gas: 900000,
-          to: this.addresses.ticketSale,
+          to: thisClass.addresses.ticketSale,
           value: moneyWei,
         }
+        console.log('transactionObj,', transactionObj)
 
         var transaction = await decrypted.signTransaction(transactionObj)
         console.log('transaction,', transaction)
 
-        this.web3.eth.sendSignedTransaction(transaction.rawTransaction)
+        thisClass.web3.eth.sendSignedTransaction(transaction.rawTransaction)
           .on('transactionHash', (hash) => {
             console.log('transactionHash', hash)
           })

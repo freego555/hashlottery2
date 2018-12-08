@@ -60,7 +60,7 @@ contract Draw {
         , "init not complete"
         );
         require(msg.sender == cronAddress
-        , "Only owner of contract can call this"
+        , "Only cron can call this"
         );
         _;
     }
@@ -206,7 +206,7 @@ contract Draw {
     }
 
     //cron 1
-    function startSelling() public onlyCron onlyWaitCron1 {
+    function startSellingPeriod() public onlyCron onlyWaitCron1 {
         currentDrawId++;
         startSelling = now;
         stopSelling = startSelling + 47 hours;
@@ -317,6 +317,15 @@ contract Draw {
 
     function setStageTicketsSale() public onlyOwner {
         stageOfCurrentDraw = 11; // продажа билетов 47 часов
+
+        currentDrawId++;
+        startSelling = now;
+        stopSelling = startSelling + 47 hours;
+        stopAcceptingTickets = stopSelling + 1 hours;
+
+        // set others timestamps to 0
+        startRequests = 0;
+
     }
 
     function setStageFillingTicketsWithoutTransferOfTokens() public onlyOwner {
