@@ -17,6 +17,7 @@ contract TokenERC20 {
     // ownership definition
     mapping(address => uint256) public ownersIndex;
     address[] public ownerAddressesLists;
+    address[] public ownerAddressesListPart;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
@@ -166,15 +167,19 @@ contract TokenERC20 {
     }
 
     // возвращает процент с четырьмя знаками после точки если разделить полученный результат на 10000
-    function getOwnership(address account) public view returns (uint256 percentageMultiplied100) {
+    function getOwnership(address account) public view returns (uint256 percentageMultiplied10000) {
         return balanceOf[account] * 1000000 / totalSupply;
     }
 
-    function getOwnerAddressesList() public view returns (address[] ownerAddressesListPart) {
-        return ownerAddressesLists;
+    function getOwnerAddressesList(uint256 _startIndex, uint256 _endIndex) public returns (address[]) {
+        ownerAddressesListPart.length = 0;
+        for (uint256 index = _startIndex; index < _endIndex; index++) {
+            ownerAddressesListPart.push(ownerAddressesLists[index]);
+        }
+        return ownerAddressesListPart;
     }
 
-    function getOwnerAddressesListElement(uint256 userIndex) public view returns (address ownerAddress) {
-        return ownerAddressesLists[userIndex];
+    function getOwnerAddressesListLength() public view returns (uint256) {
+        return ownerAddressesLists.length;
     }
 }
