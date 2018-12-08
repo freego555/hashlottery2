@@ -1,6 +1,7 @@
 pragma solidity ^0.4.24;
 
 import './Kassa.sol';
+import './../LotteryIncomeWallet.sol';
 
 contract Draw {
 
@@ -8,6 +9,7 @@ contract Draw {
 
     address public cronAddress; // контракт крона
     address public kassaAddress; // контракт кассы
+    address public walletAddress; // контракт wallet income
 
     address public owner; // владелец контракта
     bool public initComplete = false;
@@ -96,7 +98,7 @@ contract Draw {
         );
         cronAddress = _address;
 
-        if (kassaAddress != address(0)) {
+        if (kassaAddress != address(0) && walletAddress != address(0)) {
             initComplete = true;
         }
     }
@@ -107,7 +109,18 @@ contract Draw {
         );
         kassaAddress = _address;
 
-        if (cronAddress != address(0)) {
+        if (cronAddress != address(0) && walletAddress != address(0)) {
+            initComplete = true;
+        }
+    }
+
+    function setWalletAddress(address _address) public onlyOwner {
+        require(walletAddress == address(0)
+        , "walletAddress is already set"
+        );
+        walletAddress = _address;
+
+        if (cronAddress != address(0) && kassaAddress != address(0)) {
             initComplete = true;
         }
     }
@@ -250,6 +263,9 @@ contract Draw {
         }
         // вызвать кассу на начало раздачи выиграша
         Kassa(kassaAddress).startWithdraws(fromIndex, count);
+
+        // распределение прибыли
+        LotteryIncomeWallet(kassaAddress).initDistributing(currentDrawId, count);
     }
 
     // можно продавать билеты
