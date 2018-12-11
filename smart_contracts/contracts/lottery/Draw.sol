@@ -254,7 +254,7 @@ contract Draw {
     }
 
     // cron 3
-    function startWithdraws(uint fromIndex, uint count) public onlyCronOrKassa onlyWaitCron3 {
+    function startWithdraws(uint fromIndex, uint countWithdraws, uint countIncome) public onlyCronOrKassa onlyWaitCron3 {
 
         if (getStageOfCurrentDraw() == 30) {
             // first launch of cron
@@ -262,10 +262,10 @@ contract Draw {
             stopVacation = startVacation + calcVacationPeriod();
         }
         // вызвать кассу на начало раздачи выиграша
-        Kassa(kassaAddress).startWithdraws(fromIndex, count);
+        Kassa(kassaAddress).startWithdraws(fromIndex, countWithdraws);
 
         // распределение прибыли
-        LotteryIncomeWallet(kassaAddress).initDistributing(currentDrawId, count);
+        LotteryIncomeWallet(kassaAddress).initDistributing(currentDrawId, countIncome);
     }
 
     // можно продавать билеты
@@ -304,10 +304,6 @@ contract Draw {
         bool cronContinue = !Kassa(kassaAddress).fullyDistributedPrize(currentDrawId);
         return firstLaunch || (isVacation && cronContinue);
 
-    }
-
-    function hashVal(uint8 number, uint256 salt) public pure returns (bytes32) {
-        return keccak256(number, salt);
     }
 
     // ТЕСТ Для ручного изменения этапа розыгрыша во время презентации
