@@ -15,7 +15,7 @@ contract PrizePool {
     address public owner; // владелец контракта
     bool public initComplete = false;
 
-    uint public prizePool; // размер призового фонда на текущий момент
+    uint256 public prizePool; // размер призового фонда на текущий момент
     
     constructor() public {
         owner = msg.sender;
