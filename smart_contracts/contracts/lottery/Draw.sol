@@ -1,7 +1,11 @@
 pragma solidity ^0.4.24;
 
 import './Kassa.sol';
-import './../LotteryIncomeWallet.sol';
+// import './../LotteryIncomeWallet.sol';
+
+interface LotteryIncomeWallet {
+    function initDistributing(uint256 lottery_id, uint256 count) external;
+}
 
 contract Draw {
 

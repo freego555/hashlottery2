@@ -1,6 +1,10 @@
 pragma solidity ^0.4.24;
 import "./TokenERC20.sol";
-import "./lottery/Draw.sol";
+// import "./lottery/Draw.sol";
+
+interface Draw{
+    function currentDrawId() external returns(uint256);
+}
 
 contract LotteryIncomeWallet {
     address public owner;

@@ -1,7 +1,10 @@
 pragma solidity ^0.4.24;
 
+interface MigrationAgent {
+    function migrateOneTokenFrom(address _from, uint256 _tokenId, uint256 _drawId, bytes32[3] _combinationOfTicket, uint8 _status) external;
+}
+
 import './Draw.sol';
-import './MigrationAgentTokenERC721.sol';
 
 contract TokenERC721 {
     enum Status {
