@@ -6,10 +6,42 @@ var TicketSale = artifacts.require('./lottery/TicketSale.sol')
 var LotteryIncomeWallet = artifacts.require('./LotteryIncomeWallet.sol')
 var TokenERC721 = artifacts.require('./TokenERC721.sol')
 
+var Crowdsale = artifacts.require("./Crowdsale.sol");
+var TokenERC20 = artifacts.require("./TokenERC20.sol");
+
 const helper = require('./helpers/truffleTestHelper')
+
+contract('ICO', async (accounts) => {
+    var adminAddress = accounts[0];
+    var investor1Address = accounts[6];
+    var investor2Address = accounts[7];
+    var investor3Address = accounts[8];
+
+    before(async () => {
+          token = await TokenERC20.deployed();
+    })
+
+    describe('Mint tokens for investors', async() => {
+        it('Mint tokens for investors', async() => {
+            await token.emitMoreTokens(10000, investor1Address, {from: adminAddress});
+            await token.emitMoreTokens(20000, investor2Address, {from: adminAddress});
+            await token.emitMoreTokens(70000, investor3Address, {from: adminAddress});
+
+            let balance1 = await token.balanceOf(investor1Address);
+            //console.log('balance1 = ' + balance1);
+            let balance2 = await token.balanceOf(investor2Address);
+            //console.log('balance2 = ' + balance2);
+            let balance3 = await token.balanceOf(investor3Address);
+            //console.log('balance3 = ' + balance3);
+
+            assert.isTrue((+balance1 + +balance2 + +balance3) == 100000);
+        })
+    })
+})
 
 contract('Lottery basic', async (accounts) => {
   var draw, kassa, pool, sale, income, ticket
+  var crowdsale, token
 
   var adminAddress = accounts[0];
   var cronAddress = accounts[1];
@@ -17,10 +49,12 @@ contract('Lottery basic', async (accounts) => {
   var player2Address = accounts[3];
   var player3Address = accounts[4];
   var player4Address = accounts[5];
+  var investor1Address = accounts[6];
+  var investor2Address = accounts[7];
+  var investor3Address = accounts[8];
   var zeroAddress = '0x0000000000000000000000000000000000000000';
 
   var priceOfTicket;
-
 
   describe('lottery general', async () => {
 
@@ -32,6 +66,9 @@ contract('Lottery basic', async (accounts) => {
       sale = await TicketSale.deployed()
       income = await LotteryIncomeWallet.deployed()
       ticket = await TokenERC721.deployed()
+
+      crowdsale = await Crowdsale.deployed();
+      token = await TokenERC20.deployed();
 
       // for init
       await draw.setCronAddress(cronAddress)
