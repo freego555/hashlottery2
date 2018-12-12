@@ -365,6 +365,89 @@ class Lottery {
     // #confirm click
     // if success
     //   redirect to /lottery/confirmation-winning.html
+
+    let prize_pool_size = document.getElementById('prize_pool_size')
+    let count_of_approved_requests = document.getElementById('count_of_approved_requests')
+    let your_prize_share = document.getElementById('your_prize_share')
+    let ticket_number = document.getElementById('ticket_number') // Добавил, чтобы не читать из sessionStorage
+
+    let contractKassa = this.Kassa;
+    let contractPrizePool = this.PrizePool;
+    let contractTokenERC721 = this.TokenERC721;
+    let contractDraw = this.Draw;
+    let web3 = this.web3;
+    let addresses = this.addresses;
+
+    let url_string = window.location.href;
+    let url = new URL(url_string);
+    let ticketId = url.searchParams.get("ticketId");
+    console.log('ticketId: ' + ticketId);
+    if (ticketId === null) {
+        let ticketId = parseInt(ticket_number.value)
+    }
+    console.log('ticketId: ' + ticketId);
+    console.log('ticket_number.value: ' + ticket_number.value);
+
+    let drawId = await contractTokenERC721.methods.getTicketDrawId(ticketId).call()
+    let amountOfPrize = await contractKassa.methods.moneyForEachWinner(drawId).call()
+
+    ticket_number.value = ticketId;
+    prize_pool_size.innerHTML = await contractPrizePool.methods.prizePool().call()
+    count_of_approved_requests.innerHTML = await contractKassa.methods.winnersCount(drawId).call()
+    your_prize_share.innerHTML = amountOfPrize
+
+    ticket_number.addEventListener('change', async function (e) {
+        e.preventDefault();
+
+        ticketId = parseInt(ticket_number.value)
+        drawId = await contractTokenERC721.methods.getTicketDrawId(ticketId).call()
+        amountOfPrize = await contractKassa.methods.moneyForEachWinner(drawId).call()
+        console.log('drawId = ' + drawId)
+
+        prize_pool_size.innerHTML = await contractPrizePool.methods.prizePool().call()
+        count_of_approved_requests.innerHTML = await contractKassa.methods.winnersCount(drawId).call()
+        your_prize_share.innerHTML = amountOfPrize
+    })
+
+    // Send request
+    document.getElementById('confirm').addEventListener('click', async function (e) {
+        e.preventDefault();
+
+        const data = contractKassa.methods.withdrawPrize(amountOfPrize).encodeABI()
+
+        const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
+        let decrypted = await web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
+
+        let nonce = await web3.eth.getTransactionCount(decrypted.address)
+
+        const transactionObj = {
+            nonce: nonce,
+            from: decrypted.address,
+            gas: 900000,
+            to: addresses.kassa,
+            value: 0,
+            data
+        }
+
+        var transaction = await decrypted.signTransaction(transactionObj)
+        console.log('transaction,', transaction)
+
+        web3.eth.sendSignedTransaction(transaction.rawTransaction)
+            .on('transactionHash', (hash) => {
+                console.log('transactionHash', hash)
+            })
+            .on('receipt', (receipt) => {
+                console.log('receipt', receipt)
+                window.location.pathname = '/lottery/confirmation-winning.html'
+            })
+    })
+
+    // Cancel request
+    document.getElementById('reset').addEventListener('click', async function (e) {
+        if(confirm('Вернуться к списку билетов?')) {
+            window.location.pathname = '/lottery/list-tickets.html';
+        }
+    })
   }
 
 //------------------------------------------------------------------------------------------------------------------//
