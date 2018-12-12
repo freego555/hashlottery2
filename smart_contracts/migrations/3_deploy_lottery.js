@@ -6,7 +6,7 @@ var TicketSale = artifacts.require('./lottery/TicketSale.sol')
 var LotteryIncomeWallet = artifacts.require('./LotteryIncomeWallet.sol')
 var TokenERC721 = artifacts.require('./TokenERC721.sol')
 
-module.exports = async function (deployer, accounts) {
+module.exports = async function(deployer, accounts) {
   try {
 
     var draw, kassa, pool, sale, income, ticket
@@ -41,6 +41,9 @@ module.exports = async function (deployer, accounts) {
 
                 return draw.setKassaAddress(kassa.address).then(function (i) {
                   console.log('Draw setKassaAddress')
+
+                return draw.setWalletAddress(income.address).then(function (i) {
+                  console.log('Draw setWalletAddress')
 
                   //kassa
                   return kassa.setPrizePoolAddress(pool.address).then(function (i) {
@@ -89,6 +92,9 @@ module.exports = async function (deployer, accounts) {
                                                 console.log('ticket setAddressOfContractKassa')
 
                                                 //income
+                                              return income.setToken(ticket.address).then(function (i) {
+                                                console.log('income setToken')
+
                                                 return income.setDraw(draw.address).then(function (i) {
                                                     console.log('income setDraw')
 
@@ -105,6 +111,7 @@ module.exports = async function (deployer, accounts) {
                                                     console.log( "incomeWallet: '" + income.address +"',");
                                                     console.log( "tokenERC721: '" + ticket.address +"',");
                                                 })
+                                                })
                                             })
                                         })
                                       })
@@ -119,6 +126,8 @@ module.exports = async function (deployer, accounts) {
                     })
                   })
                 })
+              })
+
               })
 
             })

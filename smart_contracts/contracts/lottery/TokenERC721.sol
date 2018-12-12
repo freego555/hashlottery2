@@ -1,22 +1,7 @@
 pragma solidity ^0.4.24;
 
-/*<<<<<<< HEAD
-interface Draw {
-    function isSellingTicketPeriod() external view returns (bool);
-    function isFillingTicketPeriod() external view returns (bool);
-    function isAcceptRequestPeriod() external view returns (bool);
-    function isVacationPeriod() external view returns (bool);
-    function isWaitingWithdrawsPeriod() external view returns (bool);
-    function currentDrawId() external view returns(uint256 _drawId);
-}*/
-
-interface MigrationAgent {
-    function migrateOneTokenFrom(address _from, uint256 _tokenId, uint256 _drawId, bytes32[3] _combinationOfTicket, uint8 _status) external;
-}
-/*=======*/
 import './Draw.sol';
-/*import './MigrationAgentTokenERC721.sol';
->>>>>>> temp-mary*/
+import './MigrationAgentTokenERC721.sol';
 
 contract TokenERC721 {
     enum Status {

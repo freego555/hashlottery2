@@ -57,6 +57,7 @@ class Lottery {
     routes['/lottery/confirmation-application.html'] = 'confirmationApplication'
 
     routes['/lottery/make-request.html'] = 'makeRequest'
+    routes['/cron.html'] = 'cronPage'
 
     routes['/lottery/error.html'] = 'error'
 
@@ -74,6 +75,7 @@ class Lottery {
       document.getElementById('draw_address').innerHTML = this.addresses.draw
 
       let stageCode = await this.Draw.methods.getStageOfCurrentDraw().call()
+      console.log('stageCode', stageCode);
       let statuses = new Array()
       statuses[10] = 'ждем cron#1 для начала продаж'
       statuses[11] = 'продажа билетов 47 часов'
@@ -98,8 +100,21 @@ class Lottery {
       if (stageCode == 10) {
         document.getElementById('next_draw_start_date').innerHTML = '?'
       } else {
-        let nextDrawTimestamp = await this.Draw.methods.stopVacation().call()
-        let next = new Date(parseInt(nextDrawTimestamp) * 1000)
+        //
+        // let currentDrawId = await this.Draw.methods.currentDrawId().call()
+        // console.log('currentDrawId', currentDrawId)
+        //
+        // let startSelling = await this.Draw.methods.startSelling().call()
+        // console.log('startSelling', startSelling)
+        //
+        // let stopSelling = await this.Draw.methods.stopSelling().call()
+        // console.log('stopSelling', stopSelling)
+
+        let stopAcceptingTickets = await this.Draw.methods.stopAcceptingTickets().call()
+        // console.log('stopAcceptingTickets', stopAcceptingTickets)
+
+        let next = new Date(parseInt(stopAcceptingTickets) * 1000)
+        // console.log('next', next)
         document.getElementById('next_draw_start_date').innerHTML = next.yyyymmdd()
       }
 
@@ -150,10 +165,11 @@ class Lottery {
       })
 
       //купить
-
+      var thisClass = this;
       document.getElementById('buy_ticket').addEventListener('click', async function (e) {
         e.preventDefault()
 
+        console.log('buy_ticket')
         if (!isSelling) {
           alert('Сейчас не период продаж')
           return
@@ -165,23 +181,31 @@ class Lottery {
         }
 
         const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
-        let decrypted = await this.web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
+        console.log('keyStoreFormatted', keyStoreFormatted)
 
-        let nonce = await this.web3.eth.getTransactionCount(decrypted.address),
-          moneyWei = await  this.web3.utils.toWei(moneyEth)
+        let decrypted = await thisClass.web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
+        console.log('decrypted', decrypted)
+
+        let nonce = await thisClass.web3.eth.getTransactionCount(decrypted.address);
+        console.log('nonce', nonce)
+
+        console.log('moneyEth', moneyInput.value)
+        let  moneyWei = await  thisClass.web3.utils.toWei(moneyInput.value)
+        console.log('moneyWei', moneyWei)
 
         const transactionObj = {
           nonce: nonce,
           from: decrypted.address,
           gas: 900000,
-          to: this.addresses.ticketSale,
+          to: thisClass.addresses.ticketSale,
           value: moneyWei,
         }
+        console.log('transactionObj,', transactionObj)
 
         var transaction = await decrypted.signTransaction(transactionObj)
         console.log('transaction,', transaction)
 
-        this.web3.eth.sendSignedTransaction(transaction.rawTransaction)
+        thisClass.web3.eth.sendSignedTransaction(transaction.rawTransaction)
           .on('transactionHash', (hash) => {
             console.log('transactionHash', hash)
           })
@@ -233,6 +257,11 @@ class Lottery {
       alert('Сейчас не период заполнения билетов')
     }
 
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var ticketId = url.searchParams.get("ticketId");
+    document.getElementById('ticketId').innerHTML = ticketId
+
     let num1 = document.getElementById('num1')
     let num2 = document.getElementById('num2')
     let num3 = document.getElementById('num3')
@@ -253,13 +282,10 @@ class Lottery {
       salt.value = parseInt(salt.value)
     })
 
+    var thisClass = this;
     document.getElementById('confirm').addEventListener('click', async function (e) {
       e.preventDefault()
 
-      // if (!isSelling) {
-      //   alert('Сейчас не период продаж')
-      //   return
-      // }
       let n1 = parseInt(num1.value)
       let n2 = parseInt(num2.value)
       let n3 = parseInt(num3.value)
@@ -267,8 +293,13 @@ class Lottery {
       if (!(1 <= n1 && n1 <= 99
           && 1 <= n2 && n2 <= 99
           && 1 <= n3 && n3 <= 99)) {
+        alert('Числа должны быть заполнены и быть в промежутке 1..99')
+        return
+      }
 
-        alert('Числа должны быть в промежутке 1..99')
+      if (!(n1 < n2 && n2 < n3)) {
+        alert('Числа должны быть разными и отсортированы по возрастанию')
+        return
       }
 
       if (salt.value.length < 10) {
@@ -282,39 +313,37 @@ class Lottery {
       numbers.sort(function (a, b) {return a - b})
       let hashed = new Array()
       for (let i = 0; i <= 2; i++) {
-        hashed[i] = await this.Draw.methods.hashVal(numbers[i] + salty).call()
+        hashed[i] = await thisClass.Kassa.methods.hashVal(numbers[i], salty).call();
       }
 
-      // send
-      await this.Draw.methods.isSellingTicketPeriod().call()
-      let token_id = 1
-
-      const data = this.TokenERC721.methods.fillCombinationOfTicket(token_id, numbers).encodeABI()
+      const data = thisClass.TokenERC721.methods.fillCombinationOfTicket(ticketId, hashed).encodeABI()
 
       const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
-      let decrypted = await this.web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
+      let decrypted = await thisClass.web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
 
-      let nonce = await this.web3.eth.getTransactionCount(decrypted.address)
+      let nonce = await thisClass.web3.eth.getTransactionCount(decrypted.address)
 
       const transactionObj = {
         nonce: nonce,
         from: decrypted.address,
         gas: 900000,
-        to: this.addresses.tokenERC721,
+        to: thisClass.addresses.tokenERC721,
         data: data
       }
 
       var transaction = await decrypted.signTransaction(transactionObj)
       console.log('transaction,', transaction)
 
-      this.web3.eth.sendSignedTransaction(transaction.rawTransaction)
+      thisClass.web3.eth.sendSignedTransaction(transaction.rawTransaction)
         .on('transactionHash', (hash) => {
           console.log('transactionHash', hash)
         })
         .on('receipt', (receipt) => {
           console.log('receipt', receipt)
           //todo: set numbersOfTicketInDraw to local storage
-          // window.location.href = '/lottery/success-screen.html'
+
+          localStorage.setItem('numbers[' + ticketId + ']', numbers.join('|'))
+          window.location.href = '/lottery/success-screen.html'
         })
 
       return false
@@ -388,9 +417,9 @@ class Lottery {
     let web3 = this.web3;
     let addresses = this.addresses;
     let drawId = 0 //sessionStorage.getItem('drawId') //todo: get drawId from session storage
-    let choosedTicket = ticket_number.value //sessionStorage.getItem('ticket_number') //todo: get ticket number from session storage
+    let choosedTicket = parseInt(ticket_number.value) //sessionStorage.getItem('ticket_number') //todo: get ticket number from session storage
 
-    let winningNumbers = ['?', '?', '?'] //sessionStorage.getItem('winning_numbers') //todo: get winning numbers from session storage
+    let winningNumbers = [0, 0, 0] //sessionStorage.getItem('winning_numbers') //todo: get winning numbers from session storage
     let prizePool = await contractPrizePool.methods.prizePool().call()
     let winnersCount = await contractKassa.methods.winnersCount(drawId).call()
 
@@ -427,21 +456,25 @@ class Lottery {
     ticket_number.addEventListener('change', async function (e) {
         e.preventDefault();
 
-        choosedTicket = ticket_number.value
+        choosedTicket = parseInt(ticket_number.value)
 
         let dataOfTicket = await contractTokenERC721.methods.getDataOfTicket(choosedTicket).call()
         drawId = +dataOfTicket._drawId
         console.log('dataOfTicket = ' + dataOfTicket)
 
         try {
-            winningNumbers[0] = await contractDraw.methods.winnersNumbers(drawId, 0).call()
-            winningNumbers[1] = await contractDraw.methods.winnersNumbers(drawId, 1).call()
-            winningNumbers[2] = await contractDraw.methods.winnersNumbers(drawId, 2).call()
+            winningNumbers = await contractDraw.methods.getWinnersNumbers(drawId).call()
+            /*winningNumbers[1] = await contractDraw.methods.getWinnersNumbers(drawId).call()
+            winningNumbers[2] = await contractDraw.methods.getWinnersNumbers(drawId).call()*/
             console.log('winningNumbers = ' + winningNumbers)
         } catch(e) {
             console.log('error: ' + e.message)
         }
-        winning_numbers.innerHTML = `${winningNumbers[0]}, ${winningNumbers[1]}, ${winningNumbers[2]}`
+        if (winningNumbers.length = 3) {
+            winning_numbers.innerHTML = `${winningNumbers[0]}, ${winningNumbers[1]}, ${winningNumbers[2]}`
+        } else {
+            winning_numbers.innerHTML = '?, ?, ?'
+        }
 
         winnersCount = await contractKassa.methods.winnersCount(drawId).call()
         count_of_approved_requests.innerHTML = winnersCount
@@ -458,7 +491,7 @@ class Lottery {
     document.getElementById('confirm').addEventListener('click', async function (e) {
         e.preventDefault();
 
-        const data = contractKassa.methods.addNewRequest(choosedTicket, winningNumbers, salt.value).encodeABI()
+        const data = contractKassa.methods.addNewRequest(choosedTicket, winningNumbers, parseInt(salt.value)).encodeABI()
 
         const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
         let decrypted = await web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
@@ -497,8 +530,71 @@ class Lottery {
 
 //------------------------------------------------------------------------------------------------------------------//
   async listTickets () {
-    // #current_user_account
+
+    if (this.wallet) {
+      document.getElementById('current_user_account').innerHTML = this.wallet.address
+    } else {
+      alert('please log in')
+    }
+
+    let statuses = new Array()
+    statuses[0] = 'NotFilled'
+    statuses[1] = 'Filled'
+    statuses[2] = 'Winning'
+    statuses[3] = 'Payed'
+
     // #draw_id -  get current drawId and make select input options
+    let draw_id = await this.Draw.methods.currentDrawId().call()
+    // console.log('draw_id', draw_id)
+    // document.getElementById('draw_id').innerHTML = draw_id
+
+    var htmlOptions = ' <option>- выбрать № розыгрыша -</option>'
+    for (var i = 1; i <= draw_id; i++) {
+      htmlOptions += '<option value="' + i + '">' + i + '</option>'
+    }
+
+    var thisClass = this
+    document.getElementById('draw_id').innerHTML = htmlOptions
+
+    document.getElementById('draw_id').addEventListener('change', async function (e) {
+
+      var selector = document.getElementById('draw_id')
+      var selectedDraw = selector.options[selector.selectedIndex].value
+
+      let countOfTickets = await thisClass.TokenERC721.methods.balanceOf(thisClass.wallet.address).call()
+      let currentCountOfTickets = 0
+
+      var ticket_details = '<p class="inputRow__label">Номер билета</p>'
+      for (var index = 0; index < countOfTickets; index++) {
+        let tokenId = await thisClass.TokenERC721.methods.tokenOfOwnerByIndex(thisClass.wallet.address, index).call()
+        let tokenData = await thisClass.TokenERC721.methods.getDataOfTicket(tokenId).call()
+
+        if (selectedDraw != tokenData._drawId) {
+          continue
+        }
+        currentCountOfTickets++
+        let currentStatus = statuses[tokenData._status]
+        if (currentStatus == 'NotFilled') {
+          currentStatus = '<a href="/lottery/fill-ticket.html?ticketId=' + tokenId + '" class="redLink">Заполнить билет</a>'
+        } else if (currentStatus == 'Filled') {
+          // вы указали 2, 14, 45
+          var savedNumbers = localStorage.getItem('numbers[' + tokenId + ']') || false
+          if (savedNumbers) {
+            currentStatus = 'вы указали ' + savedNumbers.split('|').join(', ')
+          }
+        }
+
+        ticket_details += '<p class="lotteryMain__headText">№ <span class="ticket_number">' + tokenId + '</span>' +
+          ' <span class="ticket_status">' + currentStatus + '</span> </p>'
+
+      }
+      // console.log('currentCountOfTickets', currentCountOfTickets)
+      if (currentCountOfTickets > 0) {
+        document.getElementById('ticket_details').innerHTML = ticket_details
+      }else{
+        document.getElementById('ticket_details').innerHTML = '<p class="inputRow__label">Вы не покупали билеты в данном розыгрыше</p>'
+      }
+    })
 
     // template#ticket
     // .ticket_number
@@ -509,6 +605,65 @@ class Lottery {
     //todo: set ticket number, draw Id, winning numbers to session storage for makeRequest()
   }
 
+//------------------------------------------------------------------------------------------------------------------//
+  async cronPage(){
+
+    console.log('cronPage')
+
+    const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
+    let decrypted = await this.web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
+
+    var thisClass = this;
+
+    document.getElementById('cron1').addEventListener('click', async function (e) {
+      console.log('cron1 clicked')
+
+      console.log( thisClass.web3.eth.accounts);
+
+      // {from: thisClass.addresses.cronAddress}
+      // await thisClass.Draw.methods.startSellingPeriod().call();
+
+      const data = thisClass.Draw.methods.setStageTicketsSale().encodeABI()
+      let nonce = await thisClass.web3.eth.getTransactionCount(decrypted.address)
+
+      const transactionObj = {
+        nonce: nonce,
+        from: decrypted.address,
+        gas: 900000,
+        to: thisClass.addresses.draw,
+        data: data
+      }
+
+      var transaction = await decrypted.signTransaction(transactionObj)
+      console.log('transaction,', transaction)
+
+      thisClass.web3.eth.sendSignedTransaction(transaction.rawTransaction)
+        .on('transactionHash', (hash) => {
+          console.log('transactionHash', hash)
+        })
+        .on('receipt', (receipt) => {
+          console.log('receipt', receipt)
+          //todo: set numbersOfTicketInDraw to local storage
+          // window.location.href = '/lottery/success-screen.html'
+        })
+
+
+    });
+
+    document.getElementById('cron2').addEventListener('click', async function (e) {
+      console.log('cron2 clicked')
+
+      // let num1 = document.getElementById('num1')
+      // let num2 = document.getElementById('num2')
+      // let num3 = document.getElementById('num3')
+      //
+      // console.log()
+
+
+
+
+    });
+  }
 //------------------------------------------------------------------------------------------------------------------//
 }
 

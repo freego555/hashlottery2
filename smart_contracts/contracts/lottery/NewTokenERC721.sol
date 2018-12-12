@@ -54,6 +54,7 @@ contract NewTokenERC721 is TokenERC721 {
 
         dataOfTicket[_tokenId].drawId = _drawId;
         dataOfTicket[_tokenId].combinationOfTicket = _combinationOfTicket;
+
         dataOfTicket[_tokenId].status = Status(_status);
 
         emit Transfer(addressOfMigrationAgent, _to, _tokenId);
