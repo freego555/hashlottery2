@@ -93,6 +93,13 @@ contract Draw {
         _;
     }
 
+    modifier onlyCronOrOwnerOrKassa(){
+        require(msg.sender == cronAddress || msg.sender == kassaAddress || msg.sender == owner
+        , "Only cron or owner or kassa contract can call this"
+        );
+        _;
+    }
+
     modifier onlyCronOrOwner(){
         require(msg.sender == cronAddress || msg.sender == owner
         , "Only cron or owner contract can call this"
@@ -214,7 +221,7 @@ contract Draw {
     }
 
     //cron 1
-    function startSellingPeriod() public onlyCron onlyWaitCron1 {
+    function startSellingPeriod() public onlyCronOrOwner onlyWaitCron1 {
         currentDrawId++;
         startSelling = now;
         stopSelling = startSelling + 47 hours;
@@ -227,7 +234,7 @@ contract Draw {
     }
 
     //cron 2
-    function startDraw(uint8[] numbers) public onlyCron onlyWaitCron2 {
+    function startDraw(uint8[] numbers) public onlyCronOrOwner onlyWaitCron2 {
 
         require(numbers.length == 3
         , 'Count of winning numbers must be 3'
@@ -262,7 +269,7 @@ contract Draw {
     }
 
     // cron 3
-    function startWithdraws(uint fromIndex, uint countWithdraws, uint countIncome) public onlyCronOrKassa onlyWaitCron3 {
+    function startWithdraws(uint fromIndex, uint countWithdraws, uint countIncome) public onlyCronOrOwnerOrKassa onlyWaitCron3 {
 
         if (getStageOfCurrentDraw() == 30) {
             // first launch of cron
@@ -320,16 +327,9 @@ contract Draw {
     }
 
     function setStageTicketsSale() public onlyCronOrOwner {
+        setStageWaitingStartOfSale(); // искусственно устанавливаем статус на ожидание
+        startSellingPeriod(); // вызываем старт
         stageOfCurrentDraw = 11; // продажа билетов 47 часов
-
-        currentDrawId++;
-        startSelling = now;
-        stopSelling = startSelling + 47 hours;
-        stopAcceptingTickets = stopSelling + 1 hours;
-
-        // set others timestamps to 0
-        startRequests = 0;
-
     }
 
     function setStageFillingTicketsWithoutTransferOfTokens() public onlyCronOrOwner {
@@ -340,7 +340,9 @@ contract Draw {
         stageOfCurrentDraw = 20; // ждем cron2 для розыгрыша
     }
 
-    function setStageAcceptingRequestsWithoutTransferOfTokens() public onlyCronOrOwner {
+    function setStageAcceptingRequestsWithoutTransferOfTokens(uint8[] numbers) public onlyCronOrOwner {
+        setStageWaitingDraw(); // искусственно устанавливаем статус на ожидание
+        startDraw(numbers); // вызываем старт
         stageOfCurrentDraw = 21; // начали прием заявок, акции перемещать нельзя
     }
 
@@ -352,7 +354,9 @@ contract Draw {
         stageOfCurrentDraw = 30; // ждем cron3 для подведения итогов и подсета победителей
     }
 
-    function setStageVacation() public onlyCronOrOwner {
+    function setStageVacation(uint fromIndex, uint countWithdraws, uint countIncome) public onlyCronOrOwner {
+        setStageWaitingDistributingOfPrizePool(); // искусственно устанавливаем статус на ожидание
+        startWithdraws(fromIndex, countWithdraws, countIncome); // вызываем старт
         stageOfCurrentDraw = 40; // перерыв
     }
 }

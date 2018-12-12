@@ -613,15 +613,12 @@ class Lottery {
     const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
     let decrypted = await this.web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
 
+    this.cronPageUpdateStatus()
+
     var thisClass = this;
 
     document.getElementById('cron1').addEventListener('click', async function (e) {
       console.log('cron1 clicked')
-
-      console.log( thisClass.web3.eth.accounts);
-
-      // {from: thisClass.addresses.cronAddress}
-      // await thisClass.Draw.methods.startSellingPeriod().call();
 
       const data = thisClass.Draw.methods.setStageTicketsSale().encodeABI()
       let nonce = await thisClass.web3.eth.getTransactionCount(decrypted.address)
@@ -641,10 +638,9 @@ class Lottery {
         .on('transactionHash', (hash) => {
           console.log('transactionHash', hash)
         })
-        .on('receipt', (receipt) => {
+        .on('receipt', async (receipt) => {
           console.log('receipt', receipt)
-          //todo: set numbersOfTicketInDraw to local storage
-          // window.location.href = '/lottery/success-screen.html'
+          thisClass.cronPageUpdateStatus();
         })
 
 
@@ -653,16 +649,85 @@ class Lottery {
     document.getElementById('cron2').addEventListener('click', async function (e) {
       console.log('cron2 clicked')
 
-      // let num1 = document.getElementById('num1')
-      // let num2 = document.getElementById('num2')
-      // let num3 = document.getElementById('num3')
-      //
-      // console.log()
+      let num1 = document.getElementById('num1')
+      let num2 = document.getElementById('num2')
+      let num3 = document.getElementById('num3')
 
+      let n1 = parseInt(num1.value)
+      let n2 = parseInt(num2.value)
+      let n3 = parseInt(num3.value)
+
+      if (!(1 <= n1 && n1 <= 99
+          && 1 <= n2 && n2 <= 99
+          && 1 <= n3 && n3 <= 99)) {
+        alert('Числа должны быть заполнены и быть в промежутке 1..99')
+        return
+      }
+
+      if (!(n1 < n2 && n2 < n3)) {
+        alert('Числа должны быть разными и отсортированы по возрастанию')
+        return
+      }
+
+      // сортировка по ASC
+      let numbers = [n1, n2, n3]
+      numbers.sort(function (a, b) {return a - b})
+      //
+      console.log('numbers', numbers)
+
+      const data = thisClass.Draw.methods.setStageAcceptingRequestsWithoutTransferOfTokens(numbers).encodeABI()
+      let nonce = await thisClass.web3.eth.getTransactionCount(decrypted.address)
+
+      const transactionObj = {
+        nonce: nonce,
+        from: decrypted.address,
+        gas: 900000,
+        to: thisClass.addresses.draw,
+        data: data
+      }
+
+      var transaction = await decrypted.signTransaction(transactionObj)
+      console.log('transaction,', transaction)
+
+      thisClass.web3.eth.sendSignedTransaction(transaction.rawTransaction)
+        .on('transactionHash', (hash) => {
+          console.log('transactionHash', hash)
+        })
+        .on('receipt',  (receipt) => {
+          console.log('receipt', receipt)
+          thisClass.cronPageUpdateStatus();
+        })
 
 
 
     });
+  }
+  //------------------------------------------------------------------------------------------------------------------//
+  async cronPageUpdateStatus(){
+
+    console.log('cronPageUpdateStatus')
+
+    let statuses = new Array()
+    statuses[10] = 'ждем cron#1 для начала продаж'
+    statuses[11] = 'продажа билетов 47 часов'
+    statuses[12] = 'дозаполнение билетов, продавать уже нельзя, акции перемещать нельзя'
+
+    statuses[20] = 'ждем cron#2 для розыгрыша'
+    statuses[21] = 'начали прием заявок, акции перемещать нельзя'
+    statuses[22] = 'продолжение приема заявок'
+
+    statuses[30] = 'ждем cron#3 для подведения итогов и подсчета победителей'
+    statuses[40] = 'перерыв между розыгрышами'
+
+    let stageCode = await this.Draw.methods.getStageOfCurrentDraw().call()
+    console.log('stageCode', stageCode);
+
+    try {
+      status = statuses[stageCode]
+    } catch (e) {
+      status = 'error'
+    }
+    document.getElementById('current_draw_period').innerHTML = status
   }
 //------------------------------------------------------------------------------------------------------------------//
 }
