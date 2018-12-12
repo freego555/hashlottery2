@@ -1606,10 +1606,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "1147:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -1786,10 +1786,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "1282:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -1928,10 +1928,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "1419:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -2119,10 +2119,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "1565:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -2249,7 +2249,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5411,
+                            "referencedDeclaration": 1297,
                             "src": "1695:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -2325,10 +2325,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "1687:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -2467,10 +2467,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "1817:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -2544,7 +2544,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5411,
+                            "referencedDeclaration": 1297,
                             "src": "2029:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -2620,10 +2620,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "2021:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -3020,7 +3020,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 5411,
+                          "referencedDeclaration": 1297,
                           "src": "2659:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -3181,7 +3181,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 5411,
+                          "referencedDeclaration": 1297,
                           "src": "2797:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -3320,7 +3320,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 5411,
+                          "referencedDeclaration": 1297,
                           "src": "2839:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -3495,7 +3495,7 @@
                       "name": "msg",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 5411,
+                      "referencedDeclaration": 1297,
                       "src": "2627:3:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_magic_message",
@@ -3722,7 +3722,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5411,
+                        "referencedDeclaration": 1297,
                         "src": "2976:3:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -3826,7 +3826,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5411,
+                            "referencedDeclaration": 1297,
                             "src": "3104:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -3887,10 +3887,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "3087:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -4003,10 +4003,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "3143:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -4559,7 +4559,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5411,
+                            "referencedDeclaration": 1297,
                             "src": "3623:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -4620,10 +4620,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "3606:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -5354,10 +5354,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "4058:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -5492,10 +5492,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "4128:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -5603,10 +5603,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "4193:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -5757,10 +5757,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "4271:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -7188,7 +7188,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 5411,
+                          "referencedDeclaration": 1297,
                           "src": "5284:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -7500,7 +7500,7 @@
                               "name": "msg",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 5411,
+                              "referencedDeclaration": 1297,
                               "src": "5487:3:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_magic_message",
@@ -7572,10 +7572,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "5452:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -7659,7 +7659,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 5411,
+                          "referencedDeclaration": 1297,
                           "src": "5567:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -8003,7 +8003,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5411,
+                            "referencedDeclaration": 1297,
                             "src": "5765:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -8097,7 +8097,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 5411,
+                          "referencedDeclaration": 1297,
                           "src": "5819:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -10187,10 +10187,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "1147:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -10367,10 +10367,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "1282:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -10509,10 +10509,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "1419:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -10700,10 +10700,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "1565:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -10830,7 +10830,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5411,
+                            "referencedDeclaration": 1297,
                             "src": "1695:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -10906,10 +10906,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "1687:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -11048,10 +11048,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "1817:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -11125,7 +11125,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5411,
+                            "referencedDeclaration": 1297,
                             "src": "2029:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -11201,10 +11201,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "2021:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -11601,7 +11601,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 5411,
+                          "referencedDeclaration": 1297,
                           "src": "2659:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -11762,7 +11762,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 5411,
+                          "referencedDeclaration": 1297,
                           "src": "2797:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -11901,7 +11901,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 5411,
+                          "referencedDeclaration": 1297,
                           "src": "2839:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -12076,7 +12076,7 @@
                       "name": "msg",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 5411,
+                      "referencedDeclaration": 1297,
                       "src": "2627:3:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_magic_message",
@@ -12303,7 +12303,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5411,
+                        "referencedDeclaration": 1297,
                         "src": "2976:3:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -12407,7 +12407,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5411,
+                            "referencedDeclaration": 1297,
                             "src": "3104:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -12468,10 +12468,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "3087:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -12584,10 +12584,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "3143:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -13140,7 +13140,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5411,
+                            "referencedDeclaration": 1297,
                             "src": "3623:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -13201,10 +13201,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "3606:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -13935,10 +13935,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "4058:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -14073,10 +14073,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "4128:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -14184,10 +14184,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "4193:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -14338,10 +14338,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "4271:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -15769,7 +15769,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 5411,
+                          "referencedDeclaration": 1297,
                           "src": "5284:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -16081,7 +16081,7 @@
                               "name": "msg",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 5411,
+                              "referencedDeclaration": 1297,
                               "src": "5487:3:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_magic_message",
@@ -16153,10 +16153,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5414,
-                        5415
+                        1300,
+                        1301
                       ],
-                      "referencedDeclaration": 5415,
+                      "referencedDeclaration": 1301,
                       "src": "5452:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -16240,7 +16240,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 5411,
+                          "referencedDeclaration": 1297,
                           "src": "5567:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -16584,7 +16584,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5411,
+                            "referencedDeclaration": 1297,
                             "src": "5765:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -16678,7 +16678,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 5411,
+                          "referencedDeclaration": 1297,
                           "src": "5819:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -17663,7 +17663,1283 @@
     "name": "solc",
     "version": "0.4.24+commit.e67f0147.Emscripten.clang"
   },
-  "networks": {},
+  "networks": {
+    "1544516772169": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x2b98bfca54debcd62859aaad26606f48bf569d9d",
+      "transactionHash": "0xd258166c0f16b493f1addfaf865646f9c9a78b4cc083857af6791244abbb8611"
+    },
+    "1544536883973": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf68dc0c267eecbf0a41a4a9a8bcd02c3a4041007",
+      "transactionHash": "0xe33c3fbedc860f939b4354e7af4441483e4eba93403683de8e8b714d3496d983"
+    },
+    "1544539096774": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xac890a7ed8e334ac0d694e58b027b8b45d55d2c1",
+      "transactionHash": "0x2f33afb323ae878adb7c4b633d14c5e234e590c00c6d43056a0ae6ac8b32d7d0"
+    },
+    "1544539197813": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xbf673d10fbd3b1cb9cb31a9da6206c8fec270863",
+      "transactionHash": "0x4e88b8c99fc1abc8e13176e38f39391353deb1e2f575ee9aa53cc1817940b86b"
+    },
+    "1544539315524": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xb58517e37dcda5353595908713fe04209c4c3e25",
+      "transactionHash": "0x66e1050471426135e6e7a6bd6db3c2e2104a97df020ae730843a60558ddc413f"
+    },
+    "1544541736560": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xd9c8a26f25fda601de932e5945448ffaf77cba09",
+      "transactionHash": "0xb386868a4c7e57ee6ce0af5522f983ff394a546f33090df9e745c14378740113"
+    },
+    "1544541802584": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x4bf08868bb1780e0e3d441a162c5f2b1ef224520",
+      "transactionHash": "0x27f9efe8097a7cb3942af5f3f10441ee7de41f717ac022d0596e22238f59207f"
+    },
+    "1544541884957": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xcd5f56781c174ed5a9d041ecedc43257aacf0531",
+      "transactionHash": "0x1abf1f0c9377fa43bfcdbda667b32a0db5506bd68681fdcb17e1d95bb81c309f"
+    },
+    "1544541952606": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x5dd3389296423ab5fbd121323c5ff4096e11e476",
+      "transactionHash": "0x8e8d4f6ca1ff45ec6c7c6aaf6bd25af0c9d0238f2d73998efb6a822766111f59"
+    },
+    "1544541982299": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x1f503bb7e6d6f30cc8794d7722cb94b0a3d9b8c9",
+      "transactionHash": "0x7221e07507a10093aed8867f46dc3ad215ab6797b54dd3c571651bd3b4532b44"
+    },
+    "1544542304352": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x41325abfc48a325aadbe73855ac19df37a60ea14",
+      "transactionHash": "0xd6c71dd1757b53d4fccc4862767c66c9d1c750547917aacb80a7e8145393ca4e"
+    },
+    "1544542359875": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x69e462f722cf875125610edb5a5c67672866fa50",
+      "transactionHash": "0xb12e9f1f9197ec3673db36e1ab282082e71c89ee55fafddaf47ac113bddd994e"
+    },
+    "1544596644377": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf71f4ccac9963b2b359bae6b89efc60abddf3ba6",
+      "transactionHash": "0xfc927f071ed53471d2ecf711c9ae0a7bc4b29cc7c9cfd059970fb8219bcc17b0"
+    },
+    "1544607275743": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x2ea53c4ceb49198b26cb8dcb02bf12bbf35e360f",
+      "transactionHash": "0xad366564515c0ca27d0c47b05f2b1094179878b20f69617095095da2a32055b0"
+    },
+    "1544611086444": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0x2aa96caefc338980cfbb5f55c044257c9dfac53f04d038fffd8217bb13c3e2d2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "tokensSupplyed",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokensEmitted",
+          "type": "event"
+        },
+        "0x18df02dcc52b9c494f391df09661519c0069bd8540141946280399408205ca1a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Migrate",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x229d1534e6d18c9c7d2cec72288a4b3e5d082322",
+      "transactionHash": "0x789d12f3eabfd03672c5bdb2af1587a577750b99ba6a8dbedc26f6d8b198f7e7"
+    }
+  },
   "schemaVersion": "2.0.1",
-  "updatedAt": "2018-12-11T10:02:39.156Z"
+  "updatedAt": "2018-12-12T10:38:38.245Z"
 }
