@@ -417,9 +417,9 @@ class Lottery {
     let web3 = this.web3;
     let addresses = this.addresses;
     let drawId = 0 //sessionStorage.getItem('drawId') //todo: get drawId from session storage
-    let choosedTicket = ticket_number.value //sessionStorage.getItem('ticket_number') //todo: get ticket number from session storage
+    let choosedTicket = parseInt(ticket_number.value) //sessionStorage.getItem('ticket_number') //todo: get ticket number from session storage
 
-    let winningNumbers = ['?', '?', '?'] //sessionStorage.getItem('winning_numbers') //todo: get winning numbers from session storage
+    let winningNumbers = [0, 0, 0] //sessionStorage.getItem('winning_numbers') //todo: get winning numbers from session storage
     let prizePool = await contractPrizePool.methods.prizePool().call()
     let winnersCount = await contractKassa.methods.winnersCount(drawId).call()
 
@@ -456,21 +456,25 @@ class Lottery {
     ticket_number.addEventListener('change', async function (e) {
         e.preventDefault();
 
-        choosedTicket = ticket_number.value
+        choosedTicket = parseInt(ticket_number.value)
 
         let dataOfTicket = await contractTokenERC721.methods.getDataOfTicket(choosedTicket).call()
         drawId = +dataOfTicket._drawId
         console.log('dataOfTicket = ' + dataOfTicket)
 
         try {
-            winningNumbers[0] = await contractDraw.methods.winnersNumbers(drawId, 0).call()
-            winningNumbers[1] = await contractDraw.methods.winnersNumbers(drawId, 1).call()
-            winningNumbers[2] = await contractDraw.methods.winnersNumbers(drawId, 2).call()
+            winningNumbers = await contractDraw.methods.getWinnersNumbers(drawId).call()
+            /*winningNumbers[1] = await contractDraw.methods.getWinnersNumbers(drawId).call()
+            winningNumbers[2] = await contractDraw.methods.getWinnersNumbers(drawId).call()*/
             console.log('winningNumbers = ' + winningNumbers)
         } catch(e) {
             console.log('error: ' + e.message)
         }
-        winning_numbers.innerHTML = `${winningNumbers[0]}, ${winningNumbers[1]}, ${winningNumbers[2]}`
+        if (winningNumbers.length = 3) {
+            winning_numbers.innerHTML = `${winningNumbers[0]}, ${winningNumbers[1]}, ${winningNumbers[2]}`
+        } else {
+            winning_numbers.innerHTML = '?, ?, ?'
+        }
 
         winnersCount = await contractKassa.methods.winnersCount(drawId).call()
         count_of_approved_requests.innerHTML = winnersCount
@@ -487,7 +491,7 @@ class Lottery {
     document.getElementById('confirm').addEventListener('click', async function (e) {
         e.preventDefault();
 
-        const data = contractKassa.methods.addNewRequest(choosedTicket, winningNumbers, salt.value).encodeABI()
+        const data = contractKassa.methods.addNewRequest(choosedTicket, winningNumbers, parseInt(salt.value)).encodeABI()
 
         const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
         let decrypted = await web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
