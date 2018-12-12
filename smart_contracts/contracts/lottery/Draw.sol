@@ -92,6 +92,14 @@ contract Draw {
         );
         _;
     }
+
+    modifier onlyCronOrOwner(){
+        require(msg.sender == cronAddress || msg.sender == owner
+        , "Only cron or owner contract can call this"
+        );
+        _;
+    }
+
     function setCronAddress(address _address) public onlyOwner {
         require(cronAddress == address(0)
         , "cronAddress is already set"
@@ -307,11 +315,11 @@ contract Draw {
     }
 
     // ТЕСТ Для ручного изменения этапа розыгрыша во время презентации
-    function setStageWaitingStartOfSale() public onlyOwner {
+    function setStageWaitingStartOfSale() public onlyCronOrOwner {
         stageOfCurrentDraw = 10; // ждем cron1 для начала продаж
     }
 
-    function setStageTicketsSale() public onlyOwner {
+    function setStageTicketsSale() public onlyCronOrOwner {
         stageOfCurrentDraw = 11; // продажа билетов 47 часов
 
         currentDrawId++;
@@ -324,27 +332,27 @@ contract Draw {
 
     }
 
-    function setStageFillingTicketsWithoutTransferOfTokens() public onlyOwner {
+    function setStageFillingTicketsWithoutTransferOfTokens() public onlyCronOrOwner {
         stageOfCurrentDraw = 12; // дозаполнение билетов, продавать уже нельзя, акции перемещать нельзя
     }
 
-    function setStageWaitingDraw() public onlyOwner {
+    function setStageWaitingDraw() public onlyCronOrOwner {
         stageOfCurrentDraw = 20; // ждем cron2 для розыгрыша
     }
 
-    function setStageAcceptingRequestsWithoutTransferOfTokens() public onlyOwner {
+    function setStageAcceptingRequestsWithoutTransferOfTokens() public onlyCronOrOwner {
         stageOfCurrentDraw = 21; // начали прием заявок, акции перемещать нельзя
     }
 
-    function setStageContinueAcceptingRequests() public onlyOwner {
+    function setStageContinueAcceptingRequests() public onlyCronOrOwner {
         stageOfCurrentDraw = 22; // продолжение приема заявок
     }
 
-    function setStageWaitingDistributingOfPrizePool() public onlyOwner {
+    function setStageWaitingDistributingOfPrizePool() public onlyCronOrOwner {
         stageOfCurrentDraw = 30; // ждем cron3 для подведения итогов и подсета победителей
     }
 
-    function setStageVacation() public onlyOwner {
+    function setStageVacation() public onlyCronOrOwner {
         stageOfCurrentDraw = 40; // перерыв
     }
 }
