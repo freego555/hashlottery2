@@ -100,15 +100,6 @@ class Lottery {
       if (stageCode == 10) {
         document.getElementById('next_draw_start_date').innerHTML = '?'
       } else {
-        //
-        // let currentDrawId = await this.Draw.methods.currentDrawId().call()
-        // console.log('currentDrawId', currentDrawId)
-        //
-        // let startSelling = await this.Draw.methods.startSelling().call()
-        // console.log('startSelling', startSelling)
-        //
-        // let stopSelling = await this.Draw.methods.stopSelling().call()
-        // console.log('stopSelling', stopSelling)
 
         let stopAcceptingTickets = await this.Draw.methods.stopAcceptingTickets().call()
         // console.log('stopAcceptingTickets', stopAcceptingTickets)
@@ -117,6 +108,16 @@ class Lottery {
         // console.log('next', next)
         document.getElementById('next_draw_start_date').innerHTML = next.yyyymmdd()
       }
+
+
+      let more = document.getElementById('more');
+      more.addEventListener('click', async function (e) {
+        console.log('more')
+        more.remove();
+        document.getElementsByClassName('hideContent')[0].classList.remove("hideContent");
+        // document.getElementsByClassName('hideContent').class='lotteryMain__toggleContent';
+
+      });
 
     } catch (e) {
       console.log('error: ' + e.message)
@@ -150,7 +151,7 @@ class Lottery {
       if (this.wallet) {
         document.getElementById('current_user_account').value = this.wallet.address
       } else {
-        alert('please log in')
+        window.location.href = '/lottery/identification-page.html';
       }
 
       // подсчет
@@ -172,6 +173,7 @@ class Lottery {
         console.log('buy_ticket')
         if (!isSelling) {
           alert('Сейчас не период продаж')
+
           return
         }
 
@@ -413,7 +415,7 @@ class Lottery {
     document.getElementById('confirm').addEventListener('click', async function (e) {
         e.preventDefault();
 
-        const data = contractKassa.methods.withdrawPrize(amountOfPrize).encodeABI()
+        const data = contractKassa.methods.withdrawTicketPrice(ticketId).encodeABI()
 
         const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
         let decrypted = await web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
@@ -438,6 +440,7 @@ class Lottery {
             })
             .on('receipt', (receipt) => {
                 console.log('receipt', receipt)
+                localStorage.setItem('amountOfPrize[' + ticketId + ']', amountOfPrize)
                 window.location.pathname = '/lottery/confirmation-winning.html'
             })
     })
@@ -452,8 +455,14 @@ class Lottery {
 
 //------------------------------------------------------------------------------------------------------------------//
   async confirmationWinning () {
-    // #prize_amount
-    // #ticket_number
+    let url_string = window.location.href;
+    let url = new URL(url_string);
+    let ticketId = url.searchParams.get("ticketId");
+
+    var amountOfPrize = localStorage.getItem('amountOfPrize[' + ticketId + ']')
+
+    document.getElementById('prize_amount').innerHTML = amountOfPrize
+    document.getElementById('ticket_number').innerHTML = ticketId
   }
 
 //------------------------------------------------------------------------------------------------------------------//
@@ -635,7 +644,7 @@ class Lottery {
     if (this.wallet) {
       document.getElementById('current_user_account').innerHTML = this.wallet.address
     } else {
-      alert('please log in')
+      window.location.href = '/lottery/identification-page.html';
     }
 
     let statuses = new Array()
@@ -726,6 +735,9 @@ class Lottery {
 
     const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
     let decrypted = await this.web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
+
+    let cronAddress = await this.Draw.methods.cronAddress().call()
+    document.getElementById('cron_address').innerHTML = cronAddress
 
     this.cronPageUpdateStatus()
 
