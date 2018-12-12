@@ -608,6 +608,11 @@ class Lottery {
           if ((stageCode == 21 || stageCode == 22) && draw_id == selectedDraw) {
             currentStatus += '<a style="float: right;" href="/lottery/make-request.html?ticketId=' + tokenId + '" class="redLink">Подать заявку</a>'
           }
+        } else if (currentStatus == 'Winning') {
+          if (draw_id > selectedDraw || (draw_id == selectedDraw && stageCode >= 30)) {
+            currentStatus += '<a style="float: right;" href="/lottery/getting-winnings.html?ticketId='
+              + tokenId + '" class="redLink">Получить выигрыш</a>'
+          }
         }
 
         ticket_details += '<p class="lotteryMain__headText">№ <span class="ticket_number">' + tokenId + '</span>' +
@@ -727,6 +732,36 @@ class Lottery {
 
 
     });
+
+    document.getElementById('cron3').addEventListener('click', async function (e){
+      console.log('cron3 clicked')
+
+      const data = thisClass.Draw.methods.setStageVacation(0, 10, 10).encodeABI()
+      let nonce = await thisClass.web3.eth.getTransactionCount(decrypted.address)
+
+      const transactionObj = {
+        nonce: nonce,
+        from: decrypted.address,
+        gas: 900000,
+        to: thisClass.addresses.draw,
+        data: data
+      }
+
+      var transaction = await decrypted.signTransaction(transactionObj)
+      console.log('transaction,', transaction)
+
+      thisClass.web3.eth.sendSignedTransaction(transaction.rawTransaction)
+        .on('transactionHash', (hash) => {
+          console.log('transactionHash', hash)
+        })
+        .on('receipt', async (receipt) => {
+          console.log('receipt', receipt)
+          thisClass.cronPageUpdateStatus();
+        })
+
+
+    });
+
   }
   //------------------------------------------------------------------------------------------------------------------//
   async cronPageUpdateStatus(){
