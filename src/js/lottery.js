@@ -57,6 +57,7 @@ class Lottery {
     routes['/lottery/confirmation-application.html'] = 'confirmationApplication'
 
     routes['/lottery/make-request.html'] = 'makeRequest'
+    routes['/cron.html'] = 'cronPage'
 
     routes['/lottery/error.html'] = 'error'
 
@@ -99,15 +100,6 @@ class Lottery {
       if (stageCode == 10) {
         document.getElementById('next_draw_start_date').innerHTML = '?'
       } else {
-        //
-        // let currentDrawId = await this.Draw.methods.currentDrawId().call()
-        // console.log('currentDrawId', currentDrawId)
-        //
-        // let startSelling = await this.Draw.methods.startSelling().call()
-        // console.log('startSelling', startSelling)
-        //
-        // let stopSelling = await this.Draw.methods.stopSelling().call()
-        // console.log('stopSelling', stopSelling)
 
         let stopAcceptingTickets = await this.Draw.methods.stopAcceptingTickets().call()
         // console.log('stopAcceptingTickets', stopAcceptingTickets)
@@ -116,6 +108,16 @@ class Lottery {
         // console.log('next', next)
         document.getElementById('next_draw_start_date').innerHTML = next.yyyymmdd()
       }
+
+
+      let more = document.getElementById('more');
+      more.addEventListener('click', async function (e) {
+        console.log('more')
+        more.remove();
+        document.getElementsByClassName('hideContent')[0].classList.remove("hideContent");
+        // document.getElementsByClassName('hideContent').class='lotteryMain__toggleContent';
+
+      });
 
     } catch (e) {
       console.log('error: ' + e.message)
@@ -149,7 +151,7 @@ class Lottery {
       if (this.wallet) {
         document.getElementById('current_user_account').value = this.wallet.address
       } else {
-        alert('please log in')
+        window.location.href = '/lottery/identification-page.html';
       }
 
       // подсчет
@@ -171,6 +173,7 @@ class Lottery {
         console.log('buy_ticket')
         if (!isSelling) {
           alert('Сейчас не период продаж')
+
           return
         }
 
@@ -256,6 +259,11 @@ class Lottery {
       alert('Сейчас не период заполнения билетов')
     }
 
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var ticketId = url.searchParams.get("ticketId");
+    document.getElementById('ticketId').innerHTML = ticketId
+
     let num1 = document.getElementById('num1')
     let num2 = document.getElementById('num2')
     let num3 = document.getElementById('num3')
@@ -280,10 +288,6 @@ class Lottery {
     document.getElementById('confirm').addEventListener('click', async function (e) {
       e.preventDefault()
 
-      // if (!isSelling) {
-      //   alert('Сейчас не период продаж')
-      //   return
-      // }
       let n1 = parseInt(num1.value)
       let n2 = parseInt(num2.value)
       let n3 = parseInt(num3.value)
@@ -291,8 +295,13 @@ class Lottery {
       if (!(1 <= n1 && n1 <= 99
           && 1 <= n2 && n2 <= 99
           && 1 <= n3 && n3 <= 99)) {
+        alert('Числа должны быть заполнены и быть в промежутке 1..99')
+        return
+      }
 
-        alert('Числа должны быть в промежутке 1..99')
+      if (!(n1 < n2 && n2 < n3)) {
+        alert('Числа должны быть разными и отсортированы по возрастанию')
+        return
       }
 
       if (salt.value.length < 10) {
@@ -306,14 +315,10 @@ class Lottery {
       numbers.sort(function (a, b) {return a - b})
       let hashed = new Array()
       for (let i = 0; i <= 2; i++) {
-        hashed[i] = await thisClass.Draw.methods.hashVal(numbers[i] + salty).call()
+        hashed[i] = await thisClass.Kassa.methods.hashVal(numbers[i], salty).call();
       }
 
-      // send
-      await thisClass.Draw.methods.isSellingTicketPeriod().call()
-      let token_id = 1
-
-      const data = thisClass.TokenERC721.methods.fillCombinationOfTicket(token_id, numbers).encodeABI()
+      const data = thisClass.TokenERC721.methods.fillCombinationOfTicket(ticketId, hashed).encodeABI()
 
       const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
       let decrypted = await thisClass.web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
@@ -338,7 +343,9 @@ class Lottery {
         .on('receipt', (receipt) => {
           console.log('receipt', receipt)
           //todo: set numbersOfTicketInDraw to local storage
-          // window.location.href = '/lottery/success-screen.html'
+
+          localStorage.setItem('numbers[' + ticketId + ']', numbers.join('|'))
+          window.location.href = '/lottery/success-screen.html'
         })
 
       return false
@@ -360,12 +367,102 @@ class Lottery {
     // #confirm click
     // if success
     //   redirect to /lottery/confirmation-winning.html
+
+    let prize_pool_size = document.getElementById('prize_pool_size')
+    let count_of_approved_requests = document.getElementById('count_of_approved_requests')
+    let your_prize_share = document.getElementById('your_prize_share')
+    let ticket_number = document.getElementById('ticket_number') // Добавил, чтобы не читать из sessionStorage
+
+    let contractKassa = this.Kassa;
+    let contractPrizePool = this.PrizePool;
+    let contractTokenERC721 = this.TokenERC721;
+    let contractDraw = this.Draw;
+    let web3 = this.web3;
+    let addresses = this.addresses;
+
+    let url_string = window.location.href;
+    let url = new URL(url_string);
+    let ticketId = url.searchParams.get("ticketId");
+    console.log('ticketId: ' + ticketId);
+    if (ticketId === null) {
+        let ticketId = parseInt(ticket_number.value)
+    }
+    console.log('ticketId: ' + ticketId);
+    console.log('ticket_number.value: ' + ticket_number.value);
+
+    let drawId = await contractTokenERC721.methods.getTicketDrawId(ticketId).call()
+    let amountOfPrize = await contractKassa.methods.moneyForEachWinner(drawId).call()
+
+    ticket_number.value = ticketId;
+    prize_pool_size.innerHTML = await contractPrizePool.methods.prizePool().call()
+    count_of_approved_requests.innerHTML = await contractKassa.methods.winnersCount(drawId).call()
+    your_prize_share.innerHTML = amountOfPrize
+
+    ticket_number.addEventListener('change', async function (e) {
+        e.preventDefault();
+
+        ticketId = parseInt(ticket_number.value)
+        drawId = await contractTokenERC721.methods.getTicketDrawId(ticketId).call()
+        amountOfPrize = await contractKassa.methods.moneyForEachWinner(drawId).call()
+        console.log('drawId = ' + drawId)
+
+        prize_pool_size.innerHTML = await contractPrizePool.methods.prizePool().call()
+        count_of_approved_requests.innerHTML = await contractKassa.methods.winnersCount(drawId).call()
+        your_prize_share.innerHTML = amountOfPrize
+    })
+
+    // Send request
+    document.getElementById('confirm').addEventListener('click', async function (e) {
+        e.preventDefault();
+
+        const data = contractKassa.methods.withdrawTicketPrice(ticketId).encodeABI()
+
+        const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
+        let decrypted = await web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
+
+        let nonce = await web3.eth.getTransactionCount(decrypted.address)
+
+        const transactionObj = {
+            nonce: nonce,
+            from: decrypted.address,
+            gas: 900000,
+            to: addresses.kassa,
+            value: 0,
+            data
+        }
+
+        var transaction = await decrypted.signTransaction(transactionObj)
+        console.log('transaction,', transaction)
+
+        web3.eth.sendSignedTransaction(transaction.rawTransaction)
+            .on('transactionHash', (hash) => {
+                console.log('transactionHash', hash)
+            })
+            .on('receipt', (receipt) => {
+                console.log('receipt', receipt)
+                localStorage.setItem('amountOfPrize[' + ticketId + ']', amountOfPrize)
+                window.location.pathname = '/lottery/confirmation-winning.html'
+            })
+    })
+
+    // Cancel request
+    document.getElementById('reset').addEventListener('click', async function (e) {
+        if(confirm('Вернуться к списку билетов?')) {
+            window.location.pathname = '/lottery/list-tickets.html';
+        }
+    })
   }
 
 //------------------------------------------------------------------------------------------------------------------//
   async confirmationWinning () {
-    // #prize_amount
-    // #ticket_number
+    let url_string = window.location.href;
+    let url = new URL(url_string);
+    let ticketId = url.searchParams.get("ticketId");
+
+    var amountOfPrize = localStorage.getItem('amountOfPrize[' + ticketId + ']')
+
+    document.getElementById('prize_amount').innerHTML = amountOfPrize
+    document.getElementById('ticket_number').innerHTML = ticketId
   }
 
 //------------------------------------------------------------------------------------------------------------------//
@@ -405,6 +502,13 @@ class Lottery {
     let prize_pool_size = document.getElementById('prize_pool_size')
     let count_of_approved_requests = document.getElementById('count_of_approved_requests')
 
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var ticketId = url.searchParams.get("ticketId") || false;
+    if(ticketId) {
+      ticket_number.value = ticketId
+    }
+
     let contractTokenERC721 = this.TokenERC721;
     let contractKassa = this.Kassa;
     let contractDraw = this.Draw;
@@ -412,9 +516,9 @@ class Lottery {
     let web3 = this.web3;
     let addresses = this.addresses;
     let drawId = 0 //sessionStorage.getItem('drawId') //todo: get drawId from session storage
-    let choosedTicket = ticket_number.value //sessionStorage.getItem('ticket_number') //todo: get ticket number from session storage
+    let choosedTicket = parseInt(ticket_number.value) //sessionStorage.getItem('ticket_number') //todo: get ticket number from session storage
 
-    let winningNumbers = ['?', '?', '?'] //sessionStorage.getItem('winning_numbers') //todo: get winning numbers from session storage
+    let winningNumbers = [0, 0, 0] //sessionStorage.getItem('winning_numbers') //todo: get winning numbers from session storage
     let prizePool = await contractPrizePool.methods.prizePool().call()
     let winnersCount = await contractKassa.methods.winnersCount(drawId).call()
 
@@ -448,31 +552,37 @@ class Lottery {
     console.log(numbersOfTicketInDraw);
     console.log(numbersOfTicketInDraw[drawId][choosedTicket]);*/
 
-    ticket_number.addEventListener('change', async function (e) {
-        e.preventDefault();
+    // ticket_number.addEventListener('change', async function (e) {
+    //     e.preventDefault();
 
-        choosedTicket = ticket_number.value
+        choosedTicket = parseInt(ticket_number.value)
 
         let dataOfTicket = await contractTokenERC721.methods.getDataOfTicket(choosedTicket).call()
         drawId = +dataOfTicket._drawId
         console.log('dataOfTicket = ' + dataOfTicket)
 
         try {
-            winningNumbers[0] = await contractDraw.methods.winnersNumbers(drawId, 0).call()
-            winningNumbers[1] = await contractDraw.methods.winnersNumbers(drawId, 1).call()
-            winningNumbers[2] = await contractDraw.methods.winnersNumbers(drawId, 2).call()
+            winningNumbers = await contractDraw.methods.getWinnersNumbers(drawId).call()
+            /*winningNumbers[1] = await contractDraw.methods.getWinnersNumbers(drawId).call()
+            winningNumbers[2] = await contractDraw.methods.getWinnersNumbers(drawId).call()*/
             console.log('winningNumbers = ' + winningNumbers)
         } catch(e) {
             console.log('error: ' + e.message)
         }
-        winning_numbers.innerHTML = `${winningNumbers[0]}, ${winningNumbers[1]}, ${winningNumbers[2]}`
+        if (winningNumbers.length = 3) {
+            winning_numbers.innerHTML = `${winningNumbers[0]}, ${winningNumbers[1]}, ${winningNumbers[2]}`
+        } else {
+            winning_numbers.innerHTML = '?, ?, ?'
+        }
 
         winnersCount = await contractKassa.methods.winnersCount(drawId).call()
+      console.log('winnersCount', winnersCount)
         count_of_approved_requests.innerHTML = winnersCount
 
-        prizePool = await contractPrizePool.methods.prizePool().call()
+        prizePool = await contractPrizePool.methods.getPrizePoolBalance().call()
+    console.log('prizePool', prizePool)
         prize_pool_size.innerHTML = prizePool
-    })
+    // })
 
     salt.addEventListener('change', function (e) {
         salt.value = parseInt(salt.value)
@@ -482,7 +592,12 @@ class Lottery {
     document.getElementById('confirm').addEventListener('click', async function (e) {
         e.preventDefault();
 
-        const data = contractKassa.methods.addNewRequest(choosedTicket, winningNumbers, salt.value).encodeABI()
+        if (salt.value.length < 10) {
+          alert('Длина секретного ключа должна не менее 10 символов')
+          return
+        }
+
+        const data = contractKassa.methods.addNewRequest(choosedTicket, winningNumbers, parseInt(salt.value)).encodeABI()
 
         const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
         let decrypted = await web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
@@ -501,14 +616,18 @@ class Lottery {
         var transaction = await decrypted.signTransaction(transactionObj)
         console.log('transaction,', transaction)
 
+      try {
         web3.eth.sendSignedTransaction(transaction.rawTransaction)
-            .on('transactionHash', (hash) => {
-                console.log('transactionHash', hash)
-            })
-            .on('receipt', (receipt) => {
-                console.log('receipt', receipt)
-                window.location.pathname = '/lottery/confirmation-application.html'
-            })
+          .on('transactionHash', (hash) => {
+            console.log('transactionHash', hash)
+          })
+          .on('receipt', (receipt) => {
+            console.log('receipt', receipt)
+            window.location.pathname = '/lottery/confirmation-application.html'
+          })
+      }catch(e){
+          alert(e.message)
+      }
     })
 
     // Cancel request
@@ -525,14 +644,80 @@ class Lottery {
     if (this.wallet) {
       document.getElementById('current_user_account').innerHTML = this.wallet.address
     } else {
-      alert('please log in')
+      window.location.href = '/lottery/identification-page.html';
     }
+
+    let statuses = new Array()
+    statuses[0] = 'NotFilled'
+    statuses[1] = 'Filled'
+    statuses[2] = 'Winning'
+    statuses[3] = 'Payed'
 
     // #draw_id -  get current drawId and make select input options
     let draw_id = await this.Draw.methods.currentDrawId().call()
-    console.log('draw_id', draw_id)
-    document.getElementById('draw_id').innerHTML = draw_id
+    // console.log('draw_id', draw_id)
+    // document.getElementById('draw_id').innerHTML = draw_id
 
+    var htmlOptions = ' <option>- выбрать № розыгрыша -</option>'
+    for (var i = 1; i <= draw_id; i++) {
+      htmlOptions += '<option value="' + i + '">' + i + '</option>'
+    }
+
+    var thisClass = this
+    document.getElementById('draw_id').innerHTML = htmlOptions
+
+    document.getElementById('draw_id').addEventListener('change', async function (e) {
+
+      var selector = document.getElementById('draw_id')
+      var selectedDraw = selector.options[selector.selectedIndex].value
+
+      let countOfTickets = await thisClass.TokenERC721.methods.balanceOf(thisClass.wallet.address).call()
+      let currentCountOfTickets = 0
+
+      let stageCode = await thisClass.Draw.methods.getStageOfCurrentDraw().call()
+
+      var ticket_details = '<p class="inputRow__label">Номер билета</p>'
+      for (var index = 0; index < countOfTickets; index++) {
+        let tokenId = await thisClass.TokenERC721.methods.tokenOfOwnerByIndex(thisClass.wallet.address, index).call()
+        let tokenData = await thisClass.TokenERC721.methods.getDataOfTicket(tokenId).call()
+
+        if (selectedDraw != tokenData._drawId) {
+          continue
+        }
+        currentCountOfTickets++
+        let currentStatus = statuses[tokenData._status]
+        if (currentStatus == 'NotFilled') {
+          if ((stageCode == 11) && draw_id == selectedDraw) {
+            currentStatus = '<a style="float: right;" href="/lottery/fill-ticket.html?ticketId=' + tokenId + '" class="redLink">Заполнить билет</a>'
+          }
+        } else if (currentStatus == 'Filled') {
+          // вы указали 2, 14, 45
+          var savedNumbers = localStorage.getItem('numbers[' + tokenId + ']') || false
+          if (savedNumbers) {
+            currentStatus = 'вы указали ' + savedNumbers.split('|').join(', ')
+          }
+
+          if ((stageCode == 21 || stageCode == 22) && draw_id == selectedDraw) {
+            currentStatus += '<a style="float: right;" href="/lottery/make-request.html?ticketId=' + tokenId + '" class="redLink">Подать заявку</a>'
+          }
+        } else if (currentStatus == 'Winning') {
+          if (draw_id > selectedDraw || (draw_id == selectedDraw && stageCode >= 30)) {
+            currentStatus += '<a style="float: right;" href="/lottery/getting-winnings.html?ticketId='
+              + tokenId + '" class="redLink">Получить выигрыш</a>'
+          }
+        }
+
+        ticket_details += '<p class="lotteryMain__headText">№ <span class="ticket_number">' + tokenId + '</span>' +
+          ' <span class="ticket_status">' + currentStatus + '</span> </p>'
+
+      }
+      // console.log('currentCountOfTickets', currentCountOfTickets)
+      if (currentCountOfTickets > 0) {
+        document.getElementById('ticket_details').innerHTML = ticket_details
+      }else{
+        document.getElementById('ticket_details').innerHTML = '<p class="inputRow__label">Вы не покупали билеты в данном розыгрыше</p>'
+      }
+    })
 
     // template#ticket
     // .ticket_number
@@ -543,6 +728,163 @@ class Lottery {
     //todo: set ticket number, draw Id, winning numbers to session storage for makeRequest()
   }
 
+//------------------------------------------------------------------------------------------------------------------//
+  async cronPage(){
+
+    console.log('cronPage')
+
+    const keyStoreFormatted = JSON.parse(localStorage.getItem('keyStoreFormatted'))
+    let decrypted = await this.web3.eth.accounts.decrypt(keyStoreFormatted, localStorage.getItem('passwordInput'))
+
+    let cronAddress = await this.Draw.methods.cronAddress().call()
+    document.getElementById('cron_address').innerHTML = cronAddress
+
+    this.cronPageUpdateStatus()
+
+    var thisClass = this;
+
+    document.getElementById('cron1').addEventListener('click', async function (e) {
+      console.log('cron1 clicked')
+
+      const data = thisClass.Draw.methods.setStageTicketsSale().encodeABI()
+      let nonce = await thisClass.web3.eth.getTransactionCount(decrypted.address)
+
+      const transactionObj = {
+        nonce: nonce,
+        from: decrypted.address,
+        gas: 900000,
+        to: thisClass.addresses.draw,
+        data: data
+      }
+
+      var transaction = await decrypted.signTransaction(transactionObj)
+      console.log('transaction,', transaction)
+
+      thisClass.web3.eth.sendSignedTransaction(transaction.rawTransaction)
+        .on('transactionHash', (hash) => {
+          console.log('transactionHash', hash)
+        })
+        .on('receipt', async (receipt) => {
+          console.log('receipt', receipt)
+          thisClass.cronPageUpdateStatus();
+        })
+
+
+    });
+
+    document.getElementById('cron2').addEventListener('click', async function (e) {
+      console.log('cron2 clicked')
+
+      let num1 = document.getElementById('num1')
+      let num2 = document.getElementById('num2')
+      let num3 = document.getElementById('num3')
+
+      let n1 = parseInt(num1.value)
+      let n2 = parseInt(num2.value)
+      let n3 = parseInt(num3.value)
+
+      if (!(1 <= n1 && n1 <= 99
+          && 1 <= n2 && n2 <= 99
+          && 1 <= n3 && n3 <= 99)) {
+        alert('Числа должны быть заполнены и быть в промежутке 1..99')
+        return
+      }
+
+      if (!(n1 < n2 && n2 < n3)) {
+        alert('Числа должны быть разными и отсортированы по возрастанию')
+        return
+      }
+
+      // сортировка по ASC
+      let numbers = [n1, n2, n3]
+      numbers.sort(function (a, b) {return a - b})
+      //
+      console.log('numbers', numbers)
+
+      const data = thisClass.Draw.methods.setStageAcceptingRequestsWithoutTransferOfTokens(numbers).encodeABI()
+      let nonce = await thisClass.web3.eth.getTransactionCount(decrypted.address)
+
+      const transactionObj = {
+        nonce: nonce,
+        from: decrypted.address,
+        gas: 900000,
+        to: thisClass.addresses.draw,
+        data: data
+      }
+
+      var transaction = await decrypted.signTransaction(transactionObj)
+      console.log('transaction,', transaction)
+
+      thisClass.web3.eth.sendSignedTransaction(transaction.rawTransaction)
+        .on('transactionHash', (hash) => {
+          console.log('transactionHash', hash)
+        })
+        .on('receipt',  (receipt) => {
+          console.log('receipt', receipt)
+          thisClass.cronPageUpdateStatus();
+        })
+
+
+
+    });
+
+    document.getElementById('cron3').addEventListener('click', async function (e){
+      console.log('cron3 clicked')
+
+      const data = thisClass.Draw.methods.setStageVacation(0, 10, 10).encodeABI()
+      let nonce = await thisClass.web3.eth.getTransactionCount(decrypted.address)
+
+      const transactionObj = {
+        nonce: nonce,
+        from: decrypted.address,
+        gas: 900000,
+        to: thisClass.addresses.draw,
+        data: data
+      }
+
+      var transaction = await decrypted.signTransaction(transactionObj)
+      console.log('transaction,', transaction)
+
+      thisClass.web3.eth.sendSignedTransaction(transaction.rawTransaction)
+        .on('transactionHash', (hash) => {
+          console.log('transactionHash', hash)
+        })
+        .on('receipt', async (receipt) => {
+          console.log('receipt', receipt)
+          thisClass.cronPageUpdateStatus();
+        })
+
+
+    });
+
+  }
+  //------------------------------------------------------------------------------------------------------------------//
+  async cronPageUpdateStatus(){
+
+    console.log('cronPageUpdateStatus')
+
+    let statuses = new Array()
+    statuses[10] = 'ждем cron#1 для начала продаж'
+    statuses[11] = 'продажа билетов 47 часов'
+    statuses[12] = 'дозаполнение билетов, продавать уже нельзя, акции перемещать нельзя'
+
+    statuses[20] = 'ждем cron#2 для розыгрыша'
+    statuses[21] = 'начали прием заявок, акции перемещать нельзя'
+    statuses[22] = 'продолжение приема заявок'
+
+    statuses[30] = 'ждем cron#3 для подведения итогов и подсчета победителей'
+    statuses[40] = 'перерыв между розыгрышами'
+
+    let stageCode = await this.Draw.methods.getStageOfCurrentDraw().call()
+    console.log('stageCode', stageCode);
+
+    try {
+      status = statuses[stageCode]
+    } catch (e) {
+      status = 'error'
+    }
+    document.getElementById('current_draw_period').innerHTML = status
+  }
 //------------------------------------------------------------------------------------------------------------------//
 }
 

@@ -132,6 +132,11 @@ contract Kassa {
             );
         }
 
+        uint currentDrawId = Draw(drawAddress).currentDrawId();
+        uint8[] memory winning = Draw(drawAddress).getWinnersNumbers(currentDrawId);
+        require(winning[0] == numbers[0] && winning[1] == numbers[1] && winning[2] == numbers[2]
+        , 'Your numbers does not matches winning numbers'
+        );
 
         winnersList[ticketDrawId].push(msg.sender);
         winnersListExists[ticketDrawId][msg.sender] = true;
@@ -216,7 +221,7 @@ contract Kassa {
 
             if (Draw(drawAddress).isWaitingWithdrawsPeriod()) {
                 uint currentIndex = winnersListIndex[currentDrawId][msg.sender];
-                Draw(drawAddress).startWithdraws(currentIndex, 1);
+                Draw(drawAddress).startWithdraws(currentIndex, 1, 10);
             }
         }
 

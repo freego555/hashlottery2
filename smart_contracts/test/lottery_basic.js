@@ -6,10 +6,42 @@ var TicketSale = artifacts.require('./lottery/TicketSale.sol')
 var LotteryIncomeWallet = artifacts.require('./LotteryIncomeWallet.sol')
 var TokenERC721 = artifacts.require('./TokenERC721.sol')
 
+var Crowdsale = artifacts.require("./Crowdsale.sol");
+var TokenERC20 = artifacts.require("./TokenERC20.sol");
+
 const helper = require('./helpers/truffleTestHelper')
+
+contract('ICO', async (accounts) => {
+    var adminAddress = accounts[0];
+    var investor1Address = accounts[6];
+    var investor2Address = accounts[7];
+    var investor3Address = accounts[8];
+
+    before(async () => {
+          token = await TokenERC20.deployed();
+    })
+
+    describe('Mint tokens for investors', async() => {
+        it('Mint tokens for investors', async() => {
+            await token.emitMoreTokens(10000, investor1Address, {from: adminAddress});
+            await token.emitMoreTokens(20000, investor2Address, {from: adminAddress});
+            await token.emitMoreTokens(70000, investor3Address, {from: adminAddress});
+
+            let balance1 = await token.balanceOf(investor1Address);
+            //console.log('balance1 = ' + balance1);
+            let balance2 = await token.balanceOf(investor2Address);
+            //console.log('balance2 = ' + balance2);
+            let balance3 = await token.balanceOf(investor3Address);
+            //console.log('balance3 = ' + balance3);
+
+            assert.isTrue((+balance1 + +balance2 + +balance3) == 100000);
+        })
+    })
+})
 
 contract('Lottery basic', async (accounts) => {
   var draw, kassa, pool, sale, income, ticket
+  var crowdsale, token
 
   var adminAddress = accounts[0];
   var cronAddress = accounts[1];
@@ -17,10 +49,12 @@ contract('Lottery basic', async (accounts) => {
   var player2Address = accounts[3];
   var player3Address = accounts[4];
   var player4Address = accounts[5];
+  var investor1Address = accounts[6];
+  var investor2Address = accounts[7];
+  var investor3Address = accounts[8];
   var zeroAddress = '0x0000000000000000000000000000000000000000';
 
   var priceOfTicket;
-
 
   describe('lottery general', async () => {
 
@@ -32,6 +66,9 @@ contract('Lottery basic', async (accounts) => {
       sale = await TicketSale.deployed()
       income = await LotteryIncomeWallet.deployed()
       ticket = await TokenERC721.deployed()
+
+      crowdsale = await Crowdsale.deployed();
+      token = await TokenERC20.deployed();
 
       // for init
       await draw.setCronAddress(cronAddress)
@@ -98,7 +135,7 @@ contract('Lottery basic', async (accounts) => {
 
     describe('Sale of tickets', async () => {
         it('Start of sale of tickets', async () => {
-            await draw.startSelling({from: cronAddress});
+            await draw.startSellingPeriod({from: cronAddress});
             let currentDrawId = await draw.currentDrawId();
 
             assert.isTrue(currentDrawId == 1);
@@ -143,6 +180,7 @@ contract('Lottery basic', async (accounts) => {
             })
         })
 
+       var hash1, hash2, hash3;
         describe('Player1 filled the ticket #1', async () => {
             it('Filling of ticket #1 is succesful', async () => {
                 let ticketId = 1;
@@ -150,8 +188,12 @@ contract('Lottery basic', async (accounts) => {
                 let salt = 123;
                 let numbersHash = [];
                 for (let i = 0; i < 3; i++) {
-                    numbersHash.push(await draw.hashVal(numbers[i], salt));
+                    numbersHash.push(await kassa.hashVal(numbers[i], salt));
                 }
+                hash1 = numbersHash[0];
+                hash2 = numbersHash[1];
+                hash3 = numbersHash[2];
+
                 /*console.log('hash of 1 number = ' + numbersHash[0]);
                 console.log('hash of 2 number = ' + numbersHash[1]);
                 console.log('hash of 3 number = ' + numbersHash[2]);*/
@@ -160,10 +202,6 @@ contract('Lottery basic', async (accounts) => {
 
             it('combinationOfTicket is correct', async () => {
                 let ticketId = 1;
-                let hash1 = '0x252ac694d08d2760b5f6b3a44bb08769e3c9ac86baac29cba96f660db0abc624';
-                let hash2 = '0x5b2f4ba2eb8931310f2bb5dcba03ff7d4dd4ddcfe3bd6192d4dc0f6063503087';
-                let hash3 = '0xb8519ee7f06eb5e9adfc18c511ffd081b448f906ff9a2654731d425b62097841';
-
                 let numbersHash = await ticket.getTicketCombination(ticketId);
 
                 assert.isTrue(numbersHash[0] == hash1 && numbersHash[1] == hash2 && numbersHash[2] == hash3);
@@ -257,7 +295,7 @@ contract('Lottery basic', async (accounts) => {
                 let fromIndex = 0;
                 let count = 1;
 
-                await draw.startWithdraws(fromIndex, count, {from: cronAddress});
+                await draw.startWithdraws(fromIndex, count, 1, {from: cronAddress});
             })
 
             it('fullyDistributedPrize(drawId) should be true', async () => {
@@ -303,11 +341,13 @@ contract('Lottery basic', async (accounts) => {
                 let currentDrawId = await draw.currentDrawId();
                 let poolSize = await kassa.poolSizes(currentDrawId.toString(10));
 
+                let ticketId = 1;
                 let beforeBalanceOfPlayer1 = await web3.eth.getBalance(player1Address);
-                await kassa.withdrawPrize(poolSize.toString(10), {from: player1Address});
+                // await kassa.withdrawPrize(poolSize.toString(10), {from: player1Address});
+                await kassa.withdrawTicketPrice(ticketId, {from: player1Address});
                 let afterBalanceOfPlayer1 = await web3.eth.getBalance(player1Address);
 
-                //assert.isTrue(afterBalanceOfPlayer1 > beforeBalanceOfPlayer1);
+                assert.isTrue(afterBalanceOfPlayer1 > beforeBalanceOfPlayer1);
             })
 
             it('winnersMoney(player1Address) should be 0', async () => {

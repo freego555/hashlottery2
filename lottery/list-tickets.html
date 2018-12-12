@@ -16,7 +16,7 @@
   <link rel="manifest" href="../manifest.json">
 
   <link rel="stylesheet" href="/dist/css/font-awesome.css">
-  <link rel="stylesheet" href="/dist/dist/css/app.css">
+  <link rel="stylesheet" href="/dist/css/app.css">
 </head>
 <body>
   <div class="headerBar">
@@ -36,20 +36,19 @@
       </p>
       <div class="wrapLottery__wrapSelect">
         <select class="select" id="draw_id">
-          <option>12</option>
+          <option>loading....</option>
         </select>
       </div>
       <p class="inputRow__label">
         Адрес кошелька, в котором находятся билеты
       </p>
-      <p class="lotteryMain__headText hash" id="current_user_account">0x000</p>
-      <p class="inputRow__label">
-        Номер билета
-      </p>
+      <p class="lotteryMain__headText hash" id="current_user_account">Загрузка...</p>
 
+
+      <div id="ticket_details"> </div>
       <template id="ticket">
-        <p class="lotteryMain__headText">№ <span class="ticket_number">?</span>
-          <span class="ticket_status">?</span> </p>
+        <p class="lotteryMain__headText">№ <span class="ticket_number">Загрузка...</span>
+          <span class="ticket_status">Загрузка...</span> </p>
       </template>
 
       <div class="formShipment__footer">
@@ -59,13 +58,7 @@
       </div>
     </div>
   </div>
-  <script src='/dist/js/parts/jquery-3.2.1.min.js'></script>
-  <script src="/dist/js/parts/jquery.nice-select.min.js"></script>
+
   <script src="/dist/js/app.js"></script>
-  <script>
-    $(document).ready(function() {
-      $('.select').niceSelect();
-    });
-  </script>
 </body>
 </html>

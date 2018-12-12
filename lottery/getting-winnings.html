@@ -31,6 +31,17 @@
       <p class="buyTicket__title border">
         Получение выигрыша
       </p>
+
+      <p class="inputRow__label">
+        № билета
+      </p>
+      <div class="inputRow">
+        <div class="inputRow__wrapInput">
+          <input disabled type="text" class="inputRow__itemInput numbersOnly" id="ticket_number">
+        </div>
+        <p class="errorText">Текст ошибки</p>
+      </div>
+
       <p class="inputRow__label">
         Призовой фонд составляет: 
       </p>
@@ -48,7 +59,7 @@
         <a id="confirm" href="#" class="button">
           Получить выигрыш
         </a>
-        <a href="/lottery/mainPage.html" class="button cancel">
+        <a id="reset" href="/lottery/mainPage.html" class="button cancel">
           Отмена
         </a>
       </div>

@@ -96,6 +96,21 @@ contract Draw {
         );
         _;
     }
+
+    modifier onlyCronOrOwnerOrKassa(){
+        require(msg.sender == cronAddress || msg.sender == kassaAddress || msg.sender == owner
+        , "Only cron or owner or kassa contract can call this"
+        );
+        _;
+    }
+
+    modifier onlyCronOrOwner(){
+        require(msg.sender == cronAddress || msg.sender == owner
+        , "Only cron or owner contract can call this"
+        );
+        _;
+    }
+
     function setCronAddress(address _address) public onlyOwner {
         require(cronAddress == address(0)
         , "cronAddress is already set"
@@ -210,7 +225,7 @@ contract Draw {
     }
 
     //cron 1
-    function startSellingPeriod() public onlyCron onlyWaitCron1 {
+    function startSellingPeriod() public onlyCronOrOwner onlyWaitCron1 {
         currentDrawId++;
         startSelling = now;
         stopSelling = startSelling + 47 hours;
@@ -223,7 +238,7 @@ contract Draw {
     }
 
     //cron 2
-    function startDraw(uint8[] numbers) public onlyCron onlyWaitCron2 {
+    function startDraw(uint8[] numbers) public onlyCronOrOwner onlyWaitCron2 {
 
         require(numbers.length == 3
         , 'Count of winning numbers must be 3'
@@ -258,7 +273,7 @@ contract Draw {
     }
 
     // cron 3
-    function startWithdraws(uint fromIndex, uint count) public onlyCronOrKassa onlyWaitCron3 {
+    function startWithdraws(uint fromIndex, uint countWithdraws, uint countIncome) public onlyCronOrOwnerOrKassa onlyWaitCron3 {
 
         if (getStageOfCurrentDraw() == 30) {
             // first launch of cron
@@ -266,10 +281,10 @@ contract Draw {
             stopVacation = startVacation + calcVacationPeriod();
         }
         // вызвать кассу на начало раздачи выиграша
-        Kassa(kassaAddress).startWithdraws(fromIndex, count);
+        Kassa(kassaAddress).startWithdraws(fromIndex, countWithdraws);
 
         // распределение прибыли
-        LotteryIncomeWallet(kassaAddress).initDistributing(currentDrawId, count);
+        LotteryIncomeWallet(kassaAddress).initDistributing(currentDrawId, countIncome);
     }
 
     // можно продавать билеты
@@ -310,49 +325,42 @@ contract Draw {
 
     }
 
-    function hashVal(uint8 number, uint256 salt) public pure returns (bytes32) {
-        return keccak256(number, salt);
-    }
-
     // ТЕСТ Для ручного изменения этапа розыгрыша во время презентации
-    function setStageWaitingStartOfSale() public onlyOwner {
+    function setStageWaitingStartOfSale() public onlyCronOrOwner {
         stageOfCurrentDraw = 10; // ждем cron1 для начала продаж
     }
 
-    function setStageTicketsSale() public onlyOwner {
+    function setStageTicketsSale() public onlyCronOrOwner {
+        setStageWaitingStartOfSale(); // искусственно устанавливаем статус на ожидание
+        startSellingPeriod(); // вызываем старт
         stageOfCurrentDraw = 11; // продажа билетов 47 часов
-
-        currentDrawId++;
-        startSelling = now;
-        stopSelling = startSelling + 47 hours;
-        stopAcceptingTickets = stopSelling + 1 hours;
-
-        // set others timestamps to 0
-        startRequests = 0;
-
     }
 
-    function setStageFillingTicketsWithoutTransferOfTokens() public onlyOwner {
+    function setStageFillingTicketsWithoutTransferOfTokens() public onlyCronOrOwner {
         stageOfCurrentDraw = 12; // дозаполнение билетов, продавать уже нельзя, акции перемещать нельзя
     }
 
-    function setStageWaitingDraw() public onlyOwner {
+    function setStageWaitingDraw() public onlyCronOrOwner {
         stageOfCurrentDraw = 20; // ждем cron2 для розыгрыша
     }
 
-    function setStageAcceptingRequestsWithoutTransferOfTokens() public onlyOwner {
+    function setStageAcceptingRequestsWithoutTransferOfTokens(uint8[] numbers) public onlyCronOrOwner {
+        setStageWaitingDraw(); // искусственно устанавливаем статус на ожидание
+        startDraw(numbers); // вызываем старт
         stageOfCurrentDraw = 21; // начали прием заявок, акции перемещать нельзя
     }
 
-    function setStageContinueAcceptingRequests() public onlyOwner {
+    function setStageContinueAcceptingRequests() public onlyCronOrOwner {
         stageOfCurrentDraw = 22; // продолжение приема заявок
     }
 
-    function setStageWaitingDistributingOfPrizePool() public onlyOwner {
+    function setStageWaitingDistributingOfPrizePool() public onlyCronOrOwner {
         stageOfCurrentDraw = 30; // ждем cron3 для подведения итогов и подсета победителей
     }
 
-    function setStageVacation() public onlyOwner {
+    function setStageVacation(uint fromIndex, uint countWithdraws, uint countIncome) public onlyCronOrOwner {
+        setStageWaitingDistributingOfPrizePool(); // искусственно устанавливаем статус на ожидание
+        startWithdraws(fromIndex, countWithdraws, countIncome); // вызываем старт
         stageOfCurrentDraw = 40; // перерыв
     }
 }

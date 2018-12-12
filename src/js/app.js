@@ -22,6 +22,7 @@ let walletAccountSaved = localStorage.getItem('privateKey') ? JSON.parse(localSt
 /** Authorization */
 
 if (window.location.pathname !== '/cabinet/identification-page.html'
+  && window.location.pathname !== '/lottery/identification-page.html'
   && window.location.pathname !== '/ico/form-acquisition.html'
   && window.location.pathname !== '/'
 ) {
@@ -192,8 +193,17 @@ $(document).ready(function () {
 
   ico.init()
 
-  if (window.location.pathname === '/cabinet/identification-page.html' || window.location.pathname === '/ico/form-acquisition.html') {
+  if (window.location.pathname === '/cabinet/identification-page.html'
+    || window.location.pathname === '/lottery/identification-page.html'
+    || window.location.pathname === '/ico/form-acquisition.html'
+  ) {
     if (
+      walletAccountSaved &&
+      window.location.pathname === '/lottery/identification-page.html' &&
+      confirm('Вы уже авторизированы на этом устройстве. Хотите продолжить с теми же параметрами?')
+    ) {
+      window.location.pathname = '/lottery/mainPage.html'
+    } else if (
       walletAccountSaved &&
       window.location.pathname === '/cabinet/identification-page.html' &&
       confirm('Вы уже авторизированы на этом устройстве. Хотите продолжить с теми же параметрами?')
@@ -305,7 +315,12 @@ $(document).ready(function () {
 
               return true
             } else {
-              window.location.pathname = '/cabinet/main-page.html'
+
+                if(window.location.pathname === '/lottery/identification-page.html'){
+                  window.location.pathname = '/lottery/mainPage.html'
+                }else {
+                  window.location.pathname = '/cabinet/main-page.html'
+                }
             }
           })
             .catch(function (err) {
