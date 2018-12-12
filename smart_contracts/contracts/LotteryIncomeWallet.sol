@@ -49,23 +49,23 @@ contract LotteryIncomeWallet {
     }
 
     // Возможно, данную функцию можно будет удалить
-    function getOwnersListIndex(address _ownerAddress) public view returns(uint256) {
-        return TokenERC20(tokenERC20Address).ownersIndex(_ownerAddress);
-    }
+    // function getOwnersListIndex(address _ownerAddress) public view returns(uint256) {
+    //     return TokenERC20(tokenERC20Address).ownersIndex(_ownerAddress);
+    // }
 
     // функция получает часть массива акционеров из Токена-20 и начисляет этой части дивиденды
-    function getOwnerAddressesListPart(uint256 _startIndex, uint256 _count, uint256 lottery_id) private {
+    // function getOwnerAddressesListPart(uint256 _startIndex, uint256 _count, uint256 lottery_id) private {
 
-        if ((_startIndex + _count) <= stockHoldersCount) {
-            stockHolders = TokenERC20(tokenERC20Address).getOwnerAddressesList(_startIndex, _startIndex + _count);
-            distributeIncome(stockHolders, lottery_id);
+    //     if ((_startIndex + _count) <= stockHoldersCount) {
+    //         stockHolders = TokenERC20(tokenERC20Address).getOwnerAddressesList(_startIndex, _startIndex + _count);
+    //         distributeIncome(stockHolders, lottery_id);
 
-            getOwnerAddressesListPart(_startIndex + _count, _count, lottery_id);
-        } else {
-            stockHolders = TokenERC20(tokenERC20Address).getOwnerAddressesList(_startIndex, stockHoldersCount);
-            distributeIncome(stockHolders, lottery_id);
-        }
-    }
+    //         getOwnerAddressesListPart(_startIndex + _count, _count, lottery_id);
+    //     } else {
+    //         stockHolders = TokenERC20(tokenERC20Address).getOwnerAddressesList(_startIndex, stockHoldersCount);
+    //         distributeIncome(stockHolders, lottery_id);
+    //     }
+    // }
 
     // данная функция  распределяет прибыль от лотереи, путем определения текущей доли каждого акционера и начисления части прибыли от текущего розыгрыша согласно доле
     function distributeIncome(address[] stockHoldersPart, uint256 lottery_id) private {
@@ -76,11 +76,11 @@ contract LotteryIncomeWallet {
         }
     }
 
-    // Функция, которая запускает рекурсивное получение массива акционеров частями из Токена-20
-    function initDistributing(uint256 lottery_id, uint256 count) external onlyDraw() {
+    // Функция, которая получает массив акционеров из Токена-20 и запускает распределение прибыли
+    function initDistributing(uint256 lottery_id) external onlyDraw() {
         stockHoldersCount = TokenERC20(tokenERC20Address).getOwnerAddressesListLength();
-        getOwnerAddressesListPart(1, count, lottery_id);
-
+        stockHolders = TokenERC20(tokenERC20Address).getOwnerAddressesList(1, stockHoldersCount);
+        distributeIncome(stockHolders, lottery_id);
     }
 
     function trackPayments() private {
