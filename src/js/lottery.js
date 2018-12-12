@@ -378,10 +378,20 @@ class Lottery {
     let web3 = this.web3;
     let addresses = this.addresses;
 
-    let choosedTicket = parseInt(ticket_number.value)
-    let drawId = await contractTokenERC721.methods.getTicketDrawId(choosedTicket).call()
+    let url_string = window.location.href;
+    let url = new URL(url_string);
+    let ticketId = url.searchParams.get("ticketId");
+    console.log('ticketId: ' + ticketId);
+    if (ticketId === null) {
+        let ticketId = parseInt(ticket_number.value)
+    }
+    console.log('ticketId: ' + ticketId);
+    console.log('ticket_number.value: ' + ticket_number.value);
+
+    let drawId = await contractTokenERC721.methods.getTicketDrawId(ticketId).call()
     let amountOfPrize = await contractKassa.methods.moneyForEachWinner(drawId).call()
 
+    ticket_number.value = ticketId;
     prize_pool_size.innerHTML = await contractPrizePool.methods.prizePool().call()
     count_of_approved_requests.innerHTML = await contractKassa.methods.winnersCount(drawId).call()
     your_prize_share.innerHTML = amountOfPrize
@@ -389,8 +399,8 @@ class Lottery {
     ticket_number.addEventListener('change', async function (e) {
         e.preventDefault();
 
-        choosedTicket = parseInt(ticket_number.value)
-        drawId = await contractTokenERC721.methods.getTicketDrawId(choosedTicket).call()
+        ticketId = parseInt(ticket_number.value)
+        drawId = await contractTokenERC721.methods.getTicketDrawId(ticketId).call()
         amountOfPrize = await contractKassa.methods.moneyForEachWinner(drawId).call()
         console.log('drawId = ' + drawId)
 
