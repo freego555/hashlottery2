@@ -410,6 +410,13 @@ class Lottery {
     let prize_pool_size = document.getElementById('prize_pool_size')
     let count_of_approved_requests = document.getElementById('count_of_approved_requests')
 
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var ticketId = url.searchParams.get("ticketId") || false;
+    if(ticketId) {
+      ticket_number.value = ticketId
+    }
+
     let contractTokenERC721 = this.TokenERC721;
     let contractKassa = this.Kassa;
     let contractDraw = this.Draw;
@@ -453,8 +460,8 @@ class Lottery {
     console.log(numbersOfTicketInDraw);
     console.log(numbersOfTicketInDraw[drawId][choosedTicket]);*/
 
-    ticket_number.addEventListener('change', async function (e) {
-        e.preventDefault();
+    // ticket_number.addEventListener('change', async function (e) {
+    //     e.preventDefault();
 
         choosedTicket = parseInt(ticket_number.value)
 
@@ -477,11 +484,13 @@ class Lottery {
         }
 
         winnersCount = await contractKassa.methods.winnersCount(drawId).call()
+      console.log('winnersCount', winnersCount)
         count_of_approved_requests.innerHTML = winnersCount
 
-        prizePool = await contractPrizePool.methods.prizePool().call()
+        prizePool = await contractPrizePool.methods.getPrizePoolBalance().call()
+    console.log('prizePool', prizePool)
         prize_pool_size.innerHTML = prizePool
-    })
+    // })
 
     salt.addEventListener('change', function (e) {
         salt.value = parseInt(salt.value)
@@ -490,6 +499,11 @@ class Lottery {
     // Send request
     document.getElementById('confirm').addEventListener('click', async function (e) {
         e.preventDefault();
+
+        if (salt.value.length < 10) {
+          alert('Длина секретного ключа должна не менее 10 символов')
+          return
+        }
 
         const data = contractKassa.methods.addNewRequest(choosedTicket, winningNumbers, parseInt(salt.value)).encodeABI()
 
@@ -510,14 +524,18 @@ class Lottery {
         var transaction = await decrypted.signTransaction(transactionObj)
         console.log('transaction,', transaction)
 
+      try {
         web3.eth.sendSignedTransaction(transaction.rawTransaction)
-            .on('transactionHash', (hash) => {
-                console.log('transactionHash', hash)
-            })
-            .on('receipt', (receipt) => {
-                console.log('receipt', receipt)
-                window.location.pathname = '/lottery/confirmation-application.html'
-            })
+          .on('transactionHash', (hash) => {
+            console.log('transactionHash', hash)
+          })
+          .on('receipt', (receipt) => {
+            console.log('receipt', receipt)
+            window.location.pathname = '/lottery/confirmation-application.html'
+          })
+      }catch(e){
+          alert(e.message)
+      }
     })
 
     // Cancel request
@@ -564,6 +582,8 @@ class Lottery {
       let countOfTickets = await thisClass.TokenERC721.methods.balanceOf(thisClass.wallet.address).call()
       let currentCountOfTickets = 0
 
+      let stageCode = await thisClass.Draw.methods.getStageOfCurrentDraw().call()
+
       var ticket_details = '<p class="inputRow__label">Номер билета</p>'
       for (var index = 0; index < countOfTickets; index++) {
         let tokenId = await thisClass.TokenERC721.methods.tokenOfOwnerByIndex(thisClass.wallet.address, index).call()
@@ -575,12 +595,18 @@ class Lottery {
         currentCountOfTickets++
         let currentStatus = statuses[tokenData._status]
         if (currentStatus == 'NotFilled') {
-          currentStatus = '<a href="/lottery/fill-ticket.html?ticketId=' + tokenId + '" class="redLink">Заполнить билет</a>'
+          if ((stageCode == 11) && draw_id == selectedDraw) {
+            currentStatus = '<a style="float: right;" href="/lottery/fill-ticket.html?ticketId=' + tokenId + '" class="redLink">Заполнить билет</a>'
+          }
         } else if (currentStatus == 'Filled') {
           // вы указали 2, 14, 45
           var savedNumbers = localStorage.getItem('numbers[' + tokenId + ']') || false
           if (savedNumbers) {
             currentStatus = 'вы указали ' + savedNumbers.split('|').join(', ')
+          }
+
+          if ((stageCode == 21 || stageCode == 22) && draw_id == selectedDraw) {
+            currentStatus += '<a style="float: right;" href="/lottery/make-request.html?ticketId=' + tokenId + '" class="redLink">Подать заявку</a>'
           }
         }
 
