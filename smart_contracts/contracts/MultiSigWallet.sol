@@ -1,6 +1,9 @@
 pragma solidity ^0.4.24;
 
-import './Crowdsale.sol';
+interface ICrowdsale {
+    function isIcoEnd() external view returns(bool);
+    function isIcoFail() external view returns(bool);
+}
 
 contract MultiSigWallet {
     
@@ -29,12 +32,12 @@ contract MultiSigWallet {
     }
 
     modifier isIcoEnd(bool status) {
-        require(Crowdsale(crowdSaleContract).isIcoEnd() == status, "ICO isn't end");
+        require(ICrowdsale(crowdSaleContract).isIcoEnd() == status, "ICO isn't end");
         _;
     }
     
     modifier isIcoFail(bool status) {
-        require(Crowdsale(crowdSaleContract).isIcoFail() == status, "ICO isn't fail");
+        require(ICrowdsale(crowdSaleContract).isIcoFail() == status, "ICO isn't fail");
         _;
     }
     

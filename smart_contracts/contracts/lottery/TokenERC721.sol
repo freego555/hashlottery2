@@ -1,10 +1,15 @@
 pragma solidity ^0.4.24;
 
-interface MigrationAgent {
-    function migrateOneTokenFrom(address _from, uint256 _tokenId, uint256 _drawId, bytes32[3] _combinationOfTicket, uint8 _status) external;
+interface IDraw {
+    function isAcceptRequestPeriod() external view returns (bool);
+    function isSellingTicketPeriod() external view returns (bool);
+    function isFillingTicketPeriod() external view returns (bool);
+    function currentDrawId() external view returns (uint);
 }
 
-import './Draw.sol';
+interface IMigrationAgent {
+    function migrateOneTokenFrom(address _from, uint256 _tokenId, uint256 _drawId, bytes32[3] _combinationOfTicket, uint8 _status) external;
+}
 
 contract TokenERC721 {
     enum Status {
@@ -43,7 +48,7 @@ contract TokenERC721 {
     bool public isSetAddressOfContractTicketsSale;
     bool public isSetAddressOfContractDraw;
 
-    Draw public contractDraw;
+    IDraw public contractDraw;
 
     event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);
     event Approval(address indexed _owner, address indexed _approved, uint256 _tokenId);
@@ -129,7 +134,7 @@ contract TokenERC721 {
         require(!isSetAddressOfContractDraw, "Address of contract Draw already set.");
 
         addressOfContractDraw = _address;
-        contractDraw = Draw(_address);
+        contractDraw = IDraw(_address);
         isSetAddressOfContractDraw = true;
     }
 
@@ -251,7 +256,7 @@ contract TokenERC721 {
         totalSupply--;
         totalTicketsInDraw[_dataOfTicket.drawId]--;
 
-        MigrationAgent(addressOfMigrationAgent).migrateOneTokenFrom(msg.sender, _tokenId, _dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, uint8(_dataOfTicket.status));
+        IMigrationAgent(addressOfMigrationAgent).migrateOneTokenFrom(msg.sender, _tokenId, _dataOfTicket.drawId, _dataOfTicket.combinationOfTicket, uint8(_dataOfTicket.status));
 
         emit MigrateOneToken(_tokenId);
     }

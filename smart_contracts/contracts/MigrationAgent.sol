@@ -1,11 +1,11 @@
 pragma solidity ^0.4.24;
 
-interface TokenERC20 {
+interface ITokenERC20 {
     function totalSupply() external returns (uint256);
     function setMigrationStatus() external;
 }
 
-interface newTokenERC20 {
+interface INewTokenERC20 {
     function totalSupply() external returns (uint256);
     function createTokens(address _from, uint256 _value) external;
     function finalizeMigration() external;
@@ -63,15 +63,15 @@ contract MigrationAgent {
     isNotSetNewToken()
     isNotFinalizeMigration(){
         oldToken = _oldToken;
-        totalSupply = TokenERC20(_oldToken).totalSupply();
+        totalSupply = ITokenERC20(_oldToken).totalSupply();
 
         newToken = _newToken;
 
-        TokenERC20(_oldToken).setMigrationStatus();
+        ITokenERC20(_oldToken).setMigrationStatus();
     }
 
     function isTotalSumValid(uint _value) private view{
-        require(TokenERC20(oldToken).totalSupply() + newTokenERC20(newToken).totalSupply() == totalSupply - _value, "");
+        require(ITokenERC20(oldToken).totalSupply() + INewTokenERC20(newToken).totalSupply() == totalSupply - _value, "");
     }
 
     function migrateFrom(address _from, uint256 _value) public
@@ -81,12 +81,12 @@ contract MigrationAgent {
     isSetNewToken(){
 
         isTotalSumValid(_value);
-        newTokenERC20(newToken).createTokens(_from, _value);
+        INewTokenERC20(newToken).createTokens(_from, _value);
         isTotalSumValid(0);
     }
 
     function finalizeMigration() public onlyOwner() isNotFinalizeMigration() {
-        newTokenERC20(newToken).finalizeMigration();
+        INewTokenERC20(newToken).finalizeMigration();
         finalizeMigrationStatus = true;
         oldToken = address(0);
         newToken = address(0);

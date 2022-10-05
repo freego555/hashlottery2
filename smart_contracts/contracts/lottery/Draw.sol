@@ -1,9 +1,11 @@
 pragma solidity ^0.4.24;
 
-import './Kassa.sol';
-// import './../LotteryIncomeWallet.sol';
+interface IKassa {
+    function startWithdraws(uint fromIndex, uint countWithdraws) external;
+    function fullyDistributedPrize(uint currentDrawId) external view returns (bool);
+}
 
-interface LotteryIncomeWallet {
+interface ILotteryIncomeWallet {
     function initDistributing(uint256 lottery_id, uint256 count) external;
 }
 
@@ -281,10 +283,10 @@ contract Draw {
             stopVacation = startVacation + calcVacationPeriod();
         }
         // вызвать кассу на начало раздачи выиграша
-        Kassa(kassaAddress).startWithdraws(fromIndex, countWithdraws);
+        IKassa(kassaAddress).startWithdraws(fromIndex, countWithdraws);
 
         // распределение прибыли
-        LotteryIncomeWallet(kassaAddress).initDistributing(currentDrawId, countIncome);
+        ILotteryIncomeWallet(kassaAddress).initDistributing(currentDrawId, countIncome);
     }
 
     // можно продавать билеты
@@ -320,7 +322,7 @@ contract Draw {
         uint currentStage = getStageOfCurrentDraw();
         bool firstLaunch = currentStage == 30;
         bool isVacation = isVacationPeriod();
-        bool cronContinue = !Kassa(kassaAddress).fullyDistributedPrize(currentDrawId);
+        bool cronContinue = !IKassa(kassaAddress).fullyDistributedPrize(currentDrawId);
         return firstLaunch || (isVacation && cronContinue);
 
     }

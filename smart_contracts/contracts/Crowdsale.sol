@@ -1,6 +1,14 @@
 pragma solidity ^0.4.24;
-import './MultiSigWallet.sol';
-import './TokenERC20.sol';
+
+interface IMultiSigWallet {
+    function getCoinsAfterNegativeIco(address _investor, uint value) external;
+}
+
+interface ITokenERC20 {
+    function totalSupply() external returns (uint256);
+    function transfer(address _to, uint256 _value) external returns (bool success);
+
+}
 
 contract Crowdsale {
     address public multisigContractAddress; // куда перечисляются средства
@@ -14,8 +22,8 @@ contract Crowdsale {
     uint public startICO; // таймштамп начала ICO
     uint public startICOPlus2Days; // таймштамп начала ICO + 2 дня
     uint public price; // цена одного токена в wei
-    TokenERC20 public tokenReward; // токен, который продается на ICO
-    MultiSigWallet public multisigContract; // контракт Multisig
+    ITokenERC20 public tokenReward; // токен, который продается на ICO
+    IMultiSigWallet public multisigContract; // контракт Multisig
     mapping(address => uint256) public balanceOf; // перечень кто сколько внес средств
     mapping(address => uint256) public balanceOfBonusFirstBuyers;
     mapping(address => uint256) public balanceOfTokenBonus; // total balance of bonus tokens
@@ -46,7 +54,7 @@ contract Crowdsale {
     function setTokenUsedAsReward(address _addressOfTokenUsedAsReward) public onlyOwner {
         require(!isSetTokenReward, "Token reward contract has already set");
             
-        tokenReward = TokenERC20(_addressOfTokenUsedAsReward);
+        tokenReward = ITokenERC20(_addressOfTokenUsedAsReward);
         isSetTokenReward = true;
     }
     
@@ -54,7 +62,7 @@ contract Crowdsale {
         require(!isSetMultisig, "Multisig contract has already set");
             
         multisigContractAddress = _multisigAddress;
-        multisigContract = MultiSigWallet(multisigContractAddress);
+        multisigContract = IMultiSigWallet(multisigContractAddress);
         isSetMultisig = true;
     }
     

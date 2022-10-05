@@ -1,9 +1,27 @@
 pragma solidity ^0.4.24;
 
-import './Draw.sol';
-import './PrizePool.sol';
-import './TokenERC721.sol';
+interface IDraw {
+    function isAcceptRequestPeriod() external view returns (bool);
+    function isWaitingWithdrawsPeriod() external view returns (bool);
+    function currentDrawId() external view returns (uint);
+    function getWinnersNumbers(uint _currentDrawId) external view returns (uint8[]);
+    function startWithdraws(uint currentIndex, uint countWithdraws, uint countIncome) external;
+}
 
+interface IPrizePool {
+    function determineWinners(uint countOfWinners) external returns (uint);
+    function prizePool() external returns (uint256);
+    function sendToWinner(address winner, uint value) external;
+}
+
+interface ITokenERC721 {
+    function tokenExists(uint256 ticketNumber) external returns (bool);
+    function ownerOf(uint256 ticketNumber) external returns (address);
+    function getTicketDrawId(uint256 ticketId) external view returns (uint256);
+    function getTicketCombination(uint256 ticketId) external view returns (bytes32[3]);
+    function setTicketStatusWinning(uint256 _tokenId) external;
+    function setTicketStatusPayed(uint256 _tokenId) external;
+}
 
 contract Kassa {
 
@@ -94,21 +112,21 @@ contract Kassa {
     }
 
     function addNewRequest(uint ticketNumber, uint8[] numbers, uint256 salt) public inited {
-        require(Draw(drawAddress).isAcceptRequestPeriod()
+        require(IDraw(drawAddress).isAcceptRequestPeriod()
         , "You add winning request during this period"
         );
-        require(TokenERC721(token712Address).tokenExists(ticketNumber)
+        require(ITokenERC721(token712Address).tokenExists(ticketNumber)
         , 'This ticket does not exists'
         );
-        require(TokenERC721(token712Address).ownerOf(ticketNumber) == msg.sender
+        require(ITokenERC721(token712Address).ownerOf(ticketNumber) == msg.sender
         , 'You are not the owner of this ticket'
         );
 
 
-        uint ticketDrawId = TokenERC721(token712Address).getTicketDrawId(ticketNumber);
-        bytes32[3] memory combinationOfTicket = TokenERC721(token712Address).getTicketCombination(ticketNumber);
+        uint ticketDrawId = ITokenERC721(token712Address).getTicketDrawId(ticketNumber);
+        bytes32[3] memory combinationOfTicket = ITokenERC721(token712Address).getTicketCombination(ticketNumber);
 
-        require(ticketDrawId == Draw(drawAddress).currentDrawId()
+        require(ticketDrawId == IDraw(drawAddress).currentDrawId()
         , 'This ticket is not from current Draw'
         );
 
@@ -132,8 +150,8 @@ contract Kassa {
             );
         }
 
-        uint currentDrawId = Draw(drawAddress).currentDrawId();
-        uint8[] memory winning = Draw(drawAddress).getWinnersNumbers(currentDrawId);
+        uint currentDrawId = IDraw(drawAddress).currentDrawId();
+        uint8[] memory winning = IDraw(drawAddress).getWinnersNumbers(currentDrawId);
         require(winning[0] == numbers[0] && winning[1] == numbers[1] && winning[2] == numbers[2]
         , 'Your numbers does not matches winning numbers'
         );
@@ -143,14 +161,14 @@ contract Kassa {
         winnersListIndex[ticketDrawId][msg.sender] = winnersCount[ticketDrawId];
         winnersCount[ticketDrawId]++;
 
-        TokenERC721(token712Address).setTicketStatusWinning(ticketNumber);
+        ITokenERC721(token712Address).setTicketStatusWinning(ticketNumber);
 
         emit RequestApproved(ticketNumber);
     }
 
     // начать распределять выигрыш между победителями // cron > draw > kassa
     function startWithdraws(uint fromIndex, uint count) public inited onlyDraw {
-        uint currentDrawId = Draw(drawAddress).currentDrawId();
+        uint currentDrawId = IDraw(drawAddress).currentDrawId();
         require(!fullyDistributedPrize[currentDrawId]
         , 'The prize pool of this draw is already fully distributed'
         );
@@ -158,8 +176,8 @@ contract Kassa {
         uint countOfWinners = winnersCount[currentDrawId];
         if (moneyForEachWinner[currentDrawId] == 0) {
             // узнать размер выигрыша одного победителя
-            moneyForEachWinner[currentDrawId] = PrizePool(prizePoolAddress).determineWinners(countOfWinners);
-            poolSizes[currentDrawId] = PrizePool(prizePoolAddress).prizePool();
+            moneyForEachWinner[currentDrawId] = IPrizePool(prizePoolAddress).determineWinners(countOfWinners);
+            poolSizes[currentDrawId] = IPrizePool(prizePoolAddress).prizePool();
         }
         if (countOfWinners == 0) {
             // нет победителей
@@ -208,20 +226,20 @@ contract Kassa {
         if (winnersMoney[msg.sender] >= value) {
             // у пользователя на счету достаточно средств для вывода
             winnersMoney[msg.sender] -= value;
-            PrizePool(prizePoolAddress).sendToWinner(msg.sender, value);
+            IPrizePool(prizePoolAddress).sendToWinner(msg.sender, value);
 
             emit TransferredPrize(msg.sender, value);
             return;
         }
 
-        uint currentDrawId = Draw(drawAddress).currentDrawId();
+        uint currentDrawId = IDraw(drawAddress).currentDrawId();
         // есть ли пользователь в списке победителей в текущем выиграше
         // и его доля еще не распредлена
         if (winnersListExists[currentDrawId][msg.sender] && !isGivenShare[currentDrawId][msg.sender]) {
 
-            if (Draw(drawAddress).isWaitingWithdrawsPeriod()) {
+            if (IDraw(drawAddress).isWaitingWithdrawsPeriod()) {
                 uint currentIndex = winnersListIndex[currentDrawId][msg.sender];
-                Draw(drawAddress).startWithdraws(currentIndex, 1, 10);
+                IDraw(drawAddress).startWithdraws(currentIndex, 1, 10);
             }
         }
 
@@ -237,7 +255,7 @@ contract Kassa {
             winnersMoney[msg.sender] -= value;
         }
 
-        PrizePool(prizePoolAddress).sendToWinner(msg.sender, value);
+        IPrizePool(prizePoolAddress).sendToWinner(msg.sender, value);
 
         emit TransferredPrize(msg.sender, value);
         return;
@@ -249,16 +267,16 @@ contract Kassa {
 
     function withdrawTicketPrice(uint256 ticketNumber) inited public {
 
-        require(TokenERC721(token712Address).tokenExists(ticketNumber)
+        require(ITokenERC721(token712Address).tokenExists(ticketNumber)
         , 'This ticket does not exists'
         );
-        require(TokenERC721(token712Address).ownerOf(ticketNumber) == msg.sender
+        require(ITokenERC721(token712Address).ownerOf(ticketNumber) == msg.sender
         , 'You are not the owner of this ticket'
         );
 
-        TokenERC721(token712Address).setTicketStatusPayed(ticketNumber);
+        ITokenERC721(token712Address).setTicketStatusPayed(ticketNumber);
 
-        uint ticketDrawId = TokenERC721(token712Address).getTicketDrawId(ticketNumber);
+        uint ticketDrawId = ITokenERC721(token712Address).getTicketDrawId(ticketNumber);
         uint value = moneyForEachWinner[ticketDrawId];
         withdrawPrize(value);
 

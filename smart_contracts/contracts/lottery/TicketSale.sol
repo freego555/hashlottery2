@@ -1,8 +1,12 @@
 pragma solidity ^0.4.24;
 
-import './TokenERC721.sol';
-import './Draw.sol';
+interface IDraw {
+    function isSellingTicketPeriod() external view returns (bool);
+}
 
+interface TokenERC721 {
+    function mint(address _owner, uint256 _amountOfTokens) external;
+}
 
 contract TicketSale {
 
@@ -16,7 +20,7 @@ contract TicketSale {
     address public lotteryIncomeWalletAddress; // кошелек прибыли акционеров
 
     address public lotteryDrawAddress; //контракт розыгрыша
-    Draw public lotteryDrawContract;
+    IDraw public lotteryDrawContract;
 
     bool public initComplete = false;
 
@@ -81,7 +85,7 @@ contract TicketSale {
             "LotteryDraw contract has already set"
         );
         lotteryDrawAddress = _address;
-        lotteryDrawContract = Draw(_address);
+        lotteryDrawContract = IDraw(_address);
     }
 
     function setPrice(uint256 newPrice) public onlyOwner {

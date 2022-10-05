@@ -1,8 +1,5 @@
 pragma solidity ^0.4.24;
 
-// import './TokenERC721.sol';
-// import './NewTokenERC721.sol';
-
 interface TokenERC721 {
     function totalTicketsInDraw(uint256 _drawId) external returns(uint256);
     function lastIdOfToken() external returns(uint256);
@@ -16,7 +13,7 @@ interface NewTokenERC721 {
     function finalizeMigration() external;
 }
 
-interface Draw {
+interface IDraw {
     function currentDrawId() external view returns(uint256 _drawId);
 }
 
@@ -83,7 +80,7 @@ contract MigrationAgentTokenERC721 {
         require(contractTokenERC721.addressOfMigrationAgent() == address(this), "Address of migration agent should be set in contract of old token.");
 
         isMigrationInitiated = true;
-        uint256 _lastIdOfDraw = Draw(addressOfDraw).currentDrawId();
+        uint256 _lastIdOfDraw = IDraw(addressOfDraw).currentDrawId();
         lastIdOfDraw = _lastIdOfDraw;
         migrationSupply = contractTokenERC721.totalTicketsInDraw(_lastIdOfDraw);
 
