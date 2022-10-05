@@ -53,6 +53,6 @@ module.exports = function (deployer) {
 
 
     } catch (e) {
-        console.log("Not deployed" + e.message);
+        console.log("Not deployed", e.message);
     }
 };
