@@ -1,3 +1,4 @@
+var BN = require('bn.js');
 var Crowdsale = artifacts.require("./Crowdsale.sol");
 var TokenERC20 = artifacts.require("./TokenERC20.sol");
 var MultiSigWallet = artifacts.require("./MultiSigWallet.sol"); // test
@@ -23,28 +24,28 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
         it('startICOPlus2Days() should be startICO() + 2 days', async function(){
             let startICO          = await crowdsale.startICO();
             let startICOPlus2Days = await crowdsale.startICOPlus2Days();
-            let twoDaysInSeconds  = 24 * 2 * 60 * 60;
+            let twoDaysInSeconds  = new BN(24 * 2 * 60 * 60);
 
-            startICO = startICO.plus(twoDaysInSeconds); // use Bignumber API
+            startICO = startICO.add(twoDaysInSeconds); // use bn.js
 
-            assert.isTrue(startICO.comparedTo(startICOPlus2Days) == 0, 'startICOPlus2Days() isn\'t startICO() + 2 days'); // use Bignumber API
+            assert.isTrue(startICO.cmp(startICOPlus2Days) == 0, 'startICOPlus2Days() isn\'t startICO() + 2 days'); // use bn.js
         });
 
         it('deadline() should be startICO() + 7 days', async function(){
             let startICO = await crowdsale.startICO();
             let deadline = await crowdsale.deadline();
-            let sevenDaysInSeconds = 24 * 7 * 60 * 60;
+            let sevenDaysInSeconds = new BN(24 * 7 * 60 * 60);
 
-            startICO = startICO.plus(sevenDaysInSeconds); // use Bignumber API
+            startICO = startICO.add(sevenDaysInSeconds); // use bn.js
 
-            assert.isTrue(startICO.comparedTo(deadline) == 0, 'deadline() isn\'t startICO() + 7 days'); // use Bignumber API
+            assert.isTrue(startICO.cmp(deadline) == 0, 'deadline() isn\'t startICO() + 7 days'); // use bn.js
         });
 
         it('price() should be 0.25 Ether', async function(){
-            let price      = await crowdsale.price();
-            let checkPrice = web3.toWei(0.25); // 0.25 Eth
+            let price      = (await crowdsale.price()).toString();
+            let checkPrice = web3.utils.toWei('0.25'); // 0.25 Eth
 
-            assert.isTrue(price == checkPrice, 'price() isn\'t 0.25 Ether');
+            assert.isTrue(price === checkPrice, 'price() isn\'t 0.25 Ether');
         });
 
         it('amountTokensForSale() should be 40% of total supply of tokens', async function() {
@@ -52,9 +53,9 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
 
             let amountTokensForSale      = await crowdsale.amountTokensForSale();
             let totalSupply              = await token.totalSupply();
-            let checkAmountTokensForSale = totalSupply.times(40).div(100); // use Bignumber API
+            let checkAmountTokensForSale = totalSupply.mul(new BN(40)).div(new BN(100)); // use bn.js
 
-            assert.isTrue(amountTokensForSale.comparedTo(checkAmountTokensForSale) == 0, 'amountTokensForSale() isn\'t 40% of total supply of tokens'); // use Bignumber API
+            assert.isTrue(amountTokensForSale.cmp(checkAmountTokensForSale) == 0, 'amountTokensForSale() isn\'t 40% of total supply of tokens'); // use bn.js
         });
 
         it('amountTokensForOwners() should be the rest of total supply of tokens after sale for investors', async function(){
@@ -62,9 +63,9 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
 
             let amountTokensForOwners      = await crowdsale.amountTokensForOwners();
             let totalSupply                = await token.totalSupply();
-            let checkAmountTokensForOwners = totalSupply.minus(totalSupply.times(40).div(100)); // use Bignumber API
+            let checkAmountTokensForOwners = totalSupply.sub(totalSupply.mul(new BN(40)).div(new BN(100))); // use bn.js
 
-            assert.isTrue(amountTokensForOwners.comparedTo(checkAmountTokensForOwners) == 0, 'amountTokensForOwners() isn\'t the rest of total supply of tokens after sale for investors'); // use Bignumber API
+            assert.isTrue(amountTokensForOwners.cmp(checkAmountTokensForOwners) == 0, 'amountTokensForOwners() isn\'t the rest of total supply of tokens after sale for investors'); // use bn.js
         });
 
         it('limitOfFirstBuyers() should be 5', async function(){
@@ -87,11 +88,11 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
         });
 
         it('When some amount of tokens was sold isIcoEnd() should be false', async function(){
-            let priceOfOneToken = web3.toWei(0.25); // 0.25 Eth
+            let priceOfOneToken = new BN(web3.utils.toWei('0.25')); // 0.25 Eth
 
             //console.log("balance investor: ", await web3.eth.getBalance(investor).toString(10));
-
-            await crowdsale.invest({from: investor, value: 20 * priceOfOneToken});
+            let sumToInvest = priceOfOneToken.mul(new BN(20));
+            await crowdsale.invest({from: investor, value: sumToInvest.toString() });
 
             //console.log("balance multisig: ", await web3.eth.getBalance(MultiSigWallet.address).toString(10));
             //console.log("balance investor: ", await web3.eth.getBalance(investor).toString(10));
@@ -100,7 +101,7 @@ contract('Crowdsale (initialized and ICO is continuing)', function(accounts) {
             let amountOfSoldTokens = await crowdsale.amountOfSoldTokens();
 
             // throw if invest() hadn't sold tokens
-            if (amountOfSoldTokens == 0) {
+            if (amountOfSoldTokens.isZero()) {
                 throw Error('Amount of sold tokens is equal 0');
             }
 

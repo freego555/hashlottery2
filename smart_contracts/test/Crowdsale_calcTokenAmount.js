@@ -4,7 +4,7 @@ const helper = require('./helpers/truffleTestHelper')
 
 contract('Crowdsale > calcTokenAmount', async (accounts) => {
 
-  var price = web3.toWei(0.25)
+  var price = web3.utils.toWei('0.25')
   var tokens_buyed, tokens_bonus, change
   var crowdsale
   var money
